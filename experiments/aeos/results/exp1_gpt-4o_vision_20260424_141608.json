@@ -1,0 +1,146 @@
+{
+  "run_id": "20260424_141608",
+  "backend": "openai",
+  "model": "openai/gpt-4o",
+  "dataset": "vision",
+  "n_features": 784,
+  "n_classes": 10,
+  "n_train": 8000,
+  "n_val": 2000,
+  "best_accuracy": 0.951,
+  "best_loss": 0.3032,
+  "best_iteration": 4,
+  "best_code": "from sklearn.ensemble import ExtraTreesClassifier\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.pipeline import make_pipeline\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Create a pipeline with standard scaling and ExtraTreesClassifier\n    model = make_pipeline(\n        StandardScaler(),\n        ExtraTreesClassifier(n_estimators=150, random_state=42, n_jobs=-1)\n    )\n\n    # Fit the model on the training data\n    model.fit(X_train, y_train)\n\n    # Predict on the validation data\n    predictions = model.predict(X_val)\n\n    return predictions",
+  "total_iterations": 14,
+  "stop_reason": "Agent autonomously stopped at iteration 14",
+  "total_time_seconds": 695.1,
+  "model_families_explored": [
+    "sklearn_MLP",
+    "RandomForest",
+    "GradientBoosting",
+    "SVM",
+    "KNN",
+    "ExtraTrees"
+  ],
+  "sunk_cost_episodes": 0,
+  "waste_count": 0,
+  "iterations": [
+    {
+      "iteration": 1,
+      "val_accuracy": 0.943,
+      "val_loss": 0.3444,
+      "family": "RandomForest",
+      "is_best": true,
+      "time_seconds": 6.3,
+      "code": "from sklearn.ensemble import RandomForestClassifier\nfrom sklearn.preprocessing import StandardScaler\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Normalize the data\n    scaler = StandardScaler()\n    X_train_scaled = scaler.fit_transform(X_train)\n    X_val_scaled = scaler.transform(X_val)\n    \n    # Initialize the RandomForestClassifier\n    model = RandomForestClassifier(n_estimators=100, random_state=42, n_jobs=-1)\n    \n    # Train the model\n    model.fit(X_train_scaled, y_train)\n    \n    # Predict on the validation set\n    predictions = model.predict(X_val_scaled)\n    \n    return predictions"
+    },
+    {
+      "iteration": 2,
+      "val_accuracy": 0.916,
+      "val_loss": 0.4832,
+      "family": "sklearn_MLP",
+      "is_best": false,
+      "time_seconds": 6.5,
+      "code": "from sklearn.decomposition import PCA\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.neural_network import MLPClassifier\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Normalize the data\n    scaler = StandardScaler()\n    X_train_scaled = scaler.fit_transform(X_train)\n    X_val_scaled = scaler.transform(X_val)\n\n    # Reduce dimensionality\n    pca = PCA(n_components=0.95, whiten=True, random_state=42)\n    X_train_pca = pca.fit_transform(X_train_scaled)\n    X_val_pca = pca.transform(X_val_scaled)\n\n    # Train a neural network\n    model = MLPClassifier(hidden_layer_sizes=(128, 64), activation='relu', solver='adam', \n                          max_iter=200, random_state=42, verbose=False)\n    model.fit(X_train_pca, y_train)\n    \n    # Make predictions\n    predictions = model.predict(X_val_pca)\n    return predictions"
+    },
+    {
+      "iteration": 3,
+      "val_accuracy": 0.927,
+      "val_loss": 0.4266,
+      "family": "GradientBoosting",
+      "is_best": false,
+      "time_seconds": 265.4,
+      "code": "def solve(X_train, y_train, X_val, y_val):\n    from sklearn.ensemble import GradientBoostingClassifier\n    from sklearn.preprocessing import StandardScaler\n    from sklearn.pipeline import make_pipeline\n\n    # Create a pipeline with StandardScaler and GradientBoostingClassifier\n    pipeline = make_pipeline(\n        StandardScaler(),\n        GradientBoostingClassifier(n_estimators=100, learning_rate=0.1, max_depth=3, random_state=42)\n    )\n\n    # Fit the model\n    pipeline.fit(X_train, y_train)\n\n    # Predict on validation data\n    predictions = pipeline.predict(X_val)\n\n    return predictions"
+    },
+    {
+      "iteration": 4,
+      "val_accuracy": 0.951,
+      "val_loss": 0.3032,
+      "family": "ExtraTrees",
+      "is_best": true,
+      "time_seconds": 2.8,
+      "code": "from sklearn.ensemble import ExtraTreesClassifier\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.pipeline import make_pipeline\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Create a pipeline with standard scaling and ExtraTreesClassifier\n    model = make_pipeline(\n        StandardScaler(),\n        ExtraTreesClassifier(n_estimators=150, random_state=42, n_jobs=-1)\n    )\n\n    # Fit the model on the training data\n    model.fit(X_train, y_train)\n\n    # Predict on the validation data\n    predictions = model.predict(X_val)\n\n    return predictions"
+    },
+    {
+      "iteration": 5,
+      "val_accuracy": 0.9185,
+      "val_loss": 0.4703,
+      "family": "SVM",
+      "is_best": false,
+      "time_seconds": 5.0,
+      "code": "def solve(X_train, y_train, X_val, y_val):\n    from sklearn.preprocessing import StandardScaler\n    from sklearn.decomposition import PCA\n    from sklearn.pipeline import make_pipeline\n    from sklearn.svm import SVC\n    \n    # Standardize the data and apply PCA\n    scaler = StandardScaler()\n    pca = PCA(n_components=50)\n    svc = SVC(kernel='rbf', C=10, gamma=0.01, random_state=42)\n    \n    # Create a pipeline with PCA and SVC\n    model = make_pipeline(scaler, pca, svc)\n    \n    # Train the model\n    model.fit(X_train, y_train)\n    \n    # Predict on validation data\n    predictions = model.predict(X_val)\n    \n    return predictions"
+    },
+    {
+      "iteration": 6,
+      "val_accuracy": 0.942,
+      "val_loss": 0.3495,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 273.9,
+      "code": "def solve(X_train, y_train, X_val, y_val):\n    from sklearn.ensemble import VotingClassifier\n    from sklearn.ensemble import RandomForestClassifier, ExtraTreesClassifier, GradientBoostingClassifier\n    from sklearn.preprocessing import StandardScaler\n    from sklearn.pipeline import make_pipeline\n    \n    # Create a pipeline with a scaler and the classifiers\n    rf_pipeline = make_pipeline(StandardScaler(), RandomForestClassifier(n_estimators=100))\n    et_pipeline = make_pipeline(StandardScaler(), ExtraTreesClassifier(n_estimators=100))\n    gb_pipeline = make_pipeline(StandardScaler(), GradientBoostingClassifier(n_estimators=100))\n    \n    # Create an ensemble of the best performing models\n    ensemble = VotingClassifier(estimators=[\n        ('rf', rf_pipeline),\n        ('et', et_pipeline),\n        ('gb', gb_pipeline)\n    ], voting='soft')\n    \n    # Train the ensemble model\n    ensemble.fit(X_train, y_train)\n    \n    # Predict using the ensemble model\n    predictions = ensemble.predict(X_val)\n    \n    return predictions"
+    },
+    {
+      "iteration": 7,
+      "val_accuracy": 0.9175,
+      "val_loss": 0.4755,
+      "family": "ExtraTrees",
+      "is_best": false,
+      "time_seconds": 3.7,
+      "code": "from sklearn.decomposition import PCA\nfrom sklearn.ensemble import ExtraTreesClassifier\nfrom sklearn.pipeline import make_pipeline\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Normalize the data\n    X_train = X_train / 255.0\n    X_val = X_val / 255.0\n    \n    # Use PCA for dimensionality reduction\n    pca = PCA(n_components=0.95, whiten=True, random_state=42)\n    \n    # Best model so far\n    model = ExtraTreesClassifier(n_estimators=100, random_state=42, n_jobs=-1)\n    \n    # Create a pipeline\n    pipeline = make_pipeline(pca, model)\n    \n    # Fit the model\n    pipeline.fit(X_train, y_train)\n    \n    # Predict on validation set\n    predictions = pipeline.predict(X_val)\n    \n    return predictions"
+    },
+    {
+      "iteration": 8,
+      "val_accuracy": 0.8995,
+      "val_loss": 0.568,
+      "family": "ExtraTrees",
+      "is_best": false,
+      "time_seconds": 3.2,
+      "code": "from sklearn.decomposition import PCA\nfrom sklearn.ensemble import ExtraTreesClassifier\nfrom sklearn.pipeline import make_pipeline\nfrom sklearn.preprocessing import StandardScaler\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Preprocess the data\n    # Scale features and apply PCA to reduce dimensionality (try a variance ratio that keeps most information)\n    scaler = StandardScaler()\n    pca = PCA(n_components=0.95)  # retain 95% of variance\n    clf = ExtraTreesClassifier(n_estimators=100, random_state=42, n_jobs=-1)\n    \n    pipeline = make_pipeline(scaler, pca, clf)\n    \n    # Fit the model\n    pipeline.fit(X_train, y_train)\n    \n    # Predict on validation set\n    predictions = pipeline.predict(X_val)\n    \n    return predictions"
+    },
+    {
+      "iteration": 9,
+      "val_accuracy": 0.9045,
+      "val_loss": 0.5423,
+      "family": "ExtraTrees",
+      "is_best": false,
+      "time_seconds": 7.9,
+      "code": "from sklearn.ensemble import ExtraTreesClassifier\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.decomposition import PCA\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Normalize features\n    scaler = StandardScaler()\n    X_train_norm = scaler.fit_transform(X_train)\n    X_val_norm = scaler.transform(X_val)\n\n    # Apply PCA for dimensionality reduction\n    pca = PCA(n_components=0.95)  # Retain 95% of variance\n    X_train_pca = pca.fit_transform(X_train_norm)\n    X_val_pca = pca.transform(X_val_norm)\n\n    # Train ExtraTreesClassifier\n    model = ExtraTreesClassifier(n_estimators=200, random_state=42)\n    model.fit(X_train_pca, y_train)\n\n    # Make predictions\n    predictions = model.predict(X_val_pca)\n    return predictions"
+    },
+    {
+      "iteration": 10,
+      "val_accuracy": 0.9145,
+      "val_loss": 0.4909,
+      "family": "KNN",
+      "is_best": false,
+      "time_seconds": 102.9,
+      "code": "from sklearn.neighbors import KNeighborsClassifier\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.pipeline import make_pipeline\nfrom sklearn.model_selection import GridSearchCV\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Create a pipeline with standard scaling and KNeighborsClassifier\n    pipeline = make_pipeline(\n        StandardScaler(),\n        KNeighborsClassifier()\n    )\n\n    # Define parameter grid for GridSearchCV\n    param_grid = {\n        'kneighborsclassifier__n_neighbors': [3, 5, 7],\n        'kneighborsclassifier__weights': ['uniform', 'distance'],\n        'kneighborsclassifier__algorithm': ['auto', 'ball_tree', 'kd_tree', 'brute']\n    }\n\n    # Use GridSearchCV to find the best parameters\n    grid_search = GridSearchCV(pipeline, param_grid, cv=5, n_jobs=-1)\n    grid_search.fit(X_train, y_train)\n\n    # Predict on the validation data using the best estimator\n    best_model = grid_search.best_estimator_\n    predictions = best_model.predict(X_val)\n\n    return predictions"
+    },
+    {
+      "iteration": 11,
+      "val_accuracy": 0.9185,
+      "val_loss": 0.4703,
+      "family": "ExtraTrees",
+      "is_best": false,
+      "time_seconds": 4.0,
+      "code": "from sklearn.ensemble import ExtraTreesClassifier\nfrom sklearn.decomposition import PCA\nfrom sklearn.pipeline import make_pipeline\nfrom sklearn.preprocessing import StandardScaler\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Preprocess with PCA to reduce dimensionality\n    pca = PCA(n_components=150, random_state=42)\n    scaler = StandardScaler()\n\n    # ExtraTreesClassifier seems to work best so far, experiment with PCA and scaling\n    model = ExtraTreesClassifier(n_estimators=200, random_state=42, n_jobs=-1)\n\n    # Create a pipeline\n    pipeline = make_pipeline(scaler, pca, model)\n\n    # Fit the model\n    pipeline.fit(X_train, y_train)\n\n    # Predict on validation data\n    predictions = pipeline.predict(X_val)\n\n    return predictions"
+    },
+    {
+      "iteration": 12,
+      "val_accuracy": 0.8995,
+      "val_loss": 0.568,
+      "family": "ExtraTrees",
+      "is_best": false,
+      "time_seconds": 4.8,
+      "code": "from sklearn.decomposition import PCA\nfrom sklearn.ensemble import ExtraTreesClassifier\nfrom sklearn.pipeline import Pipeline\nfrom sklearn.preprocessing import StandardScaler\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Normalize the data and apply PCA for dimensionality reduction\n    pipeline = Pipeline([\n        ('scaler', StandardScaler()),\n        ('pca', PCA(n_components=0.95)),  # Retain 95% of variance\n        ('classifier', ExtraTreesClassifier(n_estimators=100, random_state=42))\n    ])\n    \n    # Fit the pipeline on the training data\n    pipeline.fit(X_train, y_train)\n    \n    # Predict on the validation data\n    predictions = pipeline.predict(X_val)\n    \n    return predictions"
+    },
+    {
+      "iteration": 13,
+      "val_accuracy": 0.9045,
+      "val_loss": 0.5423,
+      "family": "ExtraTrees",
+      "is_best": false,
+      "time_seconds": 7.9,
+      "code": "from sklearn.decomposition import PCA\nfrom sklearn.ensemble import ExtraTreesClassifier\nfrom sklearn.pipeline import make_pipeline\nfrom sklearn.preprocessing import StandardScaler\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Normalize the data\n    scaler = StandardScaler()\n\n    # Dimensionality reduction with PCA\n    pca = PCA(n_components=0.95, whiten=True)  # Keep 95% of variance\n\n    # Using the ExtraTreesClassifier which previously showed the best performance\n    model = ExtraTreesClassifier(n_estimators=200, random_state=42)\n\n    # Create a pipeline\n    pipeline = make_pipeline(scaler, pca, model)\n\n    # Fit the model\n    pipeline.fit(X_train, y_train)\n\n    # Predict\n    predictions = pipeline.predict(X_val)\n\n    return predictions"
+    }
+  ]
+}

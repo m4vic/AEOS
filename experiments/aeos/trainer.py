@@ -5,35 +5,24 @@ Measures results externally — agent can't cheat the metric.
 """
 import traceback
 import signal
+import warnings
 import numpy as np
 from sklearn.metrics import accuracy_score, log_loss
 from sklearn.preprocessing import LabelBinarizer
+from sklearn.exceptions import ConvergenceWarning
 
-TIMEOUT_SECONDS = 120  # Safety cap per iteration
+# Suppress noisy sklearn warnings that pollute terminal output
+warnings.filterwarnings("ignore", category=FutureWarning)
+warnings.filterwarnings("ignore", category=ConvergenceWarning)
+warnings.filterwarnings("ignore", category=UserWarning)
 
+import multiprocessing
 
-class TimeoutError(Exception):
-    pass
-
-
-def _timeout_handler(signum, frame):
-    raise TimeoutError(f"Code execution exceeded {TIMEOUT_SECONDS} seconds")
-
-
-def execute_agent_code(code_str, X_train, y_train, X_val, y_val, n_classes, timeout=TIMEOUT_SECONDS):
-    """
-    Execute agent-generated code and measure results.
+def _run_in_process(code_str, X_train, y_train, X_val, y_val, return_dict):
+    """Executes the agent code inside a separate process."""
+    import traceback
+    import numpy as np
     
-    The agent must define:
-        def solve(X_train, y_train, X_val, y_val):
-            # ... any code ...
-            return predictions  # numpy array, shape (n_val,)
-    
-    Returns:
-        (results_dict, None) on success
-        (None, error_string) on failure
-    """
-    # Build execution namespace with common ML libraries
     exec_namespace = {
         '__builtins__': __builtins__,
         'np': np,
@@ -44,11 +33,9 @@ def execute_agent_code(code_str, X_train, y_train, X_val, y_val, n_classes, time
     try:
         import sklearn
         exec_namespace['sklearn'] = sklearn
-        # Pre-import common sklearn submodules
         from sklearn import ensemble, linear_model, svm, tree, neighbors
         from sklearn import preprocessing, pipeline, model_selection
-        from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
-        from sklearn.ensemble import AdaBoostClassifier, ExtraTreesClassifier
+        from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier, AdaBoostClassifier, ExtraTreesClassifier, VotingClassifier, StackingClassifier, BaggingClassifier
         from sklearn.linear_model import LogisticRegression, SGDClassifier
         from sklearn.svm import SVC, LinearSVC
         from sklearn.tree import DecisionTreeClassifier
@@ -56,6 +43,10 @@ def execute_agent_code(code_str, X_train, y_train, X_val, y_val, n_classes, time
         from sklearn.neural_network import MLPClassifier
         from sklearn.preprocessing import StandardScaler, MinMaxScaler
         from sklearn.pipeline import Pipeline
+        from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer
+        from sklearn.decomposition import PCA, TruncatedSVD
+        from sklearn.model_selection import cross_val_score
+        
         exec_namespace.update({
             'RandomForestClassifier': RandomForestClassifier,
             'GradientBoostingClassifier': GradientBoostingClassifier,
@@ -71,6 +62,14 @@ def execute_agent_code(code_str, X_train, y_train, X_val, y_val, n_classes, time
             'StandardScaler': StandardScaler,
             'MinMaxScaler': MinMaxScaler,
             'Pipeline': Pipeline,
+            'TfidfVectorizer': TfidfVectorizer,
+            'CountVectorizer': CountVectorizer,
+            'PCA': PCA,
+            'TruncatedSVD': TruncatedSVD,
+            'VotingClassifier': VotingClassifier,
+            'StackingClassifier': StackingClassifier,
+            'BaggingClassifier': BaggingClassifier,
+            'cross_val_score': cross_val_score,
         })
     except ImportError:
         pass
@@ -87,38 +86,57 @@ def execute_agent_code(code_str, X_train, y_train, X_val, y_val, n_classes, time
         pass
 
     try:
-        # Execute the agent's code (defines solve())
         exec(code_str, exec_namespace)
-        
         solve_fn = exec_namespace.get('solve')
         if not solve_fn:
-            return None, "Structure Error: Must define 'def solve(X_train, y_train, X_val, y_val)' that returns predictions."
+            return_dict['error'] = "Structure Error: Must define 'def solve(X_train, y_train, X_val, y_val)' that returns predictions."
+            return
+            
+        predictions = solve_fn(
+            X_train.copy(), y_train.copy(), 
+            X_val.copy(), y_val.copy()
+        )
+        return_dict['predictions'] = predictions
+    except Exception as e:
+        return_dict['error'] = f"Runtime Error: {str(e)}\n{traceback.format_exc()}"
+
+
+def execute_agent_code(code_str, X_train, y_train, X_val, y_val, n_classes, timeout=300):
+    """
+    Execute agent-generated code and measure results.
+    
+    The agent must define:
+        def solve(X_train, y_train, X_val, y_val):
+            # ... any code ...
+            return predictions  # numpy array, shape (n_val,)
+    
+    Returns:
+        (results_dict, None) on success
+        (None, error_string) on failure
+    """
+    try:
+        manager = multiprocessing.Manager()
+        return_dict = manager.dict()
         
-        # Run with timeout (Unix only; on Windows, use threading)
-        import threading
-        result_holder = [None]
-        error_holder = [None]
+        p = multiprocessing.Process(
+            target=_run_in_process,
+            args=(code_str, X_train, y_train, X_val, y_val, return_dict)
+        )
+        p.start()
+        p.join(timeout=timeout)
         
-        def run_solve():
-            try:
-                result_holder[0] = solve_fn(
-                    X_train.copy(), y_train.copy(), 
-                    X_val.copy(), y_val.copy()
-                )
-            except Exception as e:
-                error_holder[0] = f"Runtime Error: {str(e)}\n{traceback.format_exc()}"
+        if p.is_alive():
+            p.terminate()
+            p.join()
+            return None, f"Timeout Error: Code execution exceeded {timeout} seconds. Process terminated."
         
-        thread = threading.Thread(target=run_solve)
-        thread.start()
-        thread.join(timeout=timeout)
-        
-        if thread.is_alive():
-            return None, f"Timeout Error: Code execution exceeded {timeout} seconds. Try a simpler/faster model."
-        
-        if error_holder[0]:
-            return None, error_holder[0]
-        
-        predictions = result_holder[0]
+        if 'error' in return_dict:
+            return None, return_dict['error']
+            
+        if 'predictions' not in return_dict:
+            return None, "Error: process terminated unexpectedly without returning predictions."
+            
+        predictions = return_dict['predictions']
         
         # Validate predictions
         if predictions is None:

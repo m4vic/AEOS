@@ -29,42 +29,67 @@ import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
+# Load .env file for API keys
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    pass  # dotenv not installed, rely on system env vars
+
 from data_loader import get_data
 from trainer import execute_agent_code
 from agent import AutonomousAgent
 
 
-# ─── Safety cap (NOT a design parameter — just prevents infinite loops) ───
-SAFETY_MAX_ITERATIONS = 200
-MIN_ITERATIONS_BEFORE_STOP = 5
-STAGNATION_PATIENCE = 5
-TIMEOUT_PER_ITERATION = 120  # seconds
+# ─── Default Parameters ───
+DEFAULT_TIMEOUT_PER_ITERATION = 300  # seconds (5 min — enough for neural networks)
 
 
-def run_experiment(backend="ollama", model_name="gemma4", api_key=None):
+def run_experiment(backend="ollama", model_name="gemma4", api_key=None, dataset="tabular", n_samples=10000, boundless=False, seed=None):
     """Run the full AITL V2 experiment."""
+    
+    # Configure experiment bounds
+    if boundless:
+        safety_max_iterations = 100
+        stagnation_patience = 999999
+        min_iterations_before_stop = 5
+    else:
+        safety_max_iterations = 200
+        stagnation_patience = 5
+        min_iterations_before_stop = 5
     
     timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
     results_dir = os.path.join(os.path.dirname(__file__), "results")
     os.makedirs(results_dir, exist_ok=True)
     
+    # Clean model name for filenames (remove provider prefixes, slashes, colons)
+    model_safe = model_name
+    for prefix in ['ollama/', 'openai/', 'anthropic/', 'gemini/']:
+        model_safe = model_safe.replace(prefix, '')
+    model_safe = model_safe.replace('/', '_').replace(':', '-')
+    
     print("=" * 70)
-    print("  AITL V2 — Autonomous ML Engineering Experiment")
+    print("  AEOS — Autonomous Evaluator Orchestration System")
     print(f"  Backend: {backend} | Model: {model_name}")
+    print(f"  Dataset: {dataset}")
     print(f"  Started: {timestamp}")
     print("=" * 70)
     
     # ─── Step 1: Load data ───
-    X_train, y_train, X_val, y_val, n_features, n_classes = get_data(
-        n_samples=10000, seed=42
+    X_train, y_train, X_val, y_val, n_features, n_classes, dataset_hint = get_data(
+        dataset=dataset, n_samples=n_samples, seed=42
     )
     n_train, n_val = len(X_train), len(X_val)
     
     # ─── Step 2: Initialize agent ───
     if backend == "ollama":
+        if not model_name.startswith("ollama/"):
+            model_name = f"ollama/{model_name}"
         agent = AutonomousAgent(
-            base_url="http://localhost:11434/v1",
-            model=model_name
+            api_base="http://localhost:11434",
+            model=model_name,
+            dataset_hint=dataset_hint,
+            seed=seed
         )
         print(f"\n  [Config] Using LOCAL model: {model_name} via Ollama")
         print(f"  [Config] Cost: $0")
@@ -73,10 +98,28 @@ def run_experiment(backend="ollama", model_name="gemma4", api_key=None):
         if not key:
             print("ERROR: Set OPENAI_API_KEY environment variable or pass --api-key")
             sys.exit(1)
-        agent = AutonomousAgent(api_key=key, model=model_name)
+        if not model_name.startswith("openai/"):
+            model_name = f"openai/{model_name}"
+        agent = AutonomousAgent(api_key=key, model=model_name, dataset_hint=dataset_hint, seed=seed)
         print(f"\n  [Config] Using OPENAI model: {model_name}")
+    elif backend == "anthropic":
+        key = api_key or os.environ.get("ANTHROPIC_API_KEY")
+        if not key:
+            print("ERROR: Set ANTHROPIC_API_KEY environment variable or pass --api-key")
+            sys.exit(1)
+        if not model_name.startswith("anthropic/"):
+            model_name = f"anthropic/{model_name}"
+        agent = AutonomousAgent(api_key=key, model=model_name, dataset_hint=dataset_hint, seed=seed)
+        print(f"\n  [Config] Using ANTHROPIC model: {model_name}")
+    elif backend == "gemini":
+        key = api_key or os.environ.get("GEMINI_API_KEY")
+        if not key:
+            print("ERROR: Set GEMINI_API_KEY environment variable or pass --api-key")
+            sys.exit(1)
+        agent = AutonomousAgent(api_key=key, model=model_name, dataset_hint=dataset_hint, seed=seed)
+        print(f"\n  [Config] Using GEMINI model: {model_name}")
     else:
-        print(f"ERROR: Unknown backend '{backend}'. Use 'ollama' or 'openai'.")
+        print(f"ERROR: Unknown backend '{backend}'.")
         sys.exit(1)
     
     # ─── Step 3: The AITL Loop ───
@@ -85,13 +128,14 @@ def run_experiment(backend="ollama", model_name="gemma4", api_key=None):
     start_time = time.time()
     
     print(f"\n  [Loop] Starting autonomous search (agent decides when to stop)")
-    print(f"  [Loop] Safety cap: {SAFETY_MAX_ITERATIONS} iterations (failsafe only)")
-    print(f"  [Loop] Min iterations: {MIN_ITERATIONS_BEFORE_STOP}")
+    print(f"  [Loop] Boundless mode: {boundless}")
+    print(f"  [Loop] Safety cap: {safety_max_iterations} iterations (failsafe only)")
+    print(f"  [Loop] Min iterations: {min_iterations_before_stop}")
     print("-" * 70)
     
     iteration = 0
     try:
-        while iteration < SAFETY_MAX_ITERATIONS:
+        while iteration < safety_max_iterations:
             iteration += 1
             iter_start = time.time()
             
@@ -107,13 +151,37 @@ def run_experiment(backend="ollama", model_name="gemma4", api_key=None):
                     n_train=n_train,
                     n_val=n_val,
                     iteration=iteration,
-                    min_iterations=MIN_ITERATIONS_BEFORE_STOP,
-                    patience=STAGNATION_PATIENCE,
-                    timeout=TIMEOUT_PER_ITERATION
+                    min_iterations=min_iterations_before_stop,
+                    patience=stagnation_patience,
+                    timeout=DEFAULT_TIMEOUT_PER_ITERATION
                 )
             except Exception as e:
+                error_str = str(e).lower()
+                # Fatal errors — stop immediately, don't loop
+                if any(term in error_str for term in ['authenticationerror', 'invalid api key', 'incorrect api key', 'permission', 'notfounderror', 'not_found_error']):
+                    stop_reason = f"FATAL: API error - {str(e)[:200]}"
+                    print(f"\n  [FATAL] Unrecoverable API error. Stopping immediately.")
+                    all_results.append({
+                        "iteration": iteration,
+                        "val_accuracy": None,
+                        "val_loss": None,
+                        "family": "LLM_CALL",
+                        "error": str(e)[:500],
+                        "time_seconds": round(time.time() - iter_start, 1),
+                        "code": None,
+                    })
+                    break
                 print(f"  [ERROR] LLM call failed: {e}")
                 agent.add_feedback(iteration, 0, 0, "", "ERROR", error=str(e))
+                all_results.append({
+                    "iteration": iteration,
+                    "val_accuracy": None,
+                    "val_loss": None,
+                    "family": "LLM_CALL",
+                    "error": str(e)[:500],
+                    "time_seconds": round(time.time() - iter_start, 1),
+                    "code": None,
+                })
                 continue
             
             # Check for STOP signal
@@ -123,10 +191,10 @@ def run_experiment(backend="ollama", model_name="gemma4", api_key=None):
                 print(f"  [STOP] Families explored: {agent.model_families_tried}")
                 break
                 
-            # Hard cutoff if the model is too "optimistic" and won't stop itself
-            if agent.stagnation_counter >= STAGNATION_PATIENCE * 3:
-                stop_reason = f"System forced stop (Plateaued for {agent.stagnation_counter} iterations)"
-                print(f"\n  [STOP] {stop_reason}. Agent failed to improve after 3 full pivot attempts.")
+            # Hard cutoff if model can't improve (iters_since_best doesn't reset on pivot)
+            if agent.iters_since_best >= stagnation_patience * 3:
+                stop_reason = f"System forced stop (no improvement in {agent.iters_since_best} iterations)"
+                print(f"\n  [STOP] {stop_reason}. Giving up after 3 pivot cycles.")
                 break
             
             # Detect model family
@@ -134,10 +202,10 @@ def run_experiment(backend="ollama", model_name="gemma4", api_key=None):
             print(f"  [Model Family] {family}")
             
             # Execute the code
-            print(f"  [Trainer] Executing agent code (timeout={TIMEOUT_PER_ITERATION}s)...")
+            print(f"  [Trainer] Executing agent code (timeout={DEFAULT_TIMEOUT_PER_ITERATION}s)...")
             result, error = execute_agent_code(
                 code, X_train, y_train, X_val, y_val, 
-                n_classes, timeout=TIMEOUT_PER_ITERATION
+                n_classes, timeout=DEFAULT_TIMEOUT_PER_ITERATION
             )
             
             iter_time = time.time() - iter_start
@@ -161,9 +229,9 @@ def run_experiment(backend="ollama", model_name="gemma4", api_key=None):
             
             # Update checkpoint
             is_best = agent.update_checkpoint(iteration, val_loss, val_acc, code)
-            agent.add_feedback(iteration, val_loss, val_acc, code, family)
+            agent.add_feedback(iteration, val_loss, val_acc, code, family, is_best=is_best)
             
-            marker = " ★ NEW BEST ★" if is_best else ""
+            marker = " * NEW BEST *" if is_best else ""
             print(f"  [RESULT] Accuracy: {val_acc:.4f} | Loss: {val_loss:.4f} | "
                   f"Family: {family} | Time: {iter_time:.1f}s{marker}")
             
@@ -184,7 +252,7 @@ def run_experiment(backend="ollama", model_name="gemma4", api_key=None):
             })
             
         else:
-            stop_reason = f"Safety cap reached ({SAFETY_MAX_ITERATIONS} iterations)"
+            stop_reason = f"Safety cap reached ({safety_max_iterations} iterations)"
             
     except KeyboardInterrupt:
         stop_reason = f"Experiment manually aborted by user at iteration {iteration}"
@@ -213,7 +281,7 @@ def run_experiment(backend="ollama", model_name="gemma4", api_key=None):
         "run_id": timestamp,
         "backend": backend,
         "model": model_name,
-        "dataset": "covtype_10k_stripped",
+        "dataset": dataset,
         "n_features": n_features,
         "n_classes": n_classes,
         "n_train": n_train,
@@ -226,10 +294,12 @@ def run_experiment(backend="ollama", model_name="gemma4", api_key=None):
         "stop_reason": stop_reason,
         "total_time_seconds": round(total_time, 1),
         "model_families_explored": list(agent.model_families_tried),
+        "sunk_cost_episodes": _count_sunk_cost_episodes(all_results),
+        "waste_count": sum(1 for r in all_results if r.get('error')),
         "iterations": all_results,
     }
     
-    json_path = os.path.join(results_dir, f"v2_run_{backend}_{timestamp}.json")
+    json_path = os.path.join(results_dir, f"exp1_{model_safe}_{dataset}_{timestamp}.json")
     with open(json_path, "w") as f:
         json.dump(run_data, f, indent=2)
     print(f"\n  [Saved] Results: {json_path}")
@@ -308,25 +378,58 @@ def _generate_plot(results, agent, backend, model_name, results_dir, timestamp):
     print(f"  [Saved] Plot: {plot_path}")
 
 
+def _count_sunk_cost_episodes(results):
+    """Count sunk-cost episodes: 3+ consecutive iterations with same family and no improvement."""
+    episodes = 0
+    streak = 0
+    last_family = None
+    for r in results:
+        if r.get('error'):
+            continue
+        family = r.get('family', 'Unknown')
+        is_best = r.get('is_best', False)
+        if family == last_family and not is_best:
+            streak += 1
+            if streak >= 3:
+                episodes += 1
+                streak = 0
+        else:
+            streak = 0
+        last_family = family
+    return episodes
+
+
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="AITL V2 — Autonomous ML Engineering")
-    parser.add_argument("--backend", choices=["ollama", "openai"], default="ollama",
+    parser = argparse.ArgumentParser(description="AEOS — Autonomous Evaluator Orchestration System")
+    parser.add_argument("--backend", choices=["ollama", "openai", "anthropic", "gemini"], default="ollama",
                         help="LLM backend (default: ollama)")
     parser.add_argument("--model", default="gemma4",
-                        help="Model name (default: gemma4 for Ollama, gpt-4o-mini for OpenAI)")
+                        help="Model name (e.g., gemma4, gpt-4o-mini, claude-3-5-sonnet-20240620)")
+    parser.add_argument("--dataset", choices=["tabular", "text", "vision"], default="tabular",
+                        help="Dataset to use (default: tabular)")
     parser.add_argument("--api-key", default=None,
-                        help="OpenAI API key (or set OPENAI_API_KEY env var)")
+                        help="API key (or set corresponding env var like OPENAI_API_KEY)")
     parser.add_argument("--samples", type=int, default=10000,
                         help="Dataset subsample size (default: 10000)")
+    parser.add_argument("--boundless", action="store_true",
+                        help="Run in boundless mode (disable forced pivots, up to 100 iterations)")
+    parser.add_argument("--seed", type=int, default=None,
+                        help="Random seed for the LLM to ensure reproducibility")
     
     args = parser.parse_args()
     
     # Set default model based on backend
     if args.backend == "openai" and args.model == "gemma4":
         args.model = "gpt-4o-mini"
+    elif args.backend == "anthropic" and args.model == "gemma4":
+        args.model = "claude-3-5-haiku-20241022"
     
     run_experiment(
         backend=args.backend,
         model_name=args.model,
         api_key=args.api_key,
+        dataset=args.dataset,
+        n_samples=args.samples,
+        boundless=args.boundless,
+        seed=args.seed
     )

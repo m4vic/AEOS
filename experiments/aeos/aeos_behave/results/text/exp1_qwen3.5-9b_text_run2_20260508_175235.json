@@ -1,0 +1,342 @@
+{
+  "run_id": "20260508_175235",
+  "backend": "ollama",
+  "model": "ollama/qwen3.5:9b",
+  "dataset": "text",
+  "n_features": 0,
+  "n_classes": 6,
+  "n_train": 3427,
+  "n_val": 2282,
+  "best_accuracy": 0.8278,
+  "best_loss": 0.8355,
+  "best_iteration": 31,
+  "best_code": "import numpy as np\nfrom sklearn.feature_extraction.text import TfidfVectorizer\nfrom sklearn.linear_model import LogisticRegression\nfrom sklearn.svm import LinearSVC\nfrom sklearn.ensemble import RandomForestClassifier\nimport time\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Convert text to features\n    vectorizer = TfidfVectorizer(\n        max_features=50000,\n        ngram_range=(1, 2),\n        min_df=2,\n        max_df=0.95,\n        sublinear_tf=True\n    )\n    \n    X_train_vec = vectorizer.fit_transform(X_train)\n    X_val_vec = vectorizer.transform(X_val)\n    \n    # Try LinearSVC which is often faster and effective for text\n    start = time.time()\n    model = LinearSVC(\n        C=1.0,\n        dual=True,\n        max_iter=10000,\n        class_weight='balanced'\n    )\n    model.fit(X_train_vec, y_train)\n    \n    # Get predictions\n    predictions = model.predict(X_val_vec)\n    \n    elapsed = time.time() - start\n    print(f\"LinearSVC: {elapsed:.2f}s, Acc: {np.mean(predictions == y_val):.4f}\")\n    \n    return predictions.astype(np.int32)",
+  "total_iterations": 36,
+  "stop_reason": "Agent autonomously stopped at iteration 36",
+  "total_time_seconds": 4865.1,
+  "model_families_explored": [
+    "LogisticRegression",
+    "RandomForest",
+    "SVM",
+    "GradientBoosting"
+  ],
+  "sunk_cost_episodes": 1,
+  "waste_count": 21,
+  "iterations": [
+    {
+      "iteration": 1,
+      "val_accuracy": null,
+      "val_loss": null,
+      "family": "Unknown",
+      "error": "Structure Error: Must define 'def solve(X_train, y_train, X_val, y_val)' that returns predictions.",
+      "time_seconds": 82.0,
+      "code": "print('Error: LLM returned an empty response. You might be exceeding your context window.')"
+    },
+    {
+      "iteration": 2,
+      "val_accuracy": null,
+      "val_loss": null,
+      "family": "Unknown",
+      "error": "Structure Error: Must define 'def solve(X_train, y_train, X_val, y_val)' that returns predictions.",
+      "time_seconds": 64.7,
+      "code": "print('Error: LLM returned an empty response. You might be exceeding your context window.')"
+    },
+    {
+      "iteration": 3,
+      "val_accuracy": null,
+      "val_loss": null,
+      "family": "Unknown",
+      "error": "Structure Error: Must define 'def solve(X_train, y_train, X_val, y_val)' that returns predictions.",
+      "time_seconds": 63.9,
+      "code": "print('Error: LLM returned an empty response. You might be exceeding your context window.')"
+    },
+    {
+      "iteration": 4,
+      "val_accuracy": null,
+      "val_loss": null,
+      "family": "Unknown",
+      "error": "Structure Error: Must define 'def solve(X_train, y_train, X_val, y_val)' that returns predictions.",
+      "time_seconds": 63.7,
+      "code": "print('Error: LLM returned an empty response. You might be exceeding your context window.')"
+    },
+    {
+      "iteration": 5,
+      "val_accuracy": 0.7099,
+      "val_loss": 1.3724,
+      "family": "RandomForest",
+      "is_best": true,
+      "time_seconds": 31.3,
+      "code": "import numpy as np\nfrom sklearn.feature_extraction.text import TfidfVectorizer\nfrom sklearn.ensemble import RandomForestClassifier\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Convert text to TF-IDF features\n    vectorizer = TfidfVectorizer(max_features=5000, ngram_range=(1, 2), max_df=0.8, min_df=2)\n    X_train_vec = vectorizer.fit_transform(X_train)\n    X_val_vec = vectorizer.transform(X_val)\n    \n    # Train model\n    model = RandomForestClassifier(n_estimators=150, max_depth=15, random_state=42, n_jobs=-1)\n    model.fit(X_train_vec, y_train)\n    \n    # Predict\n    predictions = model.predict(X_val_vec)\n    \n    return predictions"
+    },
+    {
+      "iteration": 6,
+      "val_accuracy": null,
+      "val_loss": null,
+      "family": "GradientBoosting",
+      "error": "Timeout Error: Code execution exceeded 300 seconds. Process terminated.",
+      "time_seconds": 328.2,
+      "code": "from sklearn.feature_extraction.text import TfidfVectorizer\nfrom sklearn.ensemble import GradientBoostingClassifier\nfrom sklearn.linear_model import LogisticRegression\nfrom sklearn.svm import SVC\nfrom sklearn.model_selection import GridSearchCV\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Convert text to TF-IDF features\n    vectorizer = TfidfVectorizer(max_features=5000, ngram_range=(1, 2), min_df=2)\n    X_train_vec = vectorizer.fit_transform(X_train).toarray()\n    X_val_vec = vectorizer.transform(X_val).toarray()\n    \n    # Try multiple models and ensemble\n    models = {\n        'rf': GradientBoostingClassifier(n_estimators=200, max_depth=5, random_state=42),\n        'lr': LogisticRegression(max_iter=1000, C=1.0, random_state=42, solver='lbfgs'),\n        'svc': SVC(kernel='linear', probability=False, random_state=42)\n    }\n    \n    # Train all models\n    for name, model in models.items():\n        model.fit(X_train_vec, y_train)\n    \n    # Get predictions from best performing models\n    rf_pred = models['rf'].predict(X_val_vec)\n    lr_pred = models['lr'].predict(X_val_vec)\n    svc_pred = models['svc'].predict(X_val_vec)\n    \n    # Return predictions from ensemble (weighted by confidence)\n    # Use GradientBoosting as it typically performs well on structured text features\n    predictions = models['rf'].predict(X_val_vec)\n    \n    return np.array(predictions, dtype=int)"
+    },
+    {
+      "iteration": 7,
+      "val_accuracy": 0.7103,
+      "val_loss": 1.3704,
+      "family": "RandomForest",
+      "is_best": true,
+      "time_seconds": 46.5,
+      "code": "import numpy as np\nfrom sklearn.feature_extraction.text import TfidfVectorizer\nfrom sklearn.ensemble import RandomForestClassifier\nfrom sklearn.linear_model import LogisticRegression\nfrom sklearn.metrics import accuracy_score\n\ndef solve(X_train, y_train, X_val, y_val):\n    vectorizer = TfidfVectorizer(max_features=5000, ngram_range=(1, 2), min_df=2)\n    X_train_vec = vectorizer.fit_transform(X_train).toarray()\n    X_val_vec = vectorizer.transform(X_val).toarray()\n    \n    model = RandomForestClassifier(n_estimators=100, max_depth=20, random_state=42, n_jobs=-1)\n    model.fit(X_train_vec, y_train)\n    predictions = model.predict(X_val_vec)\n    return predictions"
+    },
+    {
+      "iteration": 8,
+      "val_accuracy": null,
+      "val_loss": null,
+      "family": "Unknown",
+      "error": "Structure Error: Must define 'def solve(X_train, y_train, X_val, y_val)' that returns predictions.",
+      "time_seconds": 61.0,
+      "code": "print('Error: LLM returned an empty response. You might be exceeding your context window.')"
+    },
+    {
+      "iteration": 9,
+      "val_accuracy": 0.723,
+      "val_loss": 1.3125,
+      "family": "GradientBoosting",
+      "is_best": true,
+      "time_seconds": 128.0,
+      "code": "from sklearn.feature_extraction.text import TfidfVectorizer\nfrom sklearn.ensemble import GradientBoostingClassifier\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Vectorize text data with TF-IDF\n    vectorizer = TfidfVectorizer(max_features=5000, ngram_range=(1, 2), min_df=2)\n    X_train_vec = vectorizer.fit_transform(X_train)\n    X_val_vec = vectorizer.transform(X_val)\n    \n    # Train GradientBoosting model\n    model = GradientBoostingClassifier(n_estimators=100, max_depth=5, learning_rate=0.1, random_state=42)\n    model.fit(X_train_vec, y_train)\n    \n    # Predict\n    predictions = model.predict(X_val_vec)\n    return predictions"
+    },
+    {
+      "iteration": 10,
+      "val_accuracy": null,
+      "val_loss": null,
+      "family": "Ensemble",
+      "error": "Timeout Error: Code execution exceeded 300 seconds. Process terminated.",
+      "time_seconds": 330.5,
+      "code": "import numpy as np\nfrom sklearn.feature_extraction.text import TfidfVectorizer\nfrom sklearn.ensemble import GradientBoostingClassifier, RandomForestClassifier, VotingClassifier\nfrom sklearn.linear_model import LogisticRegression\nfrom sklearn.pipeline import Pipeline\nfrom sklearn.model_selection import GridSearchCV\n\ndef solve(X_train, y_train, X_val, y_val):\n    # TF-IDF vectorization with optimized parameters\n    vectorizer = TfidfVectorizer(\n        max_features=5000,\n        ngram_range=(1, 2),\n        min_df=2,\n        max_df=0.95,\n        sublinear_tf=True\n    )\n    \n    # Convert text to features\n    X_train_vec = vectorizer.fit_transform(X_train)\n    X_val_vec = vectorizer.transform(X_val)\n    \n    # Ensemble of multiple models for better performance\n    models = {\n        'gbc': GradientBoostingClassifier(\n            n_estimators=200,\n            max_depth=5,\n            learning_rate=0.1,\n            min_samples_split=50,\n            min_samples_leaf=20,\n            subsample=0.8,\n            random_state=42\n        ),\n        'rf': RandomForestClassifier(\n            n_estimators=200,\n            max_depth=10,\n            min_samples_split=50,\n            min_samples_leaf=20,\n            random_state=42,\n            n_jobs=-1\n        ),\n        'lr': LogisticRegression(\n            max_iter=1000,\n            C=1.0,\n            solver='lbfgs',\n            random_state=42\n        )\n    }\n    \n    # Train all models\n    for name, model in models.items():\n        model.fit(X_train_vec, y_train)\n    \n    # Get predictions from ensemble\n    predictions = np.zeros(len(y_val), dtype=int)\n    \n    for name, model in models.items():\n        pred = model.predict(X_val_vec)\n        predictions += pred\n    \n    # Average prediction (voting)\n    predictions = np.array([np.argmax([models[m].predict_proba(X_val_vec)[i] for m in models]) for i in range(len(y_val))])\n    \n    return predictions.astype(int)"
+    },
+    {
+      "iteration": 11,
+      "val_accuracy": null,
+      "val_loss": null,
+      "family": "Unknown",
+      "error": "Structure Error: Must define 'def solve(X_train, y_train, X_val, y_val)' that returns predictions.",
+      "time_seconds": 70.6,
+      "code": "print('Error: LLM returned an empty response. You might be exceeding your context window.')"
+    },
+    {
+      "iteration": 12,
+      "val_accuracy": null,
+      "val_loss": null,
+      "family": "RandomForest",
+      "error": "Timeout Error: Code execution exceeded 300 seconds. Process terminated.",
+      "time_seconds": 325.5,
+      "code": "import numpy as np\nfrom sklearn.feature_extraction.text import TfidfVectorizer\nfrom sklearn.ensemble import GradientBoostingClassifier, RandomForestClassifier\nfrom sklearn.linear_model import LogisticRegression\nfrom sklearn.pipeline import Pipeline\nfrom sklearn.metrics import accuracy_score\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Efficient preprocessing with TF-IDF\n    vectorizer = TfidfVectorizer(\n        max_features=5000,\n        ngram_range=(1, 2),\n        min_df=2,\n        max_df=0.8\n    )\n    \n    # Train TF-IDF vectorizer on training data\n    X_train_vec = vectorizer.fit_transform(X_train).toarray()\n    X_val_vec = vectorizer.transform(X_val).toarray()\n    \n    # Use GradientBoosting with optimized parameters\n    model = GradientBoostingClassifier(\n        n_estimators=150,\n        max_depth=5,\n        learning_rate=0.1,\n        min_samples_split=10,\n        min_samples_leaf=5,\n        subsample=0.8,\n        random_state=42\n    )\n    \n    model.fit(X_train_vec, y_train)\n    \n    # Get predictions\n    predictions = model.predict(X_val_vec)\n    \n    return np.array(predictions, dtype=np.int32)"
+    },
+    {
+      "iteration": 13,
+      "val_accuracy": 0.7818,
+      "val_loss": 1.0451,
+      "family": "LogisticRegression",
+      "is_best": true,
+      "time_seconds": 59.1,
+      "code": "import numpy as np\nfrom sklearn.feature_extraction.text import TfidfVectorizer\nfrom sklearn.linear_model import LogisticRegression\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Efficient TF-IDF vectorization\n    vectorizer = TfidfVectorizer(\n        max_features=4000,\n        ngram_range=(1, 2),\n        min_df=2,\n        max_df=0.85,\n        sublinear_tf=True\n    )\n    \n    X_train_vec = vectorizer.fit_transform(X_train).toarray()\n    X_val_vec = vectorizer.transform(X_val).toarray()\n    \n    # LogisticRegression is fast and performs well on text data\n    model = LogisticRegression(\n        max_iter=1000,\n        C=1.0,\n        solver='lbfgs',\n        multi_class='multinomial',\n        random_state=42\n    )\n    \n    model.fit(X_train_vec, y_train)\n    predictions = model.predict(X_val_vec)\n    \n    return predictions"
+    },
+    {
+      "iteration": 14,
+      "val_accuracy": 0.794,
+      "val_loss": 0.9892,
+      "family": "RandomForest",
+      "is_best": true,
+      "time_seconds": 28.4,
+      "code": "import numpy as np\nfrom sklearn.feature_extraction.text import TfidfVectorizer\nfrom sklearn.linear_model import LogisticRegression\nfrom sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier\nfrom sklearn.naive_bayes import MultinomialNB\nfrom sklearn.preprocessing import StandardScaler\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Vectorize text data\n    vectorizer = TfidfVectorizer(max_features=10000, ngram_range=(1, 2), min_df=2, max_df=0.8)\n    X_train_vec = vectorizer.fit_transform(X_train)\n    X_val_vec = vectorizer.transform(X_val)\n    \n    # Train Logistic Regression with optimized hyperparameters\n    model = LogisticRegression(\n        C=10.0,\n        max_iter=1000,\n        solver='lbfgs',\n        multi_class='multinomial',\n        class_weight='balanced',\n        random_state=42\n    )\n    \n    model.fit(X_train_vec, y_train)\n    \n    # Predict on validation set\n    predictions = model.predict(X_val_vec)\n    \n    return predictions"
+    },
+    {
+      "iteration": 15,
+      "val_accuracy": null,
+      "val_loss": null,
+      "family": "Unknown",
+      "error": "Structure Error: Must define 'def solve(X_train, y_train, X_val, y_val)' that returns predictions.",
+      "time_seconds": 61.0,
+      "code": "print('Error: LLM returned an empty response. You might be exceeding your context window.')"
+    },
+    {
+      "iteration": 16,
+      "val_accuracy": null,
+      "val_loss": null,
+      "family": "GradientBoosting",
+      "error": "Timeout Error: Code execution exceeded 300 seconds. Process terminated.",
+      "time_seconds": 328.7,
+      "code": "import numpy as np\nfrom sklearn.feature_extraction.text import TfidfVectorizer\nfrom sklearn.ensemble import GradientBoostingClassifier\n\ndef solve(X_train, y_train, X_val, y_val):\n    vectorizer = TfidfVectorizer(max_features=4000, ngram_range=(1, 2), min_df=2)\n    X_train_vec = vectorizer.fit_transform(X_train).toarray()\n    X_val_vec = vectorizer.transform(X_val).toarray()\n    \n    model = GradientBoostingClassifier(n_estimators=150, max_depth=4, learning_rate=0.1, subsample=0.8)\n    model.fit(X_train_vec, y_train)\n    \n    predictions = model.predict(X_val_vec)\n    \n    return predictions.astype(np.int32)"
+    },
+    {
+      "iteration": 17,
+      "val_accuracy": 0.1792,
+      "val_loss": 3.789,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 54.1,
+      "code": "import numpy as np\nfrom sklearn.feature_extraction.text import TfidfVectorizer\nfrom sklearn.ensemble import RandomForestClassifier, ExtraTreesClassifier\nfrom sklearn.linear_model import LogisticRegression\n\ndef solve(X_train, y_train, X_val, y_val):\n    vectorizer = TfidfVectorizer(\n        max_features=5000,\n        ngram_range=(1, 2),\n        min_df=2,\n        max_df=0.8,\n        stop_words='english',\n        use_idf=True,\n        norm='l2'\n    )\n    \n    X_train_vec = vectorizer.fit_transform(X_train)\n    X_val_vec = vectorizer.transform(X_val)\n    \n    rf = RandomForestClassifier(\n        n_estimators=150,\n        max_depth=15,\n        min_samples_split=4,\n        min_samples_leaf=2,\n        max_features='sqrt',\n        random_state=42,\n        n_jobs=-1\n    )\n    rf.fit(X_train_vec, y_train)\n    rf_pred = rf.predict(X_val_vec)\n    \n    et = ExtraTreesClassifier(\n        n_estimators=150,\n        max_depth=15,\n        min_samples_split=4,\n        min_samples_leaf=2,\n        max_features='sqrt',\n        random_state=42,\n        n_jobs=-1\n    )\n    et.fit(X_train_vec, y_train)\n    et_pred = et.predict(X_val_vec)\n    \n    lr = LogisticRegression(\n        max_iter=1000,\n        C=0.1,\n        random_state=42\n    )\n    lr.fit(X_train_vec, y_train)\n    lr_pred = lr.predict(X_val_vec)\n    \n    ensemble_pred = np.array([rf_pred, et_pred, lr_pred]).T\n    ensemble_pred = np.argmax(ensemble_pred, axis=1)\n    \n    return ensemble_pred"
+    },
+    {
+      "iteration": 18,
+      "val_accuracy": null,
+      "val_loss": null,
+      "family": "Unknown",
+      "error": "Structure Error: Must define 'def solve(X_train, y_train, X_val, y_val)' that returns predictions.",
+      "time_seconds": 61.1,
+      "code": "print('Error: LLM returned an empty response. You might be exceeding your context window.')"
+    },
+    {
+      "iteration": 19,
+      "val_accuracy": 0.7257,
+      "val_loss": 1.3005,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 32.3,
+      "code": "from sklearn.feature_extraction.text import TfidfVectorizer\nfrom sklearn.ensemble import RandomForestClassifier\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Convert text to TF-IDF features\n    vectorizer = TfidfVectorizer(max_features=5000, ngram_range=(1, 2), max_df=0.8, min_df=2, sublinear_tf=True)\n    X_train_vec = vectorizer.fit_transform(X_train)\n    X_val_vec = vectorizer.transform(X_val)\n    \n    # Train optimized Random Forest\n    model = RandomForestClassifier(n_estimators=300, max_depth=None, min_samples_split=10, min_samples_leaf=5, max_features='sqrt', random_state=42, n_jobs=-1)\n    model.fit(X_train_vec, y_train)\n    \n    # Predict\n    predictions = model.predict(X_val_vec)\n    \n    return predictions"
+    },
+    {
+      "iteration": 20,
+      "val_accuracy": null,
+      "val_loss": null,
+      "family": "Ensemble",
+      "error": "Timeout Error: Code execution exceeded 300 seconds. Process terminated.",
+      "time_seconds": 327.4,
+      "code": "import numpy as np\nfrom sklearn.feature_extraction.text import TfidfVectorizer\nfrom sklearn.ensemble import GradientBoostingClassifier, RandomForestClassifier, VotingClassifier\nfrom sklearn.linear_model import LogisticRegression\nfrom sklearn.pipeline import Pipeline\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Vectorize text data with TF-IDF\n    vectorizer = TfidfVectorizer(\n        max_features=5000,\n        ngram_range=(1, 2),\n        min_df=2,\n        max_df=0.8,\n        sublinear_tf=True\n    )\n    \n    # Transform text to features\n    X_train_vec = vectorizer.fit_transform(X_train)\n    X_val_vec = vectorizer.transform(X_val)\n    \n    # Try Gradient Boosting with tuned parameters\n    gbc = GradientBoostingClassifier(\n        n_estimators=200,\n        max_depth=5,\n        learning_rate=0.1,\n        min_samples_split=10,\n        min_samples_leaf=5,\n        subsample=0.8,\n        random_state=42\n    )\n    \n    gbc.fit(X_train_vec.toarray(), y_train)\n    predictions = gbc.predict(X_val_vec.toarray())\n    \n    return predictions"
+    },
+    {
+      "iteration": 21,
+      "val_accuracy": 0.7375,
+      "val_loss": 1.2466,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 158.0,
+      "code": "import numpy as np\nfrom sklearn.feature_extraction.text import TfidfVectorizer\nfrom sklearn.ensemble import GradientBoostingClassifier, RandomForestClassifier\nfrom sklearn.pipeline import Pipeline\nfrom sklearn.linear_model import LogisticRegression\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Efficient text vectorization\n    vectorizer = TfidfVectorizer(\n        max_features=5000,\n        ngram_range=(1, 2),\n        min_df=2,\n        max_df=0.8,\n        sublinear_tf=True\n    )\n    \n    # Fit vectorizer on training data\n    X_train_vec = vectorizer.fit_transform(X_train)\n    X_val_vec = vectorizer.transform(X_val)\n    \n    # Try GradientBoosting as it often performs well on text data\n    model = GradientBoostingClassifier(\n        n_estimators=200,\n        max_depth=4,\n        learning_rate=0.1,\n        random_state=42,\n        subsample=0.8\n    )\n    \n    model.fit(X_train_vec, y_train)\n    \n    # Get predictions\n    predictions = model.predict(X_val_vec)\n    \n    return predictions"
+    },
+    {
+      "iteration": 22,
+      "val_accuracy": null,
+      "val_loss": null,
+      "family": "RandomForest",
+      "error": "Runtime Error: keyword argument repeated: ngram_range (<string>, line 16)\nTraceback (most recent call last):\n  File \"F:\\AI-IN-THE-LOOP\\aitl-paper\\experiments\\aeos\\aeos_behave\\trainer.py\", line 89, in _run_in_process\n    exec(code_str, exec_namespace)\n  File \"<string>\", line 16\nSyntaxError: keyword argument repeated: ngram_range\n",
+      "time_seconds": 40.0,
+      "code": "import numpy as np\nfrom sklearn.feature_extraction.text import TfidfVectorizer\nfrom sklearn.ensemble import GradientBoostingClassifier, RandomForestClassifier, ExtraTreesClassifier\nfrom sklearn.linear_model import LogisticRegression\nfrom sklearn.pipeline import Pipeline\nfrom sklearn.preprocessing import StandardScaler\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Vectorize text with n-grams for better feature representation\n    vectorizer = TfidfVectorizer(\n        max_features=10000,\n        ngram_range=(1, 2),\n        min_df=2,\n        max_df=0.85,\n        sublinear_tf=True,\n        ngram_range=(1, 2)\n    )\n    \n    X_train_vec = vectorizer.fit_transform(X_train)\n    X_val_vec = vectorizer.transform(X_val)\n    \n    # GradientBoosting with tuned parameters - strong performer for text\n    model = GradientBoostingClassifier(\n        n_estimators=150,\n        max_depth=5,\n        learning_rate=0.08,\n        min_samples_split=15,\n        min_samples_leaf=7,\n        subsample=0.85,\n        max_features='sqrt',\n        random_state=42\n    )\n    \n    model.fit(X_train_vec, y_train)\n    predictions = model.predict(X_val_vec)\n    \n    return np.array(predictions, dtype=int)"
+    },
+    {
+      "iteration": 23,
+      "val_accuracy": null,
+      "val_loss": null,
+      "family": "GradientBoosting",
+      "error": "Timeout Error: Code execution exceeded 300 seconds. Process terminated.",
+      "time_seconds": 334.9,
+      "code": "import numpy as np\nfrom sklearn.feature_extraction.text import TfidfVectorizer\nfrom sklearn.ensemble import GradientBoostingClassifier, ExtraTreesClassifier\nfrom sklearn.linear_model import LogisticRegression\nfrom sklearn.pipeline import Pipeline\nfrom sklearn.preprocessing import StandardScaler\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Build TF-IDF vectorizer\n    vectorizer = TfidfVectorizer(\n        max_features=10000,\n        ngram_range=(1, 2),\n        min_df=2,\n        max_df=0.95,\n        sublinear_tf=True\n    )\n    \n    # Transform text to numeric features\n    X_train_vec = vectorizer.fit_transform(X_train).toarray()\n    X_val_vec = vectorizer.transform(X_val).toarray()\n    \n    # Normalize features\n    scaler = StandardScaler()\n    X_train_scaled = scaler.fit_transform(X_train_vec)\n    X_val_scaled = scaler.transform(X_val_vec)\n    \n    # Train ensemble of models\n    models = [\n        GradientBoostingClassifier(n_estimators=150, max_depth=5, learning_rate=0.1, random_state=42),\n        ExtraTreesClassifier(n_estimators=200, max_depth=6, random_state=42),\n        LogisticRegression(max_iter=500, solver='lbfgs', random_state=42)\n    ]\n    \n    # Fit all models\n    for model in models:\n        model.fit(X_train_scaled, y_train)\n    \n    # Get predictions from each model\n    predictions = np.zeros(len(y_val), dtype=int)\n    \n    for model in models:\n        predictions += model.predict(X_val_scaled)\n    \n    # Average predictions (voting)\n    predictions = np.argmax(predictions, axis=0)\n    \n    return predictions"
+    },
+    {
+      "iteration": 24,
+      "val_accuracy": 0.7656,
+      "val_loss": 1.1189,
+      "family": "SVM",
+      "is_best": false,
+      "time_seconds": 44.7,
+      "code": "from sklearn.feature_extraction.text import TfidfVectorizer\nfrom sklearn.linear_model import LogisticRegression\nfrom sklearn.svm import LinearSVC\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # TF-IDF vectorization with optimized parameters for speed\n    vectorizer = TfidfVectorizer(\n        max_df=0.85,\n        min_df=2,\n        max_features=3000,\n        ngram_range=(1, 2),\n        sublinear_tf=True,\n        analyzer='word'\n    )\n    \n    X_train_vec = vectorizer.fit_transform(X_train)\n    X_val_vec = vectorizer.transform(X_val)\n    \n    # LinearSVC is faster than LogisticRegression for text classification\n    model = LinearSVC(\n        C=1.0,\n        penalty='l2',\n        dual=True,\n        max_iter=1000,\n        random_state=42\n    )\n    model.fit(X_train_vec, y_train)\n    \n    predictions = model.predict(X_val_vec)\n    return predictions"
+    },
+    {
+      "iteration": 25,
+      "val_accuracy": null,
+      "val_loss": null,
+      "family": "RandomForest",
+      "error": "Timeout Error: Code execution exceeded 300 seconds. Process terminated.",
+      "time_seconds": 326.4,
+      "code": "import numpy as np\nfrom sklearn.feature_extraction.text import TfidfVectorizer\nfrom sklearn.ensemble import GradientBoostingClassifier, RandomForestClassifier, ExtraTreesClassifier\nfrom sklearn.linear_model import LogisticRegression\nfrom sklearn.svm import SVC\nfrom sklearn.pipeline import Pipeline\nfrom sklearn.metrics import accuracy_score\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Efficient TF-IDF with optimized parameters\n    vectorizer = TfidfVectorizer(\n        max_df=0.9,\n        min_df=1,\n        max_features=10000,\n        ngram_range=(1, 2),\n        sublinear_tf=True,\n        dtype=np.float32\n    )\n    \n    X_train_vec = vectorizer.fit_transform(X_train).toarray()\n    X_val_vec = vectorizer.transform(X_val).toarray()\n    \n    # Primary model: GradientBoosting with tuned params\n    model = GradientBoostingClassifier(\n        n_estimators=200,\n        max_depth=5,\n        learning_rate=0.1,\n        min_samples_split=20,\n        min_samples_leaf=10,\n        subsample=0.8,\n        random_state=42\n    )\n    \n    model.fit(X_train_vec, y_train)\n    predictions = model.predict(X_val_vec)\n    \n    return predictions.astype(np.int32)"
+    },
+    {
+      "iteration": 26,
+      "val_accuracy": 0.7301,
+      "val_loss": 1.2806,
+      "family": "GradientBoosting",
+      "is_best": false,
+      "time_seconds": 157.2,
+      "code": "import numpy as np\nfrom sklearn.feature_extraction.text import TfidfVectorizer\nfrom sklearn.linear_model import LogisticRegression\nfrom sklearn.ensemble import GradientBoostingClassifier\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Text vectorization\n    vectorizer = TfidfVectorizer(max_features=5000, ngram_range=(1, 2), min_df=2, max_df=0.8)\n    \n    # Fit vectorizer on training data only\n    X_train_vec = vectorizer.fit_transform(X_train)\n    X_val_vec = vectorizer.transform(X_val)\n    \n    # Train GradientBoosting with tuned parameters\n    model = GradientBoostingClassifier(\n        n_estimators=200,\n        max_depth=4,\n        learning_rate=0.1,\n        subsample=0.8,\n        random_state=42\n    )\n    \n    # Train with early stopping via validation\n    model.fit(X_train_vec, y_train)\n    \n    # Predict\n    predictions = model.predict(X_val_vec)\n    \n    return predictions"
+    },
+    {
+      "iteration": 27,
+      "val_accuracy": null,
+      "val_loss": null,
+      "family": "Unknown",
+      "error": "Structure Error: Must define 'def solve(X_train, y_train, X_val, y_val)' that returns predictions.",
+      "time_seconds": 61.8,
+      "code": "print('Error: LLM returned an empty response. You might be exceeding your context window.')"
+    },
+    {
+      "iteration": 28,
+      "val_accuracy": 0.7809,
+      "val_loss": 1.0491,
+      "family": "LogisticRegression",
+      "is_best": false,
+      "time_seconds": 32.6,
+      "code": "from sklearn.feature_extraction.text import TfidfVectorizer\nfrom sklearn.linear_model import LogisticRegression\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    vectorizer = TfidfVectorizer(max_features=20000, ngram_range=(1, 2), min_df=1, max_df=0.8)\n    X_train_vec = vectorizer.fit_transform(X_train)\n    X_val_vec = vectorizer.transform(X_val)\n    \n    model = LogisticRegression(max_iter=1000, C=0.5, solver='lbfgs', random_state=42)\n    model.fit(X_train_vec, y_train)\n    \n    preds = model.predict(X_val_vec)\n    return preds"
+    },
+    {
+      "iteration": 29,
+      "val_accuracy": null,
+      "val_loss": null,
+      "family": "RandomForest",
+      "error": "Timeout Error: Code execution exceeded 300 seconds. Process terminated.",
+      "time_seconds": 330.6,
+      "code": "import numpy as np\nfrom sklearn.feature_extraction.text import TfidfVectorizer\nfrom sklearn.linear_model import LogisticRegression\nfrom sklearn.ensemble import RandomForestClassifier\nfrom sklearn.pipeline import Pipeline\nfrom sklearn.model_selection import GridSearchCV\n\ndef solve(X_train, y_train, X_val, y_val):\n    vectorizer = TfidfVectorizer(\n        max_features=15000,\n        ngram_range=(1, 2),\n        min_df=2,\n        max_df=0.85,\n        sublinear_tf=True,\n        token_pattern=r\"(?u)\\b\\w\\w+\\b\"\n    )\n    \n    pipeline = Pipeline([\n        ('tfidf', vectorizer),\n        ('clf', LogisticRegression(\n            max_iter=1000,\n            C=1.0,\n            solver='lbfgs',\n            n_jobs=-1,\n            class_weight='balanced'\n        ))\n    ])\n    \n    pipeline.fit(X_train, y_train)\n    predictions = pipeline.predict(X_val)\n    \n    return predictions.astype(np.int32)"
+    },
+    {
+      "iteration": 30,
+      "val_accuracy": 0.8107,
+      "val_loss": 0.9134,
+      "family": "LogisticRegression",
+      "is_best": true,
+      "time_seconds": 46.0,
+      "code": "from sklearn.feature_extraction.text import TfidfVectorizer\nfrom sklearn.linear_model import LogisticRegression\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    vectorizer = TfidfVectorizer(max_features=4000, ngram_range=(1, 2), stop_words='english', min_df=2)\n    X_train_vec = vectorizer.fit_transform(X_train).toarray()\n    X_val_vec = vectorizer.transform(X_val).toarray()\n    model = LogisticRegression(max_iter=1000, C=1.0, solver='lbfgs', random_state=42, class_weight='balanced')\n    model.fit(X_train_vec, y_train)\n    predictions = model.predict(X_val_vec)\n    return predictions"
+    },
+    {
+      "iteration": 31,
+      "val_accuracy": 0.8278,
+      "val_loss": 0.8355,
+      "family": "RandomForest",
+      "is_best": true,
+      "time_seconds": 31.5,
+      "code": "import numpy as np\nfrom sklearn.feature_extraction.text import TfidfVectorizer\nfrom sklearn.linear_model import LogisticRegression\nfrom sklearn.svm import LinearSVC\nfrom sklearn.ensemble import RandomForestClassifier\nimport time\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Convert text to features\n    vectorizer = TfidfVectorizer(\n        max_features=50000,\n        ngram_range=(1, 2),\n        min_df=2,\n        max_df=0.95,\n        sublinear_tf=True\n    )\n    \n    X_train_vec = vectorizer.fit_transform(X_train)\n    X_val_vec = vectorizer.transform(X_val)\n    \n    # Try LinearSVC which is often faster and effective for text\n    start = time.time()\n    model = LinearSVC(\n        C=1.0,\n        dual=True,\n        max_iter=10000,\n        class_weight='balanced'\n    )\n    model.fit(X_train_vec, y_train)\n    \n    # Get predictions\n    predictions = model.predict(X_val_vec)\n    \n    elapsed = time.time() - start\n    print(f\"LinearSVC: {elapsed:.2f}s, Acc: {np.mean(predictions == y_val):.4f}\")\n    \n    return predictions.astype(np.int32)"
+    },
+    {
+      "iteration": 32,
+      "val_accuracy": null,
+      "val_loss": null,
+      "family": "RandomForest",
+      "error": "Timeout Error: Code execution exceeded 300 seconds. Process terminated.",
+      "time_seconds": 326.2,
+      "code": "import numpy as np\nfrom sklearn.feature_extraction.text import TfidfVectorizer\nfrom sklearn.ensemble import GradientBoostingClassifier, RandomForestClassifier\nfrom sklearn.linear_model import LogisticRegression\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Vectorize text data\n    vectorizer = TfidfVectorizer(max_features=5000, ngram_range=(1, 2), min_df=2)\n    X_train_vec = vectorizer.fit_transform(X_train).toarray()\n    X_val_vec = vectorizer.transform(X_val).toarray()\n    \n    # Train GradientBoosting (haven't tried yet, may outperform RandomForest)\n    model = GradientBoostingClassifier(\n        n_estimators=200,\n        max_depth=5,\n        learning_rate=0.1,\n        min_samples_split=10,\n        min_samples_leaf=5,\n        subsample=0.8,\n        random_state=42\n    )\n    model.fit(X_train_vec, y_train)\n    \n    # Get predictions\n    predictions = model.predict(X_val_vec)\n    \n    return predictions"
+    },
+    {
+      "iteration": 33,
+      "val_accuracy": null,
+      "val_loss": null,
+      "family": "RandomForest",
+      "error": "Timeout Error: Code execution exceeded 300 seconds. Process terminated.",
+      "time_seconds": 335.1,
+      "code": "import numpy as np\nfrom sklearn.feature_extraction.text import TfidfVectorizer\nfrom sklearn.ensemble import GradientBoostingClassifier, RandomForestClassifier\nfrom sklearn.pipeline import Pipeline\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Efficient TF-IDF vectorization with limited features to avoid timeout\n    vectorizer = TfidfVectorizer(max_features=5000, ngram_range=(1, 2), min_df=2, max_df=0.95)\n    \n    # Fit vectorizer on training data and transform both train and val\n    X_train_vec = vectorizer.fit_transform(X_train).toarray()\n    X_val_vec = vectorizer.transform(X_val).toarray()\n    \n    # GradientBoosting often performs well on text data with reasonable parameters\n    model = GradientBoostingClassifier(\n        n_estimators=150,\n        max_depth=3,\n        learning_rate=0.1,\n        min_samples_split=10,\n        min_samples_leaf=5,\n        subsample=0.8,\n        random_state=42\n    )\n    \n    model.fit(X_train_vec, y_train)\n    predictions = model.predict(X_val_vec)\n    \n    return np.array(predictions)"
+    },
+    {
+      "iteration": 34,
+      "val_accuracy": null,
+      "val_loss": null,
+      "family": "RandomForest",
+      "error": "Runtime Error: keyword argument repeated: max_df (<string>, line 13)\nTraceback (most recent call last):\n  File \"F:\\AI-IN-THE-LOOP\\aitl-paper\\experiments\\aeos\\aeos_behave\\trainer.py\", line 89, in _run_in_process\n    exec(code_str, exec_namespace)\n  File \"<string>\", line 13\nSyntaxError: keyword argument repeated: max_df\n",
+      "time_seconds": 44.8,
+      "code": "import numpy as np\nfrom sklearn.feature_extraction.text import TfidfVectorizer\nfrom sklearn.ensemble import RandomForestClassifier\nfrom sklearn.linear_model import LogisticRegression\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Efficient TF-IDF vectorization with constrained parameters\n    vectorizer = TfidfVectorizer(\n        max_features=3000,\n        ngram_range=(1, 2),\n        max_df=0.85,\n        min_df=3,\n        max_df=0.85,\n        sublinear_tf=True\n    )\n    \n    X_train_vec = vectorizer.fit_transform(X_train).toarray()\n    X_val_vec = vectorizer.transform(X_val).toarray()\n    \n    # RandomForest - best performer from history\n    model = RandomForestClassifier(\n        n_estimators=150,\n        max_depth=12,\n        min_samples_split=4,\n        min_samples_leaf=3,\n        max_features='sqrt',\n        random_state=42,\n        n_jobs=1\n    )\n    \n    model.fit(X_train_vec, y_train)\n    predictions = model.predict(X_val_vec)\n    \n    return predictions.astype(np.int32)"
+    },
+    {
+      "iteration": 35,
+      "val_accuracy": 0.6924,
+      "val_loss": 1.4522,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 28.7,
+      "code": "import numpy as np\nfrom sklearn.feature_extraction.text import TfidfVectorizer\nfrom sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier, ExtraTreesClassifier\nfrom sklearn.linear_model import LogisticRegression\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.metrics import accuracy_score\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Fix: Only use max_df once, avoid repeated parameters\n    vectorizer = TfidfVectorizer(max_df=0.85, min_df=2, max_features=5000, ngram_range=(1, 2))\n    X_train_vec = vectorizer.fit_transform(X_train).toarray()\n    X_val_vec = vectorizer.transform(X_val).toarray()\n    \n    # Use RandomForest with optimized params for speed\n    model = RandomForestClassifier(n_estimators=100, max_depth=10, n_jobs=-1, random_state=42)\n    model.fit(X_train_vec, y_train)\n    \n    predictions = model.predict(X_val_vec)\n    return predictions.astype(np.int64)"
+    }
+  ]
+}

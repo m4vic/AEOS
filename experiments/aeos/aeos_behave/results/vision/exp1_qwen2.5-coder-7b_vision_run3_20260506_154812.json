@@ -1,0 +1,126 @@
+{
+  "run_id": "20260506_154812",
+  "backend": "ollama",
+  "model": "ollama/qwen2.5-coder:7b",
+  "dataset": "vision",
+  "n_features": 784,
+  "n_classes": 10,
+  "n_train": 8000,
+  "n_val": 2000,
+  "best_accuracy": 0.9645,
+  "best_loss": 0.2338,
+  "best_iteration": 9,
+  "best_code": "from sklearn.svm import SVC\n\ndef solve(X_train, y_train, X_val, y_val):\n    model = SVC(kernel='rbf', C=10)\n    model.fit(X_train, y_train)\n    predictions = model.predict(X_val)\n    return predictions",
+  "total_iterations": 12,
+  "stop_reason": "Agent autonomously stopped at iteration 12",
+  "total_time_seconds": 314.6,
+  "model_families_explored": [
+    "sklearn_MLP",
+    "SVM",
+    "PyTorch_NN",
+    "RandomForest"
+  ],
+  "sunk_cost_episodes": 0,
+  "waste_count": 2,
+  "iterations": [
+    {
+      "iteration": 1,
+      "val_accuracy": 0.943,
+      "val_loss": 0.3444,
+      "family": "RandomForest",
+      "is_best": true,
+      "time_seconds": 23.5,
+      "code": "from sklearn.ensemble import RandomForestClassifier\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Initialize the RandomForestClassifier\n    model = RandomForestClassifier(n_estimators=100, random_state=42)\n    \n    # Train the model on the training data\n    model.fit(X_train, y_train)\n    \n    # Make predictions on the validation data\n    predictions = model.predict(X_val)\n    \n    return predictions"
+    },
+    {
+      "iteration": 2,
+      "val_accuracy": 0.9525,
+      "val_loss": 0.2955,
+      "family": "sklearn_MLP",
+      "is_best": true,
+      "time_seconds": 21.9,
+      "code": "from sklearn.neural_network import MLPClassifier\nfrom sklearn.preprocessing import StandardScaler, MinMaxScaler\nfrom sklearn.pipeline import make_pipeline\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Normalize pixel values to [0, 1]\n    scaler = MinMaxScaler()\n    X_train_scaled = scaler.fit_transform(X_train)\n    X_val_scaled = scaler.transform(X_val)\n    \n    # Build and train a MLPClassifier\n    model = make_pipeline(MinMaxScaler(), MLPClassifier(hidden_layer_sizes=(128, 64), max_iter=200, random_state=42))\n    model.fit(X_train_scaled, y_train)\n    \n    # Make predictions\n    predictions = model.predict(X_val_scaled)\n    \n    return predictions"
+    },
+    {
+      "iteration": 3,
+      "val_accuracy": null,
+      "val_loss": null,
+      "family": "RandomForest",
+      "error": "Runtime Error: name 'RandomizedPCA' is not defined\nTraceback (most recent call last):\n  File \"F:\\AI-IN-THE-LOOP\\aitl-paper\\experiments\\aeos\\aeos_behave\\trainer.py\", line 95, in _run_in_process\n    predictions = solve_fn(\n  File \"<string>\", line 13, in solve\nNameError: name 'RandomizedPCA' is not defined\n",
+      "time_seconds": 18.6,
+      "code": "import numpy as np\nfrom sklearn.neural_network import MLPClassifier\nfrom sklearn.ensemble import RandomForestClassifier\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.pipeline import make_pipeline\nfrom sklearn.metrics import accuracy_score\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Try a different model or combination of models\n    models = [\n        (\"RandomForest\", RandomForestClassifier(n_estimators=100)),\n        (\"MLP\", make_pipeline(StandardScaler(), MLPClassifier(hidden_layer_sizes=(128,), max_iter=100))),\n        (\"RandomForest with PCA\", make_pipeline(RandomizedPCA(n_components=30), RandomForestClassifier(n_estimators=100)))\n    ]\n    \n    best_model = None\n    best_accuracy = 0\n    \n    for name, model in models:\n        model.fit(X_train, y_train)\n        predictions = model.predict(X_val)\n        accuracy = accuracy_score(y_val, predictions)\n        \n        if accuracy > best_accuracy:\n            best_accuracy = accuracy\n            best_model = model\n    \n    return best_model.predict(X_val)"
+    },
+    {
+      "iteration": 4,
+      "val_accuracy": 0.9495,
+      "val_loss": 0.3109,
+      "family": "sklearn_MLP",
+      "is_best": false,
+      "time_seconds": 21.2,
+      "code": "from sklearn.neural_network import MLPClassifier\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Normalize features\n    X_train = X_train / 255.0\n    X_val = X_val / 255.0\n    \n    # Define the model\n    model = MLPClassifier(hidden_layer_sizes=(128, 64), max_iter=300, random_state=42)\n    \n    # Train the model\n    model.fit(X_train, y_train)\n    \n    # Make predictions\n    predictions = model.predict(X_val)\n    \n    return predictions"
+    },
+    {
+      "iteration": 5,
+      "val_accuracy": 0.962,
+      "val_loss": 0.2467,
+      "family": "PyTorch_NN",
+      "is_best": true,
+      "time_seconds": 41.2,
+      "code": "import torch\nimport torch.nn as nn\nimport torch.optim as optim\nfrom torch.utils.data import DataLoader, TensorDataset\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Convert data to PyTorch tensors\n    X_train = torch.tensor(X_train, dtype=torch.float32).view(-1, 1, 28, 28)\n    y_train = torch.tensor(y_train, dtype=torch.long)\n    X_val = torch.tensor(X_val, dtype=torch.float32).view(-1, 1, 28, 28)\n    y_val = torch.tensor(y_val, dtype=torch.long)\n\n    # Normalize pixel values\n    X_train /= 255.0\n    X_val /= 255.0\n\n    # Create DataLoaders\n    train_dataset = TensorDataset(X_train, y_train)\n    val_dataset = TensorDataset(X_val, y_val)\n    train_loader = DataLoader(train_dataset, batch_size=64, shuffle=True)\n    val_loader = DataLoader(val_dataset, batch_size=64, shuffle=False)\n\n    # Define the CNN model\n    class SimpleCNN(nn.Module):\n        def __init__(self):\n            super(SimpleCNN, self).__init__()\n            self.conv1 = nn.Conv2d(1, 32, kernel_size=3, stride=1, padding=1)\n            self.relu = nn.ReLU()\n            self.pool = nn.MaxPool2d(kernel_size=2, stride=2, padding=0)\n            self.fc1 = nn.Linear(32 * 14 * 14, 128)\n            self.fc2 = nn.Linear(128, 10)\n\n        def forward(self, x):\n            x = self.pool(self.relu(self.conv1(x)))\n            x = torch.flatten(x, 1)  # flatten all dimensions except batch\n            x = self.relu(self.fc1(x))\n            x = self.fc2(x)\n            return x\n\n    model = SimpleCNN()\n    criterion = nn.CrossEntropyLoss()\n    optimizer = optim.Adam(model.parameters(), lr=0.001)\n\n    # Training loop\n    num_epochs = 10\n    for epoch in range(num_epochs):\n        model.train()\n        running_loss = 0.0\n        for images, labels in train_loader:\n            optimizer.zero_grad()\n            outputs = model(images)\n            loss = criterion(outputs, labels)\n            loss.backward()\n            optimizer.step()\n            running_loss += loss.item() * images.size(0)\n\n        # Validation loop\n        model.eval()\n        correct = 0\n        total = 0\n        with torch.no_grad():\n            for images, labels in val_loader:\n                outputs = model(images)\n                _, predicted = torch.max(outputs.data, 1)\n                total += labels.size(0)\n                correct += (predicted == labels).sum().item()\n\n        acc = correct / total\n        print(f'Epoch {epoch+1}/{num_epochs}, Loss: {running_loss / len(train_loader.dataset)}, Acc: {acc}')\n\n    # Evaluate on validation set and return predictions\n    model.eval()\n    predictions = []\n    with torch.no_grad():\n        for images, _ in val_loader:\n            outputs = model(images)\n            _, predicted = torch.max(outputs.data, 1)\n            predictions.extend(predicted.numpy())\n\n    return np.array(predictions)"
+    },
+    {
+      "iteration": 6,
+      "val_accuracy": null,
+      "val_loss": null,
+      "family": "sklearn_MLP",
+      "error": "Runtime Error: Expected 3D (unbatched) or 4D (batched) input to conv2d, but got input of size: [64, 784]\nTraceback (most recent call last):\n  File \"F:\\AI-IN-THE-LOOP\\aitl-paper\\experiments\\aeos\\aeos_behave\\trainer.py\", line 95, in _run_in_process\n    predictions = solve_fn(\n  File \"<string>\", line 58, in solve\n  File \"C:\\Users\\ZENITH\\AppData\\Roaming\\Python\\Python310\\site-packages\\torch\\nn\\modules\\module.py\", line 1739, in _wrapped_call_impl\n    return self._call_impl(*args, **kwargs)\n  File \"C:\\",
+      "time_seconds": 29.9,
+      "code": "import numpy as np\nfrom sklearn.neural_network import MLPClassifier\nfrom sklearn.preprocessing import StandardScaler\nfrom torch.utils.data import DataLoader, TensorDataset\nimport torch.nn as nn\nimport torch.optim as optim\nfrom torchvision import transforms\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Standardize features\n    scaler = StandardScaler()\n    X_train_scaled = scaler.fit_transform(X_train)\n    X_val_scaled = scaler.transform(X_val)\n\n    # Reshape data for PyTorch\n    transform = transforms.Compose([\n        transforms.ToTensor(),\n        transforms.Normalize((0.5,), (0.5,))\n    ])\n    \n    train_dataset = TensorDataset(torch.tensor(X_train_scaled, dtype=torch.float32), torch.tensor(y_train, dtype=torch.long))\n    val_dataset = TensorDataset(torch.tensor(X_val_scaled, dtype=torch.float32), torch.tensor(y_val, dtype=torch.long))\n\n    train_loader = DataLoader(train_dataset, batch_size=64, shuffle=True)\n    val_loader = DataLoader(val_dataset, batch_size=64, shuffle=False)\n\n    # Define PyTorch model\n    class SimpleCNN(nn.Module):\n        def __init__(self):\n            super(SimpleCNN, self).__init__()\n            self.conv1 = nn.Conv2d(1, 32, kernel_size=3, stride=1, padding=1)\n            self.relu = nn.ReLU()\n            self.pool = nn.MaxPool2d(kernel_size=2, stride=2, padding=0)\n            self.fc1 = nn.Linear(32 * 14 * 14, 128)\n            self.fc2 = nn.Linear(128, 10)\n\n        def forward(self, x):\n            x = self.conv1(x)\n            x = self.relu(x)\n            x = self.pool(x)\n            x = x.view(-1, 32 * 14 * 14)\n            x = self.fc1(x)\n            x = self.relu(x)\n            x = self.fc2(x)\n            return x\n\n    model = SimpleCNN()\n    criterion = nn.CrossEntropyLoss()\n    optimizer = optim.Adam(model.parameters(), lr=0.001)\n\n    # Train the model\n    num_epochs = 15\n    for epoch in range(num_epochs):\n        model.train()\n        running_loss = 0.0\n        for inputs, labels in train_loader:\n            optimizer.zero_grad()\n            outputs = model(inputs)\n            loss = criterion(outputs, labels)\n            loss.backward()\n            optimizer.step()\n            running_loss += loss.item()\n\n        print(f'Epoch [{epoch+1}/{num_epochs}], Loss: {running_loss/len(train_loader)}')\n\n    # Evaluate the model\n    model.eval()\n    correct = 0\n    total = 0\n    with torch.no_grad():\n        for inputs, labels in val_loader:\n            outputs = model(inputs)\n            _, predicted = torch.max(outputs.data, 1)\n            total += labels.size(0)\n            correct += (predicted == labels).sum().item()\n\n    accuracy = correct / total\n    print(f'Validation Accuracy: {accuracy:.4f}')\n\n    # Convert predictions to numpy array\n    with torch.no_grad():\n        val_loader = DataLoader(val_dataset, batch_size=64, shuffle=False)\n        predictions = []\n        for inputs, _ in val_loader:\n            outputs = model(inputs)\n            _, predicted = torch.max(outputs.data, 1)\n            predictions.extend(predicted.cpu().numpy())\n\n    return np.array(predictions, dtype=int)"
+    },
+    {
+      "iteration": 7,
+      "val_accuracy": 0.949,
+      "val_loss": 0.3135,
+      "family": "sklearn_MLP",
+      "is_best": false,
+      "time_seconds": 21.5,
+      "code": "import numpy as np\nfrom sklearn.neural_network import MLPClassifier\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Standardize features\n    X_train = X_train / 255.0\n    X_val = X_val / 255.0\n    \n    # Define and train the model\n    model = MLPClassifier(hidden_layer_sizes=(128, 64), max_iter=300)\n    model.fit(X_train, y_train)\n    \n    # Get predictions\n    predictions = model.predict(X_val)\n    return predictions"
+    },
+    {
+      "iteration": 8,
+      "val_accuracy": 0.943,
+      "val_loss": 0.3444,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 64.3,
+      "code": "def solve(X_train, y_train, X_val, y_val):\n    import numpy as np\n    from sklearn.ensemble import RandomForestClassifier\n    from sklearn.preprocessing import StandardScaler\n\n    # Preprocess data\n    scaler = StandardScaler()\n    X_train_scaled = scaler.fit_transform(X_train)\n    X_val_scaled = scaler.transform(X_val)\n\n    # Build and train model\n    model = RandomForestClassifier(n_estimators=100, random_state=42)\n    model.fit(X_train_scaled, y_train)\n\n    # Make predictions\n    predictions = model.predict(X_val_scaled)\n    return predictions"
+    },
+    {
+      "iteration": 9,
+      "val_accuracy": 0.9645,
+      "val_loss": 0.2338,
+      "family": "SVM",
+      "is_best": true,
+      "time_seconds": 21.3,
+      "code": "from sklearn.svm import SVC\n\ndef solve(X_train, y_train, X_val, y_val):\n    model = SVC(kernel='rbf', C=10)\n    model.fit(X_train, y_train)\n    predictions = model.predict(X_val)\n    return predictions"
+    },
+    {
+      "iteration": 10,
+      "val_accuracy": 0.889,
+      "val_loss": 0.622,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 23.7,
+      "code": "import numpy as np\nfrom sklearn.ensemble import RandomForestClassifier\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Normalize features\n    X_train = X_train / 255.0\n    X_val = X_val / 255.0\n    \n    # Apply PCA for dimensionality reduction\n    from sklearn.decomposition import PCA\n    pca = PCA(n_components=128)\n    X_train_pca = pca.fit_transform(X_train)\n    X_val_pca = pca.transform(X_val)\n    \n    # Build and train a RandomForestClassifier\n    model = RandomForestClassifier(n_estimators=100, max_depth=10, random_state=42)\n    model.fit(X_train_pca, y_train)\n    \n    # Make predictions\n    predictions = model.predict(X_val_pca)\n    return predictions"
+    },
+    {
+      "iteration": 11,
+      "val_accuracy": 0.957,
+      "val_loss": 0.2724,
+      "family": "SVM",
+      "is_best": false,
+      "time_seconds": 22.7,
+      "code": "def solve(X_train, y_train, X_val, y_val):\n    # Normalize the data\n    X_train = X_train.astype(np.float32) / 255.0\n    X_val = X_val.astype(np.float32) / 255.0\n\n    # Train an SVM classifier\n    from sklearn.svm import SVC\n    model = SVC(kernel='rbf', C=1.0, gamma='scale')\n    model.fit(X_train, y_train)\n\n    # Make predictions\n    predictions = model.predict(X_val)\n    return predictions"
+    }
+  ]
+}

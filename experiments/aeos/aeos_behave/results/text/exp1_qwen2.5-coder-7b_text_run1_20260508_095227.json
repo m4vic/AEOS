@@ -1,0 +1,90 @@
+{
+  "run_id": "20260508_095227",
+  "backend": "ollama",
+  "model": "ollama/qwen2.5-coder:7b",
+  "dataset": "text",
+  "n_features": 0,
+  "n_classes": 6,
+  "n_train": 3427,
+  "n_val": 2282,
+  "best_accuracy": 0.8067,
+  "best_loss": 0.9313,
+  "best_iteration": 4,
+  "best_code": "def solve(X_train, y_train, X_val, y_val):\n    from sklearn.feature_extraction.text import TfidfVectorizer\n    from sklearn.ensemble import VotingClassifier\n    from sklearn.ensemble import RandomForestClassifier\n    from sklearn.svm import SVC\n    from sklearn.linear_model import LogisticRegression\n\n    # Vectorize the text data\n    vectorizer = TfidfVectorizer()\n    X_train_vec = vectorizer.fit_transform(X_train)\n    X_val_vec = vectorizer.transform(X_val)\n\n    # Define individual classifiers\n    rf_clf = RandomForestClassifier(n_estimators=100, random_state=42)\n    svm_clf = SVC(probability=True, kernel='linear', C=1.0, random_state=42)\n    lr_clf = LogisticRegression(multi_class='ovr', solver='liblinear', max_iter=1000)\n\n    # Combine classifiers using a VotingClassifier\n    voting_clf = VotingClassifier(estimators=[('rf', rf_clf), ('svm', svm_clf), ('lr', lr_clf)], voting='soft')\n\n    # Train the combined model\n    voting_clf.fit(X_train_vec, y_train)\n\n    # Make predictions on validation set\n    predictions = voting_clf.predict(X_val_vec)\n\n    return predictions",
+  "total_iterations": 8,
+  "stop_reason": "Agent autonomously stopped at iteration 8",
+  "total_time_seconds": 456.2,
+  "model_families_explored": [
+    "RandomForest",
+    "SVM",
+    "Ensemble",
+    "GradientBoosting"
+  ],
+  "sunk_cost_episodes": 0,
+  "waste_count": 0,
+  "iterations": [
+    {
+      "iteration": 1,
+      "val_accuracy": 0.734,
+      "val_loss": 1.2626,
+      "family": "RandomForest",
+      "is_best": true,
+      "time_seconds": 30.0,
+      "code": "from sklearn.feature_extraction.text import TfidfVectorizer\nfrom sklearn.ensemble import RandomForestClassifier\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    vectorizer = TfidfVectorizer()\n    X_train_vec = vectorizer.fit_transform(X_train)\n    X_val_vec = vectorizer.transform(X_val)\n    \n    model = RandomForestClassifier(n_estimators=100, random_state=42)\n    model.fit(X_train_vec, y_train)\n    \n    predictions = model.predict(X_val_vec)\n    return predictions"
+    },
+    {
+      "iteration": 2,
+      "val_accuracy": 0.7441,
+      "val_loss": 1.2167,
+      "family": "GradientBoosting",
+      "is_best": true,
+      "time_seconds": 110.8,
+      "code": "from sklearn.feature_extraction.text import TfidfVectorizer\nfrom sklearn.ensemble import GradientBoostingClassifier\nfrom sklearn.pipeline import Pipeline\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    vectorizer = TfidfVectorizer()\n    model = GradientBoostingClassifier(n_estimators=100, learning_rate=0.1, max_depth=4)\n    pipeline = Pipeline([\n        ('vectorizer', vectorizer),\n        ('model', model)\n    ])\n    pipeline.fit(X_train, y_train)\n    predictions = pipeline.predict(X_val)\n    return predictions"
+    },
+    {
+      "iteration": 3,
+      "val_accuracy": 0.7813,
+      "val_loss": 1.0471,
+      "family": "SVM",
+      "is_best": true,
+      "time_seconds": 59.0,
+      "code": "from sklearn.feature_extraction.text import TfidfVectorizer\nfrom sklearn.svm import SVC\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    vectorizer = TfidfVectorizer(max_features=5000)\n    X_train_vec = vectorizer.fit_transform(X_train)\n    X_val_vec = vectorizer.transform(X_val)\n    \n    model = SVC(kernel='rbf', C=1.0, probability=True)\n    model.fit(X_train_vec, y_train)\n    \n    predictions = np.argmax(model.predict_proba(X_val_vec), axis=1)\n    return predictions"
+    },
+    {
+      "iteration": 4,
+      "val_accuracy": 0.8067,
+      "val_loss": 0.9313,
+      "family": "Ensemble",
+      "is_best": true,
+      "time_seconds": 66.7,
+      "code": "def solve(X_train, y_train, X_val, y_val):\n    from sklearn.feature_extraction.text import TfidfVectorizer\n    from sklearn.ensemble import VotingClassifier\n    from sklearn.ensemble import RandomForestClassifier\n    from sklearn.svm import SVC\n    from sklearn.linear_model import LogisticRegression\n\n    # Vectorize the text data\n    vectorizer = TfidfVectorizer()\n    X_train_vec = vectorizer.fit_transform(X_train)\n    X_val_vec = vectorizer.transform(X_val)\n\n    # Define individual classifiers\n    rf_clf = RandomForestClassifier(n_estimators=100, random_state=42)\n    svm_clf = SVC(probability=True, kernel='linear', C=1.0, random_state=42)\n    lr_clf = LogisticRegression(multi_class='ovr', solver='liblinear', max_iter=1000)\n\n    # Combine classifiers using a VotingClassifier\n    voting_clf = VotingClassifier(estimators=[('rf', rf_clf), ('svm', svm_clf), ('lr', lr_clf)], voting='soft')\n\n    # Train the combined model\n    voting_clf.fit(X_train_vec, y_train)\n\n    # Make predictions on validation set\n    predictions = voting_clf.predict(X_val_vec)\n\n    return predictions"
+    },
+    {
+      "iteration": 5,
+      "val_accuracy": 0.6867,
+      "val_loss": 1.4781,
+      "family": "Ensemble",
+      "is_best": false,
+      "time_seconds": 48.0,
+      "code": "from sklearn.feature_extraction.text import TfidfVectorizer\nfrom sklearn.ensemble import VotingClassifier\nfrom sklearn.ensemble import RandomForestClassifier\nfrom sklearn.svm import SVC\nfrom sklearn.neighbors import KNeighborsClassifier\nfrom sklearn.metrics import accuracy_score\n\ndef solve(X_train, y_train, X_val, y_val):\n    vectorizer = TfidfVectorizer(max_features=1000)\n    X_train_vec = vectorizer.fit_transform(X_train)\n    X_val_vec = vectorizer.transform(X_val)\n\n    rf = RandomForestClassifier(n_estimators=100, random_state=42)\n    svm = SVC(probability=True, random_state=42)\n    knn = KNeighborsClassifier(n_neighbors=5)\n\n    clf = VotingClassifier(estimators=[('rf', rf), ('svm', svm), ('knn', knn)], voting='soft')\n    clf.fit(X_train_vec, y_train)\n\n    predictions = clf.predict(X_val_vec)\n    return predictions"
+    },
+    {
+      "iteration": 6,
+      "val_accuracy": 0.6481,
+      "val_loss": 1.6537,
+      "family": "Ensemble",
+      "is_best": false,
+      "time_seconds": 69.3,
+      "code": "import numpy as np\nfrom sklearn.feature_extraction.text import TfidfVectorizer\nfrom sklearn.ensemble import VotingClassifier\nfrom sklearn.tree import DecisionTreeClassifier\nfrom sklearn.svm import SVC\nfrom sklearn.linear_model import LogisticRegression\n\ndef solve(X_train, y_train, X_val, y_val):\n    vectorizer = TfidfVectorizer()\n    X_train_vec = vectorizer.fit_transform(X_train)\n    X_val_vec = vectorizer.transform(X_val)\n\n    base_models = [\n        ('dt', DecisionTreeClassifier()),\n        ('svc', SVC(probability=True)),\n        ('lr', LogisticRegression(multi_class='multinomial', solver='lbfgs'))\n    ]\n\n    voting_clf = VotingClassifier(estimators=base_models, voting='soft')\n    voting_clf.fit(X_train_vec, y_train)\n\n    predictions = voting_clf.predict(X_val_vec)\n    return predictions"
+    },
+    {
+      "iteration": 7,
+      "val_accuracy": 0.7888,
+      "val_loss": 1.0132,
+      "family": "SVM",
+      "is_best": false,
+      "time_seconds": 66.4,
+      "code": "from sklearn.feature_extraction.text import TfidfVectorizer\nfrom sklearn.svm import SVC\nfrom sklearn.pipeline import make_pipeline\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Use TfidfVectorizer for text data preprocessing\n    vectorizer = TfidfVectorizer()\n    \n    # Create a pipeline with SVM classifier\n    model = make_pipeline(vectorizer, SVC(probability=True))\n    \n    # Train the model\n    model.fit(X_train, y_train)\n    \n    # Make predictions on validation set\n    predictions = model.predict(X_val)\n    \n    return predictions"
+    }
+  ]
+}

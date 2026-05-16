@@ -1,0 +1,125 @@
+{
+  "run_id": "20260505_175033",
+  "backend": "ollama",
+  "model": "ollama/qwen2.5-coder:14b",
+  "dataset": "vision",
+  "n_features": 784,
+  "n_classes": 10,
+  "n_train": 8000,
+  "n_val": 2000,
+  "best_accuracy": 0.962,
+  "best_loss": 0.2467,
+  "best_iteration": 5,
+  "best_code": "from sklearn.svm import SVC\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Normalize the pixel values to [0, 1]\n    X_train = X_train / 255.0\n    X_val = X_val / 255.0\n    \n    # Use PCA for dimensionality reduction\n    from sklearn.decomposition import PCA\n    pca = PCA(n_components=300)\n    X_train_pca = pca.fit_transform(X_train)\n    X_val_pca = pca.transform(X_val)\n    \n    # Train an SVM model\n    svm_model = SVC(kernel='rbf', C=1.0, gamma='scale')\n    svm_model.fit(X_train_pca, y_train)\n    \n    # Predict on the validation set\n    predictions = svm_model.predict(X_val_pca)\n    \n    return predictions",
+  "total_iterations": 12,
+  "stop_reason": "Agent autonomously stopped at iteration 12",
+  "total_time_seconds": 630.8,
+  "model_families_explored": [
+    "LogisticRegression",
+    "SVM",
+    "RandomForest"
+  ],
+  "sunk_cost_episodes": 1,
+  "waste_count": 1,
+  "iterations": [
+    {
+      "iteration": 1,
+      "val_accuracy": 0.881,
+      "val_loss": 0.6632,
+      "family": "LogisticRegression",
+      "is_best": true,
+      "time_seconds": 35.3,
+      "code": "import numpy as np\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.linear_model import LogisticRegression\nfrom sklearn.metrics import accuracy_score\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Normalize the features\n    scaler = StandardScaler()\n    X_train_normalized = scaler.fit_transform(X_train)\n    X_val_normalized = scaler.transform(X_val)\n    \n    # Train a logistic regression model\n    model = LogisticRegression(max_iter=1000, solver='lbfgs', multi_class='auto')\n    model.fit(X_train_normalized, y_train)\n    \n    # Predict on the validation set\n    predictions = model.predict(X_val_normalized)\n    \n    return predictions"
+    },
+    {
+      "iteration": 2,
+      "val_accuracy": null,
+      "val_loss": null,
+      "family": "SVM",
+      "error": "Timeout Error: Code execution exceeded 300 seconds. Process terminated.",
+      "time_seconds": 320.1,
+      "code": "import numpy as np\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.svm import SVC\nfrom sklearn.model_selection import GridSearchCV\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Normalize the data\n    scaler = StandardScaler()\n    X_train_scaled = scaler.fit_transform(X_train)\n    X_val_scaled = scaler.transform(X_val)\n    \n    # Define the model and parameter grid for GridSearchCV\n    param_grid = {\n        'C': [0.1, 1, 10, 100],\n        'gamma': ['scale', 'auto'],\n        'kernel': ['rbf']\n    }\n    \n    # Initialize SVC with GridSearchCV\n    model = GridSearchCV(SVC(), param_grid, cv=3, scoring='accuracy', n_jobs=-1)\n    \n    # Train the model\n    model.fit(X_train_scaled, y_train)\n    \n    # Predict on validation set\n    predictions = model.predict(X_val_scaled)\n    \n    return predictions"
+    },
+    {
+      "iteration": 3,
+      "val_accuracy": 0.9465,
+      "val_loss": 0.3264,
+      "family": "SVM",
+      "is_best": true,
+      "time_seconds": 32.2,
+      "code": "import numpy as np\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.metrics import accuracy_score\nfrom sklearn.svm import SVC\nfrom sklearn.decomposition import PCA\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Normalize the data\n    scaler = StandardScaler()\n    X_train_scaled = scaler.fit_transform(X_train)\n    X_val_scaled = scaler.transform(X_val)\n    \n    # Apply PCA for dimensionality reduction\n    pca = PCA(n_components=100)\n    X_train_pca = pca.fit_transform(X_train_scaled)\n    X_val_pca = pca.transform(X_val_scaled)\n    \n    # Train an SVM model\n    model = SVC(kernel='rbf', C=1.0, gamma='scale')\n    model.fit(X_train_pca, y_train)\n    \n    # Predict on the validation set\n    predictions = model.predict(X_val_pca)\n    \n    return predictions"
+    },
+    {
+      "iteration": 4,
+      "val_accuracy": 0.9345,
+      "val_loss": 0.3881,
+      "family": "SVM",
+      "is_best": false,
+      "time_seconds": 25.9,
+      "code": "import numpy as np\nfrom sklearn.svm import SVC\nfrom sklearn.preprocessing import StandardScaler\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Normalize the features\n    scaler = StandardScaler()\n    X_train_scaled = scaler.fit_transform(X_train)\n    X_val_scaled = scaler.transform(X_val)\n    \n    # Train an SVM model with a radial basis function kernel\n    model = SVC(kernel='rbf', C=1.0, gamma='scale')\n    model.fit(X_train_scaled, y_train)\n    \n    # Predict on the validation set\n    predictions = model.predict(X_val_scaled)\n    \n    return predictions"
+    },
+    {
+      "iteration": 5,
+      "val_accuracy": 0.962,
+      "val_loss": 0.2467,
+      "family": "SVM",
+      "is_best": true,
+      "time_seconds": 26.4,
+      "code": "from sklearn.svm import SVC\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Normalize the pixel values to [0, 1]\n    X_train = X_train / 255.0\n    X_val = X_val / 255.0\n    \n    # Use PCA for dimensionality reduction\n    from sklearn.decomposition import PCA\n    pca = PCA(n_components=300)\n    X_train_pca = pca.fit_transform(X_train)\n    X_val_pca = pca.transform(X_val)\n    \n    # Train an SVM model\n    svm_model = SVC(kernel='rbf', C=1.0, gamma='scale')\n    svm_model.fit(X_train_pca, y_train)\n    \n    # Predict on the validation set\n    predictions = svm_model.predict(X_val_pca)\n    \n    return predictions"
+    },
+    {
+      "iteration": 6,
+      "val_accuracy": 0.9345,
+      "val_loss": 0.3881,
+      "family": "SVM",
+      "is_best": false,
+      "time_seconds": 31.3,
+      "code": "import numpy as np\nfrom sklearn.svm import SVC\nfrom sklearn.preprocessing import StandardScaler\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Standardize the features\n    scaler = StandardScaler()\n    X_train_scaled = scaler.fit_transform(X_train)\n    X_val_scaled = scaler.transform(X_val)\n    \n    # Train an SVM model\n    svm_model = SVC(kernel='rbf', C=1.0, gamma='scale')\n    svm_model.fit(X_train_scaled, y_train)\n    \n    # Predict on the validation set\n    predictions = svm_model.predict(X_val_scaled)\n    \n    return predictions"
+    },
+    {
+      "iteration": 7,
+      "val_accuracy": 0.943,
+      "val_loss": 0.3444,
+      "family": "SVM",
+      "is_best": false,
+      "time_seconds": 24.6,
+      "code": "import numpy as np\nfrom sklearn.svm import SVC\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.pipeline import make_pipeline\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Create a pipeline that standardizes the data and then applies an SVM classifier\n    model = make_pipeline(StandardScaler(), SVC(C=10, gamma='scale'))\n    \n    # Train the model on the training data\n    model.fit(X_train, y_train)\n    \n    # Predict on the validation data\n    predictions = model.predict(X_val)\n    \n    return predictions"
+    },
+    {
+      "iteration": 8,
+      "val_accuracy": 0.9345,
+      "val_loss": 0.3881,
+      "family": "SVM",
+      "is_best": false,
+      "time_seconds": 25.1,
+      "code": "import numpy as np\nfrom sklearn.svm import SVC\nfrom sklearn.preprocessing import StandardScaler\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Normalize pixel values\n    scaler = StandardScaler()\n    X_train_normalized = scaler.fit_transform(X_train)\n    X_val_normalized = scaler.transform(X_val)\n    \n    # Train SVM model\n    model = SVC(kernel='rbf', C=1.0, gamma='scale')\n    model.fit(X_train_normalized, y_train)\n    \n    # Predict on validation set\n    predictions = model.predict(X_val_normalized)\n    \n    return predictions"
+    },
+    {
+      "iteration": 9,
+      "val_accuracy": 0.9345,
+      "val_loss": 0.3881,
+      "family": "SVM",
+      "is_best": false,
+      "time_seconds": 43.3,
+      "code": "def solve(X_train, y_train, X_val, y_val):\n    from sklearn.preprocessing import StandardScaler\n    from sklearn.svm import SVC\n    from sklearn.pipeline import make_pipeline\n    \n    # Standardize features and apply SVM\n    model = make_pipeline(StandardScaler(), SVC(probability=True, C=1.0, kernel='rbf', gamma='scale'))\n    \n    # Train the model\n    model.fit(X_train, y_train)\n    \n    # Predict on validation set\n    predictions = model.predict(X_val)\n    \n    return predictions"
+    },
+    {
+      "iteration": 10,
+      "val_accuracy": 0.9345,
+      "val_loss": 0.3881,
+      "family": "SVM",
+      "is_best": false,
+      "time_seconds": 26.9,
+      "code": "import numpy as np\nfrom sklearn.svm import SVC\nfrom sklearn.preprocessing import StandardScaler\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Standardize the features\n    scaler = StandardScaler()\n    X_train_scaled = scaler.fit_transform(X_train)\n    X_val_scaled = scaler.transform(X_val)\n    \n    # Train an SVM model\n    model = SVC(kernel='rbf', C=1.0, gamma='scale')\n    model.fit(X_train_scaled, y_train)\n    \n    # Predict on the validation set\n    predictions = model.predict(X_val_scaled)\n    \n    return predictions\n\n# Example usage:\n# X_train, y_train, X_val, y_val = load_your_data()\n# predictions = solve(X_train, y_train, X_val, y_val)"
+    },
+    {
+      "iteration": 11,
+      "val_accuracy": 0.897,
+      "val_loss": 0.5809,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 34.2,
+      "code": "from sklearn.ensemble import RandomForestClassifier\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Normalize the pixel values to [0, 1]\n    X_train = X_train / 255.0\n    X_val = X_val / 255.0\n    \n    # Use PCA for dimensionality reduction\n    from sklearn.decomposition import PCA\n    pca = PCA(n_components=300)\n    X_train_pca = pca.fit_transform(X_train)\n    X_val_pca = pca.transform(X_val)\n    \n    # Train a RandomForest model\n    rf_model = RandomForestClassifier(n_estimators=100, max_depth=None, random_state=42)\n    rf_model.fit(X_train_pca, y_train)\n    \n    # Predict on the validation set\n    predictions = rf_model.predict(X_val_pca)\n    \n    return predictions"
+    }
+  ]
+}

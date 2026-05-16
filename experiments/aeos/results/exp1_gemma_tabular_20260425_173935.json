@@ -1,0 +1,21 @@
+{
+  "run_id": "20260425_173935",
+  "backend": "ollama",
+  "model": "ollama/gemma",
+  "dataset": "tabular",
+  "n_features": 54,
+  "n_classes": 7,
+  "n_train": 8000,
+  "n_val": 2000,
+  "best_accuracy": 0.0,
+  "best_loss": Infinity,
+  "best_iteration": null,
+  "best_code": null,
+  "total_iterations": 100,
+  "stop_reason": "Safety cap reached (100 iterations)",
+  "total_time_seconds": 5.0,
+  "model_families_explored": [],
+  "sunk_cost_episodes": 0,
+  "waste_count": 0,
+  "iterations": []
+}

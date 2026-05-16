@@ -6,9 +6,14 @@ Uses any LLM (OpenAI API or Ollama local) to autonomously:
   3. Decide when to stop (no human-set iteration cap)
 """
 import re
-from openai import OpenAI
+import litellm
+import sys
+import os
+import contextlib
 
-SYSTEM_PROMPT = """You are an Autonomous ML Engineering Agent (AITL Pattern).
+litellm.drop_params = True
+
+SYSTEM_PROMPT = """You are an Autonomous ML Engineering Agent (AEOS Pattern).
 
 You have a classification dataset. Here is everything you know:
 - n_features = {n_features}
@@ -17,6 +22,8 @@ You have a classification dataset. Here is everything you know:
 - Validation samples: {n_val}
 - Features are numbered [0, 1, 2, ..., {max_feature}]. You do NOT know what they represent.
 - Classes are numbered [0, 1, 2, ..., {max_class}]. You do NOT know what they represent.
+
+DATASET TYPE: {dataset_hint}
 
 YOUR TASK: Write a Python function `solve(X_train, y_train, X_val, y_val)` that:
 1. Builds and trains ANY model you choose
@@ -81,24 +88,15 @@ Output ONLY new code inside ```python ... ```. No explanations.
 
 
 class AutonomousAgent:
-    def __init__(self, base_url=None, api_key=None, model="gpt-4o-mini"):
+    def __init__(self, model="gpt-4o-mini", api_key=None, api_base=None, dataset_hint="", seed=None):
         """
-        Initialize agent with LLM backend.
-        
-        For OpenAI: AutonomousAgent(api_key="sk-...", model="gpt-4o-mini")
-        For Ollama: AutonomousAgent(base_url="http://localhost:11434/v1", model="gemma4")
+        Initialize agent with litellm backend.
         """
-        self.is_local = base_url is not None
-        if self.is_local:
-            self.client = OpenAI(
-                base_url=base_url, 
-                api_key=api_key or "ollama",
-                timeout=300.0
-            )
-        else:
-            self.client = OpenAI(api_key=api_key, timeout=300.0)
-            
         self.model = model
+        self.api_key = api_key
+        self.api_base = api_base
+        self.dataset_hint = dataset_hint
+        self.seed = seed
         self.history = []
         
         # Autonomous tracking
@@ -107,6 +105,7 @@ class AutonomousAgent:
         self.best_code = None
         self.best_iteration = None
         self.stagnation_counter = 0
+        self.iters_since_best = 0  # Never resets on pivot, only on new best
         self.failed_approaches_since_best = []
         self.model_families_tried = set()  # Track what families were explored
 
@@ -123,10 +122,12 @@ class AutonomousAgent:
             self.best_code = code
             self.best_iteration = iteration
             self.stagnation_counter = 0
+            self.iters_since_best = 0
             self.failed_approaches_since_best = []
             return True
         else:
             self.stagnation_counter += 1
+            self.iters_since_best += 1
             summary_lines = code.strip().splitlines()[:6]
             summary = "\n".join(summary_lines) + "..."
             self.failed_approaches_since_best.append(
@@ -137,7 +138,9 @@ class AutonomousAgent:
     def _detect_model_family(self, code):
         """Detect which model family the agent used."""
         code_lower = code.lower()
-        if 'randomforest' in code_lower:
+        if 'votingclassifier' in code_lower or 'stackingclassifier' in code_lower or 'baggingclassifier' in code_lower:
+            return 'Ensemble'
+        elif 'randomforest' in code_lower:
             return 'RandomForest'
         elif 'gradientboosting' in code_lower:
             return 'GradientBoosting'
@@ -157,8 +160,6 @@ class AutonomousAgent:
             return 'PyTorch_NN'
         elif 'adaboost' in code_lower:
             return 'AdaBoost'
-        elif 'votingclassifier' in code_lower or 'stackingclassifier' in code_lower:
-            return 'Ensemble'
         return 'Unknown'
 
     def generate_code(self, n_features, n_classes, n_train, n_val, 
@@ -190,8 +191,9 @@ class AutonomousAgent:
         system_str = SYSTEM_PROMPT.format(
             n_features=n_features, n_classes=n_classes,
             n_train=n_train, n_val=n_val,
-            max_feature=n_features - 1, max_class=n_classes - 1,
-            timeout=timeout, stop_instruction=stop_instr
+            max_feature=max(n_features - 1, 0), max_class=n_classes - 1,
+            timeout=timeout, stop_instruction=stop_instr,
+            dataset_hint=self.dataset_hint
         )
         
         # Build user prompt with history
@@ -246,19 +248,32 @@ class AutonomousAgent:
         return self._call_llm(system_str, prompt)
 
     def _call_llm(self, system_str, prompt):
-        """Call the LLM (OpenAI or Ollama) and return generated code."""
+        """Call the LLM via litellm and return generated code."""
         try:
             messages = [
                 {"role": "system", "content": system_str},
                 {"role": "user", "content": prompt}
             ]
-            response = self.client.chat.completions.create(
-                model=self.model,
-                messages=messages,
-                temperature=0.7,
-                max_tokens=2048
-            )
+            
+            kwargs = {
+                "model": self.model,
+                "messages": messages,
+                "temperature": 0.7,
+                "max_tokens": 2048,
+            }
+            if self.api_key:
+                kwargs["api_key"] = self.api_key
+            if self.api_base:
+                kwargs["api_base"] = self.api_base
+            if self.seed is not None:
+                kwargs["seed"] = self.seed
+
+            # Suppress litellm's internal prints
+            with open(os.devnull, 'w') as f, contextlib.redirect_stdout(f):
+                response = litellm.completion(**kwargs)
+            
             raw_output = response.choices[0].message.content
+            raw_output = raw_output.replace("Provider List: https://docs.litellm.ai/docs/providers", "")
             
             print(f"  [LLM] Response ({len(raw_output)} chars):")
             # Print first 400 chars for debugging
@@ -273,7 +288,7 @@ class AutonomousAgent:
         
         return self._extract_code(raw_output)
 
-    def add_feedback(self, iteration, val_loss, val_acc, code, family, error=None):
+    def add_feedback(self, iteration, val_loss, val_acc, code, family, error=None, is_best=False):
         """Record iteration result for history."""
         self.history.append({
             "iteration": iteration,
@@ -281,7 +296,7 @@ class AutonomousAgent:
             "val_acc": val_acc,
             "family": family,
             "error": error,
-            "is_best": (val_acc == self.best_acc and val_loss == self.best_loss) if not error else False,
+            "is_best": is_best if not error else False,
         })
 
     def _extract_code(self, text):

@@ -1,0 +1,925 @@
+{
+  "run_id": "20260425_152954",
+  "backend": "ollama",
+  "model": "ollama/qwen3.5:9b",
+  "dataset": "tabular",
+  "n_features": 54,
+  "n_classes": 7,
+  "n_train": 8000,
+  "n_val": 2000,
+  "best_accuracy": 0.8095,
+  "best_loss": 0.9535,
+  "best_iteration": 28,
+  "best_code": "import numpy as np\nfrom sklearn.ensemble import ExtraTreesClassifier, RandomForestClassifier, GradientBoostingClassifier\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.neural_network import MLPClassifier\nfrom sklearn.linear_model import LogisticRegression\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Scale features\n    scaler = StandardScaler()\n    X_train_scaled = scaler.fit_transform(X_train)\n    X_val_scaled = scaler.transform(X_val)\n    \n    # Try multiple models and pick best\n    models = [\n        ExtraTreesClassifier(n_estimators=500, max_depth=None, random_state=42, n_jobs=-1),\n        RandomForestClassifier(n_estimators=500, max_depth=None, random_state=42, n_jobs=-1),\n        GradientBoostingClassifier(n_estimators=200, max_depth=10, random_state=42),\n        MLPClassifier(hidden_layer_sizes=(128, 64, 32), max_iter=300, random_state=42),\n        LogisticRegression(max_iter=1000, random_state=42, solver='lbfgs'),\n    ]\n    \n    best_model = None\n    best_acc = 0\n    \n    for model in models:\n        model.fit(X_train_scaled, y_train)\n        pred = model.predict(X_val_scaled)\n        acc = np.mean(pred == y_val)\n        if acc > best_acc:\n            best_acc = acc\n            best_model = model\n    \n    # Use best model for final predictions\n    best_model.fit(X_train_scaled, y_train)\n    predictions = best_model.predict(X_val_scaled)\n    \n    return predictions",
+  "total_iterations": 100,
+  "stop_reason": "Safety cap reached (100 iterations)",
+  "total_time_seconds": 5686.3,
+  "model_families_explored": [
+    "RandomForest",
+    "GradientBoosting"
+  ],
+  "sunk_cost_episodes": 17,
+  "waste_count": 29,
+  "iterations": [
+    {
+      "iteration": 1,
+      "val_accuracy": 0.769,
+      "val_loss": 1.1454,
+      "family": "RandomForest",
+      "is_best": true,
+      "time_seconds": 20.9,
+      "code": "import numpy as np\nfrom sklearn.ensemble import RandomForestClassifier\nfrom sklearn.preprocessing import StandardScaler\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Standardize features to handle different scales\n    scaler = StandardScaler()\n    X_train_scaled = scaler.fit_transform(X_train)\n    X_val_scaled = scaler.transform(X_val)\n    \n    # Train Random Forest Classifier\n    model = RandomForestClassifier(\n        n_estimators=200,\n        max_depth=15,\n        min_samples_split=5,\n        min_samples_leaf=2,\n        random_state=42,\n        n_jobs=-1\n    )\n    model.fit(X_train_scaled, y_train)\n    \n    # Make predictions\n    predictions = model.predict(X_val_scaled)\n    \n    return predictions"
+    },
+    {
+      "iteration": 2,
+      "val_accuracy": null,
+      "val_loss": null,
+      "family": "Unknown",
+      "error": "Structure Error: Must define 'def solve(X_train, y_train, X_val, y_val)' that returns predictions.",
+      "time_seconds": 45.9,
+      "code": ""
+    },
+    {
+      "iteration": 3,
+      "val_accuracy": null,
+      "val_loss": null,
+      "family": "Unknown",
+      "error": "Structure Error: Must define 'def solve(X_train, y_train, X_val, y_val)' that returns predictions.",
+      "time_seconds": 47.9,
+      "code": ""
+    },
+    {
+      "iteration": 4,
+      "val_accuracy": null,
+      "val_loss": null,
+      "family": "Unknown",
+      "error": "Structure Error: Must define 'def solve(X_train, y_train, X_val, y_val)' that returns predictions.",
+      "time_seconds": 48.0,
+      "code": ""
+    },
+    {
+      "iteration": 5,
+      "val_accuracy": 0.77,
+      "val_loss": 1.1406,
+      "family": "RandomForest",
+      "is_best": true,
+      "time_seconds": 43.9,
+      "code": "import numpy as np\nfrom sklearn.ensemble import GradientBoostingClassifier, RandomForestClassifier, ExtraTreesClassifier\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.pipeline import Pipeline\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Scale features\n    scaler = StandardScaler()\n    X_train_scaled = scaler.fit_transform(X_train)\n    X_val_scaled = scaler.transform(X_val)\n    \n    # Train GradientBoostingClassifier (often outperforms RandomForest)\n    model = GradientBoostingClassifier(\n        n_estimators=200,\n        max_depth=5,\n        learning_rate=0.1,\n        min_samples_split=10,\n        min_samples_leaf=5,\n        subsample=0.8,\n        random_state=42\n    )\n    model.fit(X_train_scaled, y_train)\n    \n    # Get predictions\n    predictions = model.predict(X_val_scaled)\n    \n    return predictions"
+    },
+    {
+      "iteration": 6,
+      "val_accuracy": 0.7875,
+      "val_loss": 1.0577,
+      "family": "RandomForest",
+      "is_best": true,
+      "time_seconds": 181.3,
+      "code": "import numpy as np\nfrom sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier, ExtraTreesClassifier, VotingClassifier\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.linear_model import LogisticRegression\nfrom sklearn.svm import SVC\nfrom sklearn.neural_network import MLPClassifier\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Scale features\n    scaler = StandardScaler()\n    X_train_scaled = scaler.fit_transform(X_train)\n    X_val_scaled = scaler.transform(X_val)\n    \n    # Try multiple models and pick best\n    models = {\n        'rf': RandomForestClassifier(n_estimators=200, max_depth=15, random_state=42),\n        'gb': GradientBoostingClassifier(n_estimators=150, max_depth=5, learning_rate=0.1, random_state=42),\n        'et': ExtraTreesClassifier(n_estimators=200, max_depth=15, random_state=42),\n        'lr': LogisticRegression(max_iter=1000, random_state=42),\n        'svc': SVC(probability=True, random_state=42),\n        'mlp': MLPClassifier(hidden_layer_sizes=(100, 50), max_iter=500, random_state=42)\n    }\n    \n    best_acc = 0\n    best_model = None\n    \n    for name, model in models.items():\n        model.fit(X_train_scaled, y_train)\n        preds = model.predict(X_val_scaled)\n        acc = np.mean(preds == y_val)\n        if acc > best_acc:\n            best_acc = acc\n            best_model = model\n    \n    # Try ensemble of top models\n    top_models = []\n    for name, model in models.items():\n        model.fit(X_train_scaled, y_train)\n        top_models.append(model)\n    \n    ensemble = VotingClassifier(estimators=[(f'{name}', m) for name, m in zip(['rf', 'gb', 'et', 'lr', 'svc', 'mlp'], top_models)], voting='soft')\n    ensemble.fit(X_train_scaled, y_train)\n    ensemble_preds = ensemble.predict(X_val_scaled)\n    ensemble_acc = np.mean(ensemble_preds == y_val)\n    \n    if ensemble_acc > best_acc:\n        best_acc = ensemble_acc\n        best_model = ensemble\n    \n    # Return predictions\n    return best_model.predict(X_val_scaled)"
+    },
+    {
+      "iteration": 7,
+      "val_accuracy": 0.791,
+      "val_loss": 1.0412,
+      "family": "RandomForest",
+      "is_best": true,
+      "time_seconds": 30.1,
+      "code": "import numpy as np\nfrom sklearn.ensemble import GradientBoostingClassifier, RandomForestClassifier\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.model_selection import cross_val_predict\nfrom sklearn.metrics import accuracy_score\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Standardize features for better performance with tree-based models\n    scaler = StandardScaler()\n    X_train_scaled = scaler.fit_transform(X_train)\n    X_val_scaled = scaler.transform(X_val)\n    \n    # GradientBoostingClassifier often outperforms RandomForest on tabular data\n    gb_clf = GradientBoostingClassifier(\n        n_estimators=500,\n        learning_rate=0.05,\n        max_depth=5,\n        min_samples_split=20,\n        min_samples_leaf=10,\n        subsample=0.8,\n        max_features='sqrt',\n        random_state=42\n    )\n    \n    gb_clf.fit(X_train_scaled, y_train)\n    \n    # Get predictions\n    predictions = gb_clf.predict(X_val_scaled)\n    \n    return predictions.astype(np.int64)"
+    },
+    {
+      "iteration": 8,
+      "val_accuracy": 0.7105,
+      "val_loss": 1.4224,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 48.2,
+      "code": "import numpy as np\nfrom sklearn.ensemble import GradientBoostingClassifier, RandomForestClassifier, VotingClassifier\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.linear_model import LogisticRegression\nfrom sklearn.pipeline import Pipeline\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Standardize features for models that benefit from it\n    scaler = StandardScaler()\n    X_train_scaled = scaler.fit_transform(X_train)\n    X_val_scaled = scaler.transform(X_val)\n    \n    # Train multiple models and ensemble\n    rf = RandomForestClassifier(n_estimators=200, max_depth=10, min_samples_leaf=5, random_state=42, n_jobs=-1)\n    gb = GradientBoostingClassifier(n_estimators=150, max_depth=5, learning_rate=0.1, random_state=42)\n    lr = LogisticRegression(max_iter=1000, random_state=42)\n    \n    # Fit all models\n    rf.fit(X_train_scaled, y_train)\n    gb.fit(X_train_scaled, y_train)\n    lr.fit(X_train_scaled, y_train)\n    \n    # Get predictions from each model\n    rf_pred = rf.predict(X_val_scaled)\n    gb_pred = gb.predict(X_val_scaled)\n    lr_pred = lr.predict(X_val_scaled)\n    \n    # Weighted ensemble based on model performance (empirical weights)\n    # GradientBoosting typically performs best on tabular data\n    predictions = np.round(0.4 * rf_pred + 0.4 * gb_pred + 0.2 * lr_pred).astype(int)\n    \n    return predictions"
+    },
+    {
+      "iteration": 9,
+      "val_accuracy": null,
+      "val_loss": null,
+      "family": "Unknown",
+      "error": "Structure Error: Must define 'def solve(X_train, y_train, X_val, y_val)' that returns predictions.",
+      "time_seconds": 49.7,
+      "code": ""
+    },
+    {
+      "iteration": 10,
+      "val_accuracy": null,
+      "val_loss": null,
+      "family": "Unknown",
+      "error": "Structure Error: Must define 'def solve(X_train, y_train, X_val, y_val)' that returns predictions.",
+      "time_seconds": 47.9,
+      "code": ""
+    },
+    {
+      "iteration": 11,
+      "val_accuracy": 0.7865,
+      "val_loss": 1.0625,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 53.7,
+      "code": "import numpy as np\nfrom sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier, VotingClassifier\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.pipeline import Pipeline\nfrom sklearn.model_selection import cross_val_predict\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Standardize features\n    scaler = StandardScaler()\n    X_train_scaled = scaler.fit_transform(X_train)\n    X_val_scaled = scaler.transform(X_val)\n    \n    # Try multiple model approaches and pick best\n    models = {\n        'rf': RandomForestClassifier(n_estimators=300, max_depth=15, min_samples_split=5, \n                                     min_samples_leaf=3, random_state=42, n_jobs=-1),\n        'gb': GradientBoostingClassifier(n_estimators=200, max_depth=5, learning_rate=0.1, \n                                         min_samples_split=4, random_state=42),\n        'rf2': RandomForestClassifier(n_estimators=500, max_depth=20, min_samples_split=3, \n                                      min_samples_leaf=2, random_state=42, n_jobs=-1)\n    }\n    \n    best_acc = 0\n    best_model = None\n    best_scaler = None\n    \n    for name, model in models.items():\n        pipe = Pipeline([('scaler', scaler), ('clf', model)])\n        pipe.fit(X_train, y_train)\n        preds = pipe.predict(X_val)\n        acc = np.mean(preds == y_val)\n        print(f\"{name}: {acc:.4f}\")\n        if acc > best_acc:\n            best_acc = acc\n            best_model = pipe\n    \n    # Use best model for final predictions\n    final_preds = best_model.predict(X_val)\n    return final_preds.astype(int)"
+    },
+    {
+      "iteration": 12,
+      "val_accuracy": null,
+      "val_loss": null,
+      "family": "RandomForest",
+      "error": "Runtime Error: axis 1 is out of bounds for array of dimension 1\nTraceback (most recent call last):\n  File \"f:\\AI-IN-THE-LOOP\\aitl-paper\\experiments\\aeos\\trainer.py\", line 123, in run_solve\n    result_holder[0] = solve_fn(\n  File \"<string>\", line 32, in solve\n  File \"C:\\Users\\ZENITH\\AppData\\Roaming\\Python\\Python310\\site-packages\\numpy\\core\\fromnumeric.py\", line 1229, in argmax\n    return _wrapfunc(a, 'argmax', axis=axis, out=out, **kwds)\n  File \"C:\\Users\\ZENITH\\AppData\\Roaming\\Python\\Python310\\si",
+      "time_seconds": 69.2,
+      "code": "import numpy as np\nfrom sklearn.ensemble import GradientBoostingClassifier, RandomForestClassifier\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.linear_model import LogisticRegression\nfrom sklearn.neural_network import MLPClassifier\nfrom sklearn.svm import SVC\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Standardize features - critical for performance\n    scaler = StandardScaler()\n    X_train_scaled = scaler.fit_transform(X_train)\n    X_val_scaled = scaler.transform(X_val)\n    \n    # Try multiple models and ensemble\n    models = {\n        'rf': RandomForestClassifier(n_estimators=200, max_depth=15, min_samples_split=5, random_state=42),\n        'gb': GradientBoostingClassifier(n_estimators=200, max_depth=5, learning_rate=0.1, min_samples_split=5, random_state=42),\n        'mlp': MLPClassifier(hidden_layer_sizes=(128, 64, 32), activation='relu', max_iter=500, random_state=42),\n        'lr': LogisticRegression(max_iter=1000, random_state=42, solver='lbfgs'),\n        'svc': SVC(kernel='rbf', C=10, gamma='scale', random_state=42)\n    }\n    \n    # Train all models\n    predictions = np.zeros(len(y_val), dtype=int)\n    \n    for name, model in models.items():\n        model.fit(X_train_scaled, y_train)\n        pred = model.predict(X_val_scaled)\n        predictions += pred\n    \n    # Average predictions (majority voting style)\n    predictions = np.argmax(predictions, axis=1)\n    \n    return predictions.astype(np.int32)"
+    },
+    {
+      "iteration": 13,
+      "val_accuracy": 0.795,
+      "val_loss": 1.0222,
+      "family": "RandomForest",
+      "is_best": true,
+      "time_seconds": 54.0,
+      "code": "import numpy as np\nfrom sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier\nfrom sklearn.preprocessing import StandardScaler\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Scale features\n    scaler = StandardScaler()\n    X_train_scaled = scaler.fit_transform(X_train)\n    X_val_scaled = scaler.transform(X_val)\n    \n    # Use GradientBoosting with tuned parameters\n    gb = GradientBoostingClassifier(\n        n_estimators=200,\n        max_depth=5,\n        learning_rate=0.1,\n        random_state=42,\n        subsample=0.8\n    )\n    gb.fit(X_train_scaled, y_train)\n    predictions = gb.predict(X_val_scaled)\n    \n    return predictions.astype(np.int32)"
+    },
+    {
+      "iteration": 14,
+      "val_accuracy": 0.77,
+      "val_loss": 1.1406,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 43.7,
+      "code": "import numpy as np\nfrom sklearn.ensemble import GradientBoostingClassifier, RandomForestClassifier, ExtraTreesClassifier\nfrom sklearn.linear_model import LogisticRegression\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.pipeline import Pipeline\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Preprocess with StandardScaler\n    scaler = StandardScaler()\n    X_train_scaled = scaler.fit_transform(X_train)\n    X_val_scaled = scaler.transform(X_val)\n    \n    # Try GradientBoosting - often outperforms RandomForest on tabular data\n    model = GradientBoostingClassifier(\n        n_estimators=200,\n        max_depth=5,\n        learning_rate=0.1,\n        min_samples_split=10,\n        min_samples_leaf=5,\n        subsample=0.8,\n        random_state=42\n    )\n    model.fit(X_train_scaled, y_train)\n    predictions = model.predict(X_val_scaled)\n    \n    # Return as numpy array of integers\n    return np.array(predictions, dtype=np.int64)"
+    },
+    {
+      "iteration": 15,
+      "val_accuracy": 0.77,
+      "val_loss": 1.1406,
+      "family": "GradientBoosting",
+      "is_best": false,
+      "time_seconds": 44.5,
+      "code": "import numpy as np\nfrom sklearn.ensemble import ExtraTreesClassifier, GradientBoostingClassifier\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.pipeline import Pipeline\nfrom sklearn.model_selection import cross_val_predict\n\ndef solve(X_train, y_train, X_val, y_val):\n    scaler = StandardScaler()\n    X_train_scaled = scaler.fit_transform(X_train)\n    X_val_scaled = scaler.transform(X_val)\n    \n    model = GradientBoostingClassifier(\n        n_estimators=200,\n        learning_rate=0.1,\n        max_depth=5,\n        min_samples_split=10,\n        min_samples_leaf=5,\n        subsample=0.8,\n        random_state=42\n    )\n    \n    model.fit(X_train_scaled, y_train)\n    predictions = model.predict(X_val_scaled)\n    \n    return np.array(predictions, dtype=np.int32)"
+    },
+    {
+      "iteration": 16,
+      "val_accuracy": 0.7855,
+      "val_loss": 1.0672,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 22.4,
+      "code": "import numpy as np\nfrom sklearn.ensemble import RandomForestClassifier\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.model_selection import cross_val_predict\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Standardize features\n    scaler = StandardScaler()\n    X_train_scaled = scaler.fit_transform(X_train)\n    X_val_scaled = scaler.transform(X_val)\n    \n    # Random Forest with tuned parameters\n    rf = RandomForestClassifier(\n        n_estimators=300,\n        max_depth=None,\n        min_samples_split=5,\n        min_samples_leaf=2,\n        max_features='sqrt',\n        bootstrap=True,\n        random_state=42,\n        n_jobs=-1,\n        class_weight='balanced'\n    )\n    \n    rf.fit(X_train_scaled, y_train)\n    predictions = rf.predict(X_val_scaled)\n    \n    return predictions.astype(np.int64)"
+    },
+    {
+      "iteration": 17,
+      "val_accuracy": 0.773,
+      "val_loss": 1.1264,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 50.0,
+      "code": "import numpy as np\nfrom sklearn.ensemble import RandomForestClassifier, ExtraTreesClassifier, GradientBoostingClassifier, VotingClassifier\nfrom sklearn.preprocessing import StandardScaler\n\ndef solve(X_train, y_train, X_val, y_val):\n    scaler = StandardScaler()\n    X_train_scaled = scaler.fit_transform(X_train)\n    X_val_scaled = scaler.transform(X_val)\n    \n    rf = RandomForestClassifier(n_estimators=300, max_depth=12, min_samples_split=4, \n                                min_samples_leaf=2, max_features='sqrt', random_state=42, n_jobs=-1)\n    et = ExtraTreesClassifier(n_estimators=300, max_depth=12, min_samples_split=4, \n                              max_features='sqrt', random_state=42, n_jobs=-1)\n    gb = GradientBoostingClassifier(n_estimators=150, max_depth=5, learning_rate=0.08, \n                                    min_samples_split=5, random_state=42)\n    \n    ensemble = VotingClassifier(estimators=[\n        ('rf', rf),\n        ('et', et),\n        ('gb', gb)\n    ], voting='soft')\n    \n    ensemble.fit(X_train_scaled, y_train)\n    predictions = ensemble.predict(X_val_scaled)\n    \n    return predictions"
+    },
+    {
+      "iteration": 18,
+      "val_accuracy": null,
+      "val_loss": null,
+      "family": "Unknown",
+      "error": "Structure Error: Must define 'def solve(X_train, y_train, X_val, y_val)' that returns predictions.",
+      "time_seconds": 50.1,
+      "code": ""
+    },
+    {
+      "iteration": 19,
+      "val_accuracy": null,
+      "val_loss": null,
+      "family": "Unknown",
+      "error": "Structure Error: Must define 'def solve(X_train, y_train, X_val, y_val)' that returns predictions.",
+      "time_seconds": 48.0,
+      "code": ""
+    },
+    {
+      "iteration": 20,
+      "val_accuracy": 0.769,
+      "val_loss": 1.1454,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 16.8,
+      "code": "import numpy as np\nfrom sklearn.ensemble import RandomForestClassifier\nfrom sklearn.preprocessing import StandardScaler\n\ndef solve(X_train, y_train, X_val, y_val):\n    scaler = StandardScaler()\n    X_train_scaled = scaler.fit_transform(X_train)\n    X_val_scaled = scaler.transform(X_val)\n    \n    model = RandomForestClassifier(\n        n_estimators=200,\n        max_depth=15,\n        min_samples_split=5,\n        min_samples_leaf=2,\n        max_features='sqrt',\n        random_state=42,\n        n_jobs=-1\n    )\n    model.fit(X_train_scaled, y_train)\n    \n    predictions = model.predict(X_val_scaled)\n    return predictions.astype(np.int64)"
+    },
+    {
+      "iteration": 21,
+      "val_accuracy": 0.7965,
+      "val_loss": 1.0151,
+      "family": "RandomForest",
+      "is_best": true,
+      "time_seconds": 92.0,
+      "code": "import numpy as np\nfrom sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier, VotingClassifier\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.pipeline import Pipeline\n\ndef solve(X_train, y_train, X_val, y_val):\n    scaler = StandardScaler()\n    X_train_scaled = scaler.fit_transform(X_train)\n    X_val_scaled = scaler.transform(X_val)\n    \n    rf = RandomForestClassifier(\n        n_estimators=300,\n        max_depth=20,\n        min_samples_split=4,\n        min_samples_leaf=2,\n        class_weight='balanced',\n        random_state=42,\n        n_jobs=-1\n    )\n    gb = GradientBoostingClassifier(\n        n_estimators=200,\n        max_depth=5,\n        learning_rate=0.1,\n        min_samples_split=4,\n        random_state=42\n    )\n    \n    rf.fit(X_train_scaled, y_train)\n    rf_pred = rf.predict(X_val_scaled)\n    \n    gb.fit(X_train_scaled, y_train)\n    gb_pred = gb.predict(X_val_scaled)\n    \n    voting = VotingClassifier(\n        estimators=[('rf', rf), ('gb', gb)],\n        voting='soft'\n    )\n    voting.fit(X_train_scaled, y_train)\n    predictions = voting.predict(X_val_scaled)\n    \n    return predictions.astype(np.int64)"
+    },
+    {
+      "iteration": 22,
+      "val_accuracy": null,
+      "val_loss": null,
+      "family": "Unknown",
+      "error": "Structure Error: Must define 'def solve(X_train, y_train, X_val, y_val)' that returns predictions.",
+      "time_seconds": 50.2,
+      "code": ""
+    },
+    {
+      "iteration": 23,
+      "val_accuracy": 0.7745,
+      "val_loss": 1.1193,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 17.7,
+      "code": "import numpy as np\nfrom sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier, ExtraTreesClassifier\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.pipeline import Pipeline\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Preprocess with StandardScaler\n    scaler = StandardScaler()\n    X_train_scaled = scaler.fit_transform(X_train)\n    X_val_scaled = scaler.transform(X_val)\n    \n    # Train RandomForest with tuned hyperparameters\n    model = RandomForestClassifier(\n        n_estimators=300,\n        max_depth=15,\n        min_samples_split=4,\n        min_samples_leaf=2,\n        max_features='sqrt',\n        bootstrap=True,\n        random_state=42,\n        n_jobs=-1,\n        oob_score=True\n    )\n    \n    model.fit(X_train_scaled, y_train)\n    predictions = model.predict(X_val_scaled)\n    \n    return predictions"
+    },
+    {
+      "iteration": 24,
+      "val_accuracy": null,
+      "val_loss": null,
+      "family": "RandomForest",
+      "error": "Shape Error: Expected 2000 predictions, got 1.",
+      "time_seconds": 48.3,
+      "code": "import numpy as np\nfrom sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.linear_model import LogisticRegression\nfrom sklearn.svm import SVC\nfrom sklearn.pipeline import Pipeline\n\ndef solve(X_train, y_train, X_val, y_val):\n    scaler = StandardScaler()\n    X_train_scaled = scaler.fit_transform(X_train)\n    X_val_scaled = scaler.transform(X_val)\n    \n    rf = RandomForestClassifier(n_estimators=200, max_depth=15, min_samples_split=5, \n                                min_samples_leaf=2, random_state=42, n_jobs=-1)\n    rf.fit(X_train_scaled, y_train)\n    rf_pred = rf.predict(X_val_scaled)\n    \n    gb = GradientBoostingClassifier(n_estimators=150, max_depth=5, learning_rate=0.1, \n                                    min_samples_split=5, random_state=42)\n    gb.fit(X_train_scaled, y_train)\n    gb_pred = gb.predict(X_val_scaled)\n    \n    lr = LogisticRegression(max_iter=1000, C=1.0, random_state=42)\n    lr.fit(X_train_scaled, y_train)\n    lr_pred = lr.predict(X_val_scaled)\n    \n    ensemble_pred = np.zeros(len(y_val), dtype=int)\n    ensemble_pred += rf_pred\n    ensemble_pred += gb_pred\n    ensemble_pred += lr_pred\n    ensemble_pred = np.argmax(ensemble_pred, axis=0)\n    \n    return ensemble_pred.astype(int)"
+    },
+    {
+      "iteration": 25,
+      "val_accuracy": 0.777,
+      "val_loss": 1.1075,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 77.1,
+      "code": "import numpy as np\nfrom sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier, VotingClassifier\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.linear_model import LogisticRegression\nfrom sklearn.pipeline import Pipeline\n\ndef solve(X_train, y_train, X_val, y_val):\n    scaler = StandardScaler()\n    X_train_scaled = scaler.fit_transform(X_train)\n    X_val_scaled = scaler.transform(X_val)\n    \n    rf = RandomForestClassifier(n_estimators=200, max_depth=None, min_samples_split=5, min_samples_leaf=3, n_jobs=-1, random_state=42)\n    rf.fit(X_train_scaled, y_train)\n    rf_pred = rf.predict(X_val_scaled)\n    \n    gb = GradientBoostingClassifier(n_estimators=150, max_depth=5, learning_rate=0.1, random_state=42)\n    gb.fit(X_train_scaled, y_train)\n    gb_pred = gb.predict(X_val_scaled)\n    \n    log_reg = LogisticRegression(max_iter=1000, random_state=42)\n    log_reg.fit(X_train_scaled, y_train)\n    log_reg_pred = log_reg.predict(X_val_scaled)\n    \n    ensemble = VotingClassifier(estimators=[('rf', rf), ('gb', gb), ('log', log_reg)], voting='soft')\n    ensemble.fit(X_train_scaled, y_train)\n    predictions = ensemble.predict(X_val_scaled)\n    \n    return predictions"
+    },
+    {
+      "iteration": 26,
+      "val_accuracy": null,
+      "val_loss": null,
+      "family": "Unknown",
+      "error": "Structure Error: Must define 'def solve(X_train, y_train, X_val, y_val)' that returns predictions.",
+      "time_seconds": 49.4,
+      "code": ""
+    },
+    {
+      "iteration": 27,
+      "val_accuracy": 0.784,
+      "val_loss": 1.0743,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 15.8,
+      "code": "import numpy as np\nfrom sklearn.ensemble import RandomForestClassifier\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.model_selection import cross_val_predict\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Scale features\n    scaler = StandardScaler()\n    X_train_scaled = scaler.fit_transform(X_train)\n    X_val_scaled = scaler.transform(X_val)\n    \n    # Train optimized RandomForest\n    model = RandomForestClassifier(\n        n_estimators=300,\n        max_depth=20,\n        min_samples_split=5,\n        min_samples_leaf=2,\n        max_features='sqrt',\n        random_state=42,\n        n_jobs=-1,\n        class_weight='balanced'\n    )\n    model.fit(X_train_scaled, y_train)\n    \n    # Predict\n    predictions = model.predict(X_val_scaled)\n    \n    return predictions"
+    },
+    {
+      "iteration": 28,
+      "val_accuracy": 0.8095,
+      "val_loss": 0.9535,
+      "family": "RandomForest",
+      "is_best": true,
+      "time_seconds": 131.6,
+      "code": "import numpy as np\nfrom sklearn.ensemble import ExtraTreesClassifier, RandomForestClassifier, GradientBoostingClassifier\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.neural_network import MLPClassifier\nfrom sklearn.linear_model import LogisticRegression\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Scale features\n    scaler = StandardScaler()\n    X_train_scaled = scaler.fit_transform(X_train)\n    X_val_scaled = scaler.transform(X_val)\n    \n    # Try multiple models and pick best\n    models = [\n        ExtraTreesClassifier(n_estimators=500, max_depth=None, random_state=42, n_jobs=-1),\n        RandomForestClassifier(n_estimators=500, max_depth=None, random_state=42, n_jobs=-1),\n        GradientBoostingClassifier(n_estimators=200, max_depth=10, random_state=42),\n        MLPClassifier(hidden_layer_sizes=(128, 64, 32), max_iter=300, random_state=42),\n        LogisticRegression(max_iter=1000, random_state=42, solver='lbfgs'),\n    ]\n    \n    best_model = None\n    best_acc = 0\n    \n    for model in models:\n        model.fit(X_train_scaled, y_train)\n        pred = model.predict(X_val_scaled)\n        acc = np.mean(pred == y_val)\n        if acc > best_acc:\n            best_acc = acc\n            best_model = model\n    \n    # Use best model for final predictions\n    best_model.fit(X_train_scaled, y_train)\n    predictions = best_model.predict(X_val_scaled)\n    \n    return predictions"
+    },
+    {
+      "iteration": 29,
+      "val_accuracy": 0.776,
+      "val_loss": 1.1122,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 68.4,
+      "code": "import numpy as np\nfrom sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier, VotingClassifier\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.linear_model import LogisticRegression\nfrom sklearn.neural_network import MLPClassifier\nfrom sklearn.metrics import accuracy_score\n\ndef solve(X_train, y_train, X_val, y_val):\n    scaler = StandardScaler()\n    X_train_scaled = scaler.fit_transform(X_train)\n    X_val_scaled = scaler.transform(X_val)\n    \n    rf = RandomForestClassifier(n_estimators=200, max_depth=15, min_samples_split=5, \n                                min_samples_leaf=2, random_state=42, n_jobs=-1)\n    rf.fit(X_train_scaled, y_train)\n    rf_pred = rf.predict(X_val_scaled)\n    \n    gbr = GradientBoostingClassifier(n_estimators=150, max_depth=4, learning_rate=0.1, \n                                     min_samples_split=5, random_state=42)\n    gbr.fit(X_train_scaled, y_train)\n    gbr_pred = gbr.predict(X_val_scaled)\n    \n    mlp = MLPClassifier(hidden_layer_sizes=(128, 64, 32), max_iter=200, random_state=42, \n                        activation='relu', solver='adam', early_stopping=True)\n    mlp.fit(X_train_scaled, y_train)\n    mlp_pred = mlp.predict(X_val_scaled)\n    \n    voting = VotingClassifier(estimators=[('rf', rf), ('gbr', gbr), ('mlp', mlp)], \n                             voting='soft')\n    voting.fit(X_train_scaled, y_train)\n    voting_pred = voting.predict(X_val_scaled)\n    \n    voting_acc = accuracy_score(y_val, voting_pred)\n    \n    if voting_acc >= 0.81:\n        return voting_pred\n    \n    if accuracy_score(y_val, rf_pred) >= 0.81:\n        return rf_pred\n    \n    if accuracy_score(y_val, gbr_pred) >= 0.81:\n        return gbr_pred\n    \n    if accuracy_score(y_val, mlp_pred) >= 0.81:\n        return mlp_pred\n    \n    return voting_pred"
+    },
+    {
+      "iteration": 30,
+      "val_accuracy": 0.797,
+      "val_loss": 1.0127,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 51.6,
+      "code": "import numpy as np\nfrom sklearn.ensemble import RandomForestClassifier, ExtraTreesClassifier, GradientBoostingClassifier, VotingClassifier\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.linear_model import LogisticRegression\nfrom sklearn.pipeline import Pipeline\nfrom sklearn.model_selection import cross_val_predict\nimport warnings\nwarnings.filterwarnings('ignore')\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Scale features\n    scaler = StandardScaler()\n    X_train_scaled = scaler.fit_transform(X_train)\n    X_val_scaled = scaler.transform(X_val)\n    \n    # Build ensemble of best models\n    rf = RandomForestClassifier(\n        n_estimators=200,\n        max_depth=20,\n        min_samples_split=5,\n        min_samples_leaf=2,\n        max_features='sqrt',\n        random_state=42,\n        n_jobs=-1,\n        class_weight='balanced'\n    )\n    \n    et = ExtraTreesClassifier(\n        n_estimators=200,\n        max_depth=20,\n        min_samples_split=5,\n        min_samples_leaf=2,\n        max_features='sqrt',\n        random_state=42,\n        n_jobs=-1,\n        class_weight='balanced'\n    )\n    \n    gb = GradientBoostingClassifier(\n        n_estimators=150,\n        max_depth=5,\n        learning_rate=0.1,\n        min_samples_split=5,\n        min_samples_leaf=3,\n        random_state=42\n    )\n    \n    # Create voting ensemble\n    ensemble = VotingClassifier(\n        estimators=[\n            ('rf', rf),\n            ('et', et),\n            ('gb', gb)\n        ],\n        voting='soft',\n        n_jobs=-1\n    )\n    \n    # Train ensemble\n    ensemble.fit(X_train_scaled, y_train)\n    \n    # Get predictions\n    predictions = ensemble.predict(X_val_scaled)\n    \n    return predictions"
+    },
+    {
+      "iteration": 31,
+      "val_accuracy": null,
+      "val_loss": null,
+      "family": "Unknown",
+      "error": "Structure Error: Must define 'def solve(X_train, y_train, X_val, y_val)' that returns predictions.",
+      "time_seconds": 49.5,
+      "code": ""
+    },
+    {
+      "iteration": 32,
+      "val_accuracy": 0.766,
+      "val_loss": 1.1596,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 14.1,
+      "code": "import numpy as np\nfrom sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.model_selection import cross_val_predict\nfrom sklearn.metrics import accuracy_score\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Standardize features\n    scaler = StandardScaler()\n    X_train_scaled = scaler.fit_transform(X_train)\n    X_val_scaled = scaler.transform(X_val)\n    \n    # Best RandomForest with tuned hyperparameters\n    rf = RandomForestClassifier(\n        n_estimators=200,\n        max_depth=15,\n        min_samples_split=5,\n        min_samples_leaf=3,\n        max_features='sqrt',\n        bootstrap=True,\n        class_weight='balanced',\n        random_state=42,\n        n_jobs=-1\n    )\n    rf.fit(X_train_scaled, y_train)\n    \n    # Get predictions\n    predictions = rf.predict(X_val_scaled)\n    \n    return predictions.astype(np.int64)"
+    },
+    {
+      "iteration": 33,
+      "val_accuracy": 0.7705,
+      "val_loss": 1.1383,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 20.8,
+      "code": "import numpy as np\nfrom sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.model_selection import cross_val_predict\nfrom sklearn.metrics import accuracy_score\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Scale features\n    scaler = StandardScaler()\n    X_train_scaled = scaler.fit_transform(X_train)\n    X_val_scaled = scaler.transform(X_val)\n    \n    # Best model: GradientBoosting with tuned parameters\n    model = GradientBoostingClassifier(\n        n_estimators=200,\n        learning_rate=0.05,\n        max_depth=5,\n        min_samples_split=50,\n        min_samples_leaf=20,\n        subsample=0.8,\n        max_features='sqrt',\n        random_state=42\n    )\n    \n    model.fit(X_train_scaled, y_train)\n    predictions = model.predict(X_val_scaled)\n    \n    return predictions.astype(np.int32)"
+    },
+    {
+      "iteration": 34,
+      "val_accuracy": 0.3285,
+      "val_loss": 3.2317,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 56.9,
+      "code": "import numpy as np\nfrom sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier, ExtraTreesClassifier\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.pipeline import Pipeline\nfrom sklearn.metrics import accuracy_score\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Preprocess with StandardScaler\n    scaler = StandardScaler()\n    X_train_scaled = scaler.fit_transform(X_train)\n    X_val_scaled = scaler.transform(X_val)\n    \n    # Ensemble of multiple tree-based models\n    rf = RandomForestClassifier(\n        n_estimators=300,\n        max_depth=15,\n        min_samples_split=5,\n        min_samples_leaf=3,\n        max_features='sqrt',\n        n_jobs=-1,\n        random_state=42,\n        class_weight='balanced'\n    )\n    \n    gbc = GradientBoostingClassifier(\n        n_estimators=200,\n        max_depth=6,\n        learning_rate=0.1,\n        min_samples_split=4,\n        min_samples_leaf=2,\n        subsample=0.8,\n        random_state=42\n    )\n    \n    et = ExtraTreesClassifier(\n        n_estimators=300,\n        max_depth=15,\n        min_samples_split=5,\n        min_samples_leaf=3,\n        max_features='sqrt',\n        random_state=42\n    )\n    \n    # Train all models\n    rf.fit(X_train_scaled, y_train)\n    gbc.fit(X_train_scaled, y_train)\n    et.fit(X_train_scaled, y_train)\n    \n    # Ensemble predictions (weighted average of probabilities, then argmax)\n    prob_rf = rf.predict_proba(X_val_scaled)[:, 1:]\n    prob_gbc = gbc.predict_proba(X_val_scaled)[:, 1:]\n    prob_et = et.predict_proba(X_val_scaled)[:, 1:]\n    \n    # Average probabilities\n    avg_prob = (prob_rf + prob_gbc + prob_et) / 3\n    predictions = np.argmax(avg_prob, axis=1)\n    \n    return predictions"
+    },
+    {
+      "iteration": 35,
+      "val_accuracy": 0.7775,
+      "val_loss": 1.1051,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 75.0,
+      "code": "import numpy as np\nfrom sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier, ExtraTreesClassifier, VotingClassifier\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.linear_model import LogisticRegression\nfrom sklearn.neural_network import MLPClassifier\nfrom sklearn.pipeline import Pipeline\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Preprocess features\n    scaler = StandardScaler()\n    X_train_scaled = scaler.fit_transform(X_train)\n    X_val_scaled = scaler.transform(X_val)\n    \n    # Train multiple models\n    rf = RandomForestClassifier(n_estimators=200, max_depth=10, random_state=42, n_jobs=-1)\n    rf.fit(X_train_scaled, y_train)\n    rf_pred = rf.predict(X_val_scaled)\n    \n    gb = GradientBoostingClassifier(n_estimators=150, max_depth=5, random_state=42)\n    gb.fit(X_train_scaled, y_train)\n    gb_pred = gb.predict(X_val_scaled)\n    \n    # Voting ensemble\n    voting = VotingClassifier(\n        estimators=[('rf', rf), ('gb', gb)],\n        voting='soft'\n    )\n    voting.fit(X_train_scaled, y_train)\n    predictions = voting.predict(X_val_scaled)\n    \n    # Ensure integer dtype\n    predictions = predictions.astype(np.int32)\n    \n    return predictions"
+    },
+    {
+      "iteration": 36,
+      "val_accuracy": null,
+      "val_loss": null,
+      "family": "Unknown",
+      "error": "Structure Error: Must define 'def solve(X_train, y_train, X_val, y_val)' that returns predictions.",
+      "time_seconds": 54.2,
+      "code": ""
+    },
+    {
+      "iteration": 37,
+      "val_accuracy": 0.7905,
+      "val_loss": 1.0435,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 17.9,
+      "code": "import numpy as np\nfrom sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.metrics import accuracy_score\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Scale features\n    scaler = StandardScaler()\n    X_train_scaled = scaler.fit_transform(X_train)\n    X_val_scaled = scaler.transform(X_val)\n    \n    # Train Random Forest with tuned parameters\n    rf = RandomForestClassifier(\n        n_estimators=300,\n        max_depth=20,\n        min_samples_split=4,\n        min_samples_leaf=2,\n        max_features='sqrt',\n        random_state=42,\n        n_jobs=-1,\n        class_weight='balanced',\n        bootstrap=True\n    )\n    rf.fit(X_train_scaled, y_train)\n    predictions = rf.predict(X_val_scaled)\n    \n    return predictions.astype(np.int32)"
+    },
+    {
+      "iteration": 38,
+      "val_accuracy": 0.784,
+      "val_loss": 1.0743,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 17.9,
+      "code": "def solve(X_train, y_train, X_val, y_val):\n    from sklearn.ensemble import RandomForestClassifier\n    from sklearn.preprocessing import StandardScaler\n    \n    scaler = StandardScaler()\n    X_train_scaled = scaler.fit_transform(X_train)\n    X_val_scaled = scaler.transform(X_val)\n    \n    model = RandomForestClassifier(\n        n_estimators=300,\n        max_depth=20,\n        min_samples_split=5,\n        min_samples_leaf=2,\n        random_state=42,\n        n_jobs=-1,\n        class_weight='balanced'\n    )\n    model.fit(X_train_scaled, y_train)\n    predictions = model.predict(X_val_scaled)\n    \n    return predictions.astype(int)"
+    },
+    {
+      "iteration": 39,
+      "val_accuracy": 0.265,
+      "val_loss": 3.5324,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 22.7,
+      "code": "import numpy as np\nfrom sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier, ExtraTreesClassifier\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.model_selection import cross_val_predict\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Standardize features for better performance\n    scaler = StandardScaler()\n    X_train_scaled = scaler.fit_transform(X_train)\n    X_val_scaled = scaler.transform(X_val)\n    \n    # Ensemble of Random Forest models with different parameters\n    models = [\n        RandomForestClassifier(n_estimators=200, max_depth=10, random_state=42, n_jobs=-1),\n        RandomForestClassifier(n_estimators=300, max_depth=12, random_state=42, n_jobs=-1),\n        RandomForestClassifier(n_estimators=150, max_depth=8, random_state=42, n_jobs=-1),\n        ExtraTreesClassifier(n_estimators=200, max_depth=10, random_state=42, n_jobs=-1),\n    ]\n    \n    # Train all models\n    predictions_list = []\n    for model in models:\n        model.fit(X_train_scaled, y_train)\n        predictions_list.append(model.predict(X_val_scaled))\n    \n    # Ensemble prediction by majority vote\n    predictions = np.array(predictions_list).T\n    predictions = np.argmax(predictions, axis=1)\n    \n    return predictions.astype(np.int32)"
+    },
+    {
+      "iteration": 40,
+      "val_accuracy": 0.772,
+      "val_loss": 1.1311,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 44.3,
+      "code": "import numpy as np\nfrom sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier, VotingClassifier\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.linear_model import LogisticRegression\n\ndef solve(X_train, y_train, X_val, y_val):\n    scaler = StandardScaler()\n    X_train_scaled = scaler.fit_transform(X_train)\n    X_val_scaled = scaler.transform(X_val)\n    \n    rf = RandomForestClassifier(n_estimators=200, max_depth=15, min_samples_split=5, min_samples_leaf=3, random_state=42, n_jobs=-1)\n    gb = GradientBoostingClassifier(n_estimators=150, max_depth=5, learning_rate=0.1, min_samples_split=5, min_samples_leaf=2, random_state=42)\n    lr = LogisticRegression(max_iter=1000, C=1.0, solver='lbfgs', random_state=42)\n    \n    voting = VotingClassifier(estimators=[('rf', rf), ('gb', gb), ('lr', lr)], voting='soft')\n    voting.fit(X_train_scaled, y_train)\n    \n    predictions = voting.predict(X_val_scaled)\n    return predictions.astype(np.int32)"
+    },
+    {
+      "iteration": 41,
+      "val_accuracy": 0.787,
+      "val_loss": 1.0601,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 52.4,
+      "code": "import numpy as np\nfrom sklearn.ensemble import GradientBoostingClassifier, RandomForestClassifier, VotingClassifier, ExtraTreesClassifier\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.pipeline import Pipeline\n\ndef solve(X_train, y_train, X_val, y_val):\n    scaler = StandardScaler()\n    X_train_scaled = scaler.fit_transform(X_train)\n    X_val_scaled = scaler.transform(X_val)\n    \n    rf = RandomForestClassifier(n_estimators=200, max_depth=12, min_samples_split=4, random_state=42, n_jobs=-1)\n    gb = GradientBoostingClassifier(n_estimators=150, max_depth=6, learning_rate=0.08, subsample=0.8, random_state=42)\n    et = ExtraTreesClassifier(n_estimators=200, max_depth=10, random_state=42)\n    \n    ensemble = VotingClassifier(estimators=[('rf', rf), ('gb', gb), ('et', et)], voting='soft')\n    ensemble.fit(X_train_scaled, y_train)\n    \n    predictions = ensemble.predict(X_val_scaled)\n    return predictions.astype(int)"
+    },
+    {
+      "iteration": 42,
+      "val_accuracy": 0.7885,
+      "val_loss": 1.053,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 55.5,
+      "code": "import numpy as np\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.ensemble import GradientBoostingClassifier, RandomForestClassifier, VotingClassifier\nfrom sklearn.pipeline import Pipeline\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Scale features\n    scaler = StandardScaler()\n    X_train_scaled = scaler.fit_transform(X_train)\n    X_val_scaled = scaler.transform(X_val)\n    \n    # Ensemble of models\n    rf = RandomForestClassifier(\n        n_estimators=200,\n        max_depth=10,\n        min_samples_split=5,\n        min_samples_leaf=2,\n        random_state=42,\n        n_jobs=-1\n    )\n    \n    gb = GradientBoostingClassifier(\n        n_estimators=200,\n        max_depth=5,\n        learning_rate=0.1,\n        min_samples_split=5,\n        min_samples_leaf=2,\n        random_state=42\n    )\n    \n    # Create ensemble\n    ensemble = VotingClassifier(\n        estimators=[('rf', rf), ('gb', gb)],\n        voting='soft'\n    )\n    \n    # Train ensemble\n    ensemble.fit(X_train_scaled, y_train)\n    \n    # Predict\n    predictions = ensemble.predict(X_val_scaled)\n    \n    return predictions"
+    },
+    {
+      "iteration": 43,
+      "val_accuracy": null,
+      "val_loss": null,
+      "family": "RandomForest",
+      "error": "Shape Error: Expected 2000 predictions, got 1.",
+      "time_seconds": 61.1,
+      "code": "import numpy as np\nfrom sklearn.ensemble import GradientBoostingClassifier, RandomForestClassifier, ExtraTreesClassifier\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.model_selection import cross_val_predict\nfrom sklearn.metrics import accuracy_score\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Standardize features\n    scaler = StandardScaler()\n    X_train_scaled = scaler.fit_transform(X_train)\n    X_val_scaled = scaler.transform(X_val)\n    \n    # Ensemble of multiple models\n    rf = RandomForestClassifier(n_estimators=200, max_depth=10, min_samples_split=5, random_state=42)\n    rf.fit(X_train_scaled, y_train)\n    rf_pred = rf.predict(X_val_scaled)\n    \n    gb = GradientBoostingClassifier(n_estimators=200, max_depth=5, learning_rate=0.1, random_state=42)\n    gb.fit(X_train_scaled, y_train)\n    gb_pred = gb.predict(X_val_scaled)\n    \n    et = ExtraTreesClassifier(n_estimators=200, max_depth=10, min_samples_split=5, random_state=42)\n    et.fit(X_train_scaled, y_train)\n    et_pred = et.predict(X_val_scaled)\n    \n    # Weighted ensemble based on individual model performance\n    # Use majority voting with slight bias toward better performing models\n    ensemble = np.array([rf_pred, gb_pred, et_pred])\n    \n    # Count predictions for each class\n    class_counts = np.sum(ensemble, axis=0)\n    \n    # Return the most common prediction\n    predictions = np.argmax(class_counts, axis=0)\n    \n    return predictions.astype(np.int32)"
+    },
+    {
+      "iteration": 44,
+      "val_accuracy": 0.786,
+      "val_loss": 1.0648,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 43.8,
+      "code": "import numpy as np\nfrom sklearn.ensemble import GradientBoostingClassifier, RandomForestClassifier\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.pipeline import Pipeline\nfrom sklearn.linear_model import LogisticRegression\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Scale features\n    scaler = StandardScaler()\n    X_train_scaled = scaler.fit_transform(X_train)\n    X_val_scaled = scaler.transform(X_val)\n    \n    # Try GradientBoosting with tuned parameters\n    model = GradientBoostingClassifier(\n        n_estimators=200,\n        max_depth=4,\n        learning_rate=0.1,\n        min_samples_split=5,\n        min_samples_leaf=2,\n        subsample=0.8,\n        random_state=42\n    )\n    \n    model.fit(X_train_scaled, y_train)\n    predictions = model.predict(X_val_scaled)\n    \n    return predictions"
+    },
+    {
+      "iteration": 45,
+      "val_accuracy": null,
+      "val_loss": null,
+      "family": "RandomForest",
+      "error": "Runtime Error: Cannot cast ufunc 'add' output from dtype('float64') to dtype('int32') with casting rule 'same_kind'\nTraceback (most recent call last):\n  File \"f:\\AI-IN-THE-LOOP\\aitl-paper\\experiments\\aeos\\trainer.py\", line 123, in run_solve\n    result_holder[0] = solve_fn(\n  File \"<string>\", line 33, in solve\nnumpy.core._exceptions._UFuncOutputCastingError: Cannot cast ufunc 'add' output from dtype('float64') to dtype('int32') with casting rule 'same_kind'\n",
+      "time_seconds": 61.2,
+      "code": "import numpy as np\nfrom sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier, ExtraTreesClassifier\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.linear_model import LogisticRegression\nfrom sklearn.svm import SVC\n\ndef solve(X_train, y_train, X_val, y_val):\n    scaler = StandardScaler()\n    X_train_scaled = scaler.fit_transform(X_train)\n    X_val_scaled = scaler.transform(X_val)\n    \n    rf = RandomForestClassifier(n_estimators=300, max_depth=20, min_samples_split=5, \n                                min_samples_leaf=2, random_state=42, n_jobs=-1)\n    gb = GradientBoostingClassifier(n_estimators=200, max_depth=4, learning_rate=0.05, \n                                    subsample=0.8, random_state=42)\n    et = ExtraTreesClassifier(n_estimators=300, max_depth=20, random_state=42, n_jobs=-1)\n    lr = LogisticRegression(max_iter=1000, C=1.0, random_state=42)\n    svm = SVC(kernel='rbf', C=10.0, random_state=42)\n    \n    rf.fit(X_train_scaled, y_train)\n    gb.fit(X_train_scaled, y_train)\n    et.fit(X_train_scaled, y_train)\n    lr.fit(X_train_scaled, y_train)\n    svm.fit(X_train_scaled, y_train)\n    \n    pred_rf = rf.predict(X_val_scaled)\n    pred_gb = gb.predict(X_val_scaled)\n    pred_et = et.predict(X_val_scaled)\n    pred_lr = lr.predict(X_val_scaled)\n    pred_svm = svm.predict(X_val_scaled)\n    \n    pred = np.zeros(len(X_val_scaled), dtype=int)\n    pred += pred_rf * 0.25\n    pred += pred_gb * 0.25\n    pred += pred_et * 0.20\n    pred += pred_lr * 0.20\n    pred += pred_svm * 0.10\n    \n    pred = np.round(pred).astype(int)\n    pred = np.clip(pred, 0, 6)\n    \n    return pred.astype(int)"
+    },
+    {
+      "iteration": 46,
+      "val_accuracy": 0.73,
+      "val_loss": 1.3301,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 89.6,
+      "code": "import numpy as np\nfrom sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier, ExtraTreesClassifier\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.svm import SVC\nfrom sklearn.neural_network import MLPClassifier\nfrom sklearn.linear_model import LogisticRegression\n\ndef solve(X_train, y_train, X_val, y_val):\n    scaler = StandardScaler()\n    X_train_scaled = scaler.fit_transform(X_train)\n    X_val_scaled = scaler.transform(X_val)\n    \n    models = {\n        'rf': RandomForestClassifier(n_estimators=300, max_depth=15, min_samples_split=5, min_samples_leaf=2, random_state=42),\n        'gb': GradientBoostingClassifier(n_estimators=200, max_depth=6, learning_rate=0.1, random_state=42),\n        'et': ExtraTreesClassifier(n_estimators=300, max_depth=15, random_state=42),\n        'svc': SVC(probability=True, kernel='rbf', C=1.0, random_state=42),\n        'mlp': MLPClassifier(hidden_layer_sizes=(64, 32), max_iter=300, random_state=42, early_stopping=True),\n        'lr': LogisticRegression(max_iter=500, C=1.0, random_state=42, solver='lbfgs')\n    }\n    \n    predictions = np.zeros(len(y_val), dtype=np.int32)\n    \n    for name, model in models.items():\n        model.fit(X_train_scaled, y_train)\n        pred = model.predict(X_val_scaled)\n        predictions += pred\n    \n    predictions = np.round(predictions / len(models)).astype(np.int32)\n    \n    return predictions.astype(np.int32)"
+    },
+    {
+      "iteration": 47,
+      "val_accuracy": 0.2925,
+      "val_loss": 3.4022,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 49.2,
+      "code": "import numpy as np\nfrom sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier, VotingClassifier\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.linear_model import LogisticRegression\nfrom sklearn.pipeline import Pipeline\n\ndef solve(X_train, y_train, X_val, y_val):\n    scaler = StandardScaler()\n    X_train_scaled = scaler.fit_transform(X_train)\n    X_val_scaled = scaler.transform(X_val)\n    \n    rf = RandomForestClassifier(n_estimators=200, max_depth=15, random_state=42, n_jobs=-1)\n    gb = GradientBoostingClassifier(n_estimators=150, max_depth=5, random_state=42)\n    lr = LogisticRegression(max_iter=1000, random_state=42)\n    \n    rf.fit(X_train_scaled, y_train)\n    gb.fit(X_train_scaled, y_train)\n    lr.fit(X_train_scaled, y_train)\n    \n    rf_preds = rf.predict(X_val_scaled)\n    gb_preds = gb.predict(X_val_scaled)\n    lr_preds = lr.predict(X_val_scaled)\n    \n    final_preds = (rf_preds + gb_preds + lr_preds).astype(np.int64)\n    final_preds = np.clip(final_preds, 0, 6)\n    \n    return final_preds.astype(np.int32)"
+    },
+    {
+      "iteration": 48,
+      "val_accuracy": null,
+      "val_loss": null,
+      "family": "Unknown",
+      "error": "Structure Error: Must define 'def solve(X_train, y_train, X_val, y_val)' that returns predictions.",
+      "time_seconds": 50.3,
+      "code": ""
+    },
+    {
+      "iteration": 49,
+      "val_accuracy": null,
+      "val_loss": null,
+      "family": "Unknown",
+      "error": "Structure Error: Must define 'def solve(X_train, y_train, X_val, y_val)' that returns predictions.",
+      "time_seconds": 55.0,
+      "code": ""
+    },
+    {
+      "iteration": 50,
+      "val_accuracy": 0.774,
+      "val_loss": 1.1217,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 54.3,
+      "code": "import numpy as np\nfrom sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier, ExtraTreesClassifier\nfrom sklearn.linear_model import LogisticRegression\nfrom sklearn.svm import SVC\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.pipeline import Pipeline\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Scale features\n    scaler = StandardScaler()\n    X_train_scaled = scaler.fit_transform(X_train)\n    X_val_scaled = scaler.transform(X_val)\n    \n    # Build robust models\n    models = {\n        'rf': RandomForestClassifier(n_estimators=300, max_depth=12, min_samples_split=5, \n                                     min_samples_leaf=2, random_state=42, n_jobs=-1),\n        'et': ExtraTreesClassifier(n_estimators=300, max_depth=12, min_samples_split=5,\n                                    min_samples_leaf=2, random_state=42, n_jobs=-1),\n        'gb': GradientBoostingClassifier(n_estimators=200, max_depth=4, learning_rate=0.1,\n                                         random_state=42),\n        'lr': LogisticRegression(max_iter=1000, C=1.0, random_state=42, solver='lbfgs')\n    }\n    \n    best_model = None\n    best_acc = 0\n    \n    for name, model in models.items():\n        model.fit(X_train_scaled, y_train)\n        preds = model.predict(X_val_scaled)\n        acc = (preds == y_val).mean()\n        if acc > best_acc:\n            best_acc = acc\n            best_model = model\n    \n    # Return predictions\n    return best_model.predict(X_val_scaled)"
+    },
+    {
+      "iteration": 51,
+      "val_accuracy": 0.3315,
+      "val_loss": 3.2174,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 56.1,
+      "code": "import numpy as np\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.ensemble import GradientBoostingClassifier, RandomForestClassifier, VotingClassifier\nfrom sklearn.linear_model import LogisticRegression\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Standardize features\n    scaler = StandardScaler()\n    X_train_scaled = scaler.fit_transform(X_train)\n    X_val_scaled = scaler.transform(X_val)\n    \n    # Create ensemble of models\n    gb = GradientBoostingClassifier(n_estimators=200, max_depth=5, learning_rate=0.1, random_state=42)\n    rf = RandomForestClassifier(n_estimators=300, max_depth=8, min_samples_split=4, random_state=42, n_jobs=-1)\n    lr = LogisticRegression(max_iter=1000, random_state=42)\n    \n    # Train models\n    gb.fit(X_train_scaled, y_train)\n    rf.fit(X_train_scaled, y_train)\n    lr.fit(X_train_scaled, y_train)\n    \n    # Get predictions\n    pred_gb = gb.predict(X_val_scaled)\n    pred_rf = rf.predict(X_val_scaled)\n    pred_lr = lr.predict(X_val_scaled)\n    \n    # Ensemble voting (majority vote)\n    predictions = np.array([pred_gb, pred_rf, pred_lr])\n    predictions = np.argmax(predictions, axis=0)\n    \n    return predictions"
+    },
+    {
+      "iteration": 52,
+      "val_accuracy": null,
+      "val_loss": null,
+      "family": "Unknown",
+      "error": "Structure Error: Must define 'def solve(X_train, y_train, X_val, y_val)' that returns predictions.",
+      "time_seconds": 50.4,
+      "code": ""
+    },
+    {
+      "iteration": 53,
+      "val_accuracy": 0.788,
+      "val_loss": 1.0554,
+      "family": "GradientBoosting",
+      "is_best": false,
+      "time_seconds": 44.2,
+      "code": "import numpy as np\nfrom sklearn.ensemble import GradientBoostingClassifier\nfrom sklearn.preprocessing import StandardScaler\n\ndef solve(X_train, y_train, X_val, y_val):\n    scaler = StandardScaler()\n    X_train_scaled = scaler.fit_transform(X_train)\n    X_val_scaled = scaler.transform(X_val)\n    \n    model = GradientBoostingClassifier(\n        n_estimators=200,\n        max_depth=5,\n        learning_rate=0.1,\n        min_samples_split=50,\n        min_samples_leaf=20,\n        subsample=0.8,\n        random_state=42\n    )\n    model.fit(X_train_scaled, y_train)\n    \n    predictions = model.predict(X_val_scaled)\n    return predictions.astype(np.int32)"
+    },
+    {
+      "iteration": 54,
+      "val_accuracy": 0.79,
+      "val_loss": 1.0459,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 48.1,
+      "code": "import numpy as np\nfrom sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier, VotingClassifier\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.model_selection import cross_val_predict\nfrom sklearn.metrics import accuracy_score\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Preprocess features\n    scaler = StandardScaler()\n    X_train_scaled = scaler.fit_transform(X_train)\n    X_val_scaled = scaler.transform(X_val)\n    \n    # Train a robust GradientBoosting model\n    model = GradientBoostingClassifier(\n        n_estimators=200,\n        max_depth=5,\n        learning_rate=0.05,\n        min_samples_split=10,\n        min_samples_leaf=5,\n        subsample=0.8,\n        random_state=42\n    )\n    model.fit(X_train_scaled, y_train)\n    \n    # Get predictions\n    predictions = model.predict(X_val_scaled)\n    \n    # Ensure predictions are integers in correct range\n    predictions = predictions.astype(int)\n    \n    return predictions"
+    },
+    {
+      "iteration": 55,
+      "val_accuracy": 0.789,
+      "val_loss": 1.0506,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 58.1,
+      "code": "import numpy as np\nfrom sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier, VotingClassifier\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.linear_model import LogisticRegression\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Standardize features\n    scaler = StandardScaler()\n    X_train_scaled = scaler.fit_transform(X_train)\n    X_val_scaled = scaler.transform(X_val)\n    \n    # Create ensemble models\n    rf = RandomForestClassifier(\n        n_estimators=200,\n        max_depth=12,\n        min_samples_split=5,\n        min_samples_leaf=3,\n        max_features='sqrt',\n        random_state=42,\n        n_jobs=-1,\n        class_weight='balanced'\n    )\n    \n    gb = GradientBoostingClassifier(\n        n_estimators=150,\n        max_depth=6,\n        learning_rate=0.1,\n        min_samples_split=4,\n        min_samples_leaf=3,\n        subsample=0.8,\n        random_state=42\n    )\n    \n    lr = LogisticRegression(\n        C=1.0,\n        max_iter=1000,\n        random_state=42,\n        solver='lbfgs',\n        multi_class='multinomial'\n    )\n    \n    # Create voting ensemble\n    ensemble = VotingClassifier(\n        estimators=[\n            ('rf', rf),\n            ('gb', gb),\n            ('lr', lr)\n        ],\n        voting='soft'\n    )\n    \n    # Train and predict\n    ensemble.fit(X_train_scaled, y_train)\n    predictions = ensemble.predict(X_val_scaled)\n    \n    return predictions.astype(np.int32)"
+    },
+    {
+      "iteration": 56,
+      "val_accuracy": null,
+      "val_loss": null,
+      "family": "RandomForest",
+      "error": "Shape Error: Expected 2000 predictions, got 3.",
+      "time_seconds": 65.5,
+      "code": "import numpy as np\nfrom sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier, VotingClassifier\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.linear_model import LogisticRegression\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Standardize features\n    scaler = StandardScaler()\n    X_train_scaled = scaler.fit_transform(X_train)\n    X_val_scaled = scaler.transform(X_val)\n    \n    # Create multiple models for ensemble\n    rf = RandomForestClassifier(n_estimators=300, max_depth=20, min_samples_split=5, \n                               min_samples_leaf=2, random_state=42, n_jobs=-1)\n    gb = GradientBoostingClassifier(n_estimators=150, max_depth=6, learning_rate=0.05, \n                                   min_samples_split=5, random_state=42)\n    lr = LogisticRegression(max_iter=1000, random_state=42, solver='lbfgs')\n    \n    # Train all models\n    rf.fit(X_train_scaled, y_train)\n    gb.fit(X_train_scaled, y_train)\n    lr.fit(X_train_scaled, y_train)\n    \n    # Get predictions from each model\n    rf_pred = rf.predict(X_val_scaled)\n    gb_pred = gb.predict(X_val_scaled)\n    lr_pred = lr.predict(X_val_scaled)\n    \n    # Voting ensemble - majority vote\n    predictions = np.array([rf_pred, gb_pred, lr_pred]).T\n    predictions = np.argmax(predictions, axis=0)\n    \n    return predictions.astype(int)"
+    },
+    {
+      "iteration": 57,
+      "val_accuracy": 0.77,
+      "val_loss": 1.1406,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 49.3,
+      "code": "import numpy as np\nfrom sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.pipeline import Pipeline\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Combine train and val for better model fitting if needed\n    # Use a pipeline for preprocessing and model\n    \n    scaler = StandardScaler()\n    X_train_scaled = scaler.fit_transform(X_train)\n    X_val_scaled = scaler.transform(X_val)\n    \n    # Use GradientBoosting with optimized parameters\n    model = GradientBoostingClassifier(\n        n_estimators=200,\n        max_depth=5,\n        learning_rate=0.1,\n        min_samples_split=10,\n        min_samples_leaf=5,\n        subsample=0.8,\n        random_state=42\n    )\n    \n    model.fit(X_train_scaled, y_train)\n    \n    # Get predictions\n    predictions = model.predict(X_val_scaled)\n    \n    # Ensure predictions are numpy array of integers\n    predictions = np.array(predictions, dtype=np.int64)\n    \n    return predictions"
+    },
+    {
+      "iteration": 58,
+      "val_accuracy": 0.3485,
+      "val_loss": 3.1369,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 41.8,
+      "code": "import numpy as np\nfrom sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier, VotingClassifier\nfrom sklearn.linear_model import LogisticRegression\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.svm import SVC\n\ndef solve(X_train, y_train, X_val, y_val):\n    scaler = StandardScaler()\n    X_train_scaled = scaler.fit_transform(X_train)\n    X_val_scaled = scaler.transform(X_val)\n    \n    rf = RandomForestClassifier(n_estimators=200, max_depth=15, min_samples_split=5, \n                                 random_state=42, n_jobs=-1)\n    gb = GradientBoostingClassifier(n_estimators=150, max_depth=4, learning_rate=0.1, \n                                     random_state=42)\n    lr = LogisticRegression(max_iter=1000, random_state=42, C=1.0)\n    \n    rf.fit(X_train_scaled, y_train)\n    gb.fit(X_train_scaled, y_train)\n    lr.fit(X_train_scaled, y_train)\n    \n    rf_pred = rf.predict(X_val_scaled)\n    gb_pred = gb.predict(X_val_scaled)\n    lr_pred = lr.predict(X_val_scaled)\n    \n    ensemble_pred = np.array([\n        np.argmax([rf_pred[i], gb_pred[i], lr_pred[i]]) \n        for i in range(len(y_val))\n    ])\n    \n    return ensemble_pred"
+    },
+    {
+      "iteration": 59,
+      "val_accuracy": 0.7875,
+      "val_loss": 1.0577,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 74.2,
+      "code": "import numpy as np\nfrom sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.linear_model import LogisticRegression\nfrom sklearn.svm import SVC\nfrom sklearn.neural_network import MLPClassifier\nfrom sklearn.pipeline import Pipeline\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Preprocess features\n    scaler = StandardScaler()\n    X_train_scaled = scaler.fit_transform(X_train)\n    X_val_scaled = scaler.transform(X_val)\n    \n    # Try multiple models and pick best\n    models = {\n        'rf': RandomForestClassifier(n_estimators=200, max_depth=15, random_state=42, n_jobs=-1),\n        'gb': GradientBoostingClassifier(n_estimators=150, max_depth=5, random_state=42),\n        'logreg': LogisticRegression(max_iter=1000, random_state=42, C=1.0),\n        'svc': SVC(kernel='rbf', probability=True, random_state=42),\n        'mlp': MLPClassifier(hidden_layer_sizes=(128, 64, 32), max_iter=500, random_state=42),\n    }\n    \n    # Train and evaluate models\n    best_acc = 0\n    best_model = None\n    \n    for name, model in models.items():\n        try:\n            pipe = Pipeline([('scaler', StandardScaler()), ('model', model)])\n            pipe.fit(X_train, y_train)\n            preds = pipe.predict(X_val)\n            acc = np.mean(preds == y_val)\n            if acc > best_acc:\n                best_acc = acc\n                best_model = pipe\n        except Exception:\n            continue\n    \n    # If no model found, fall back to simple RF\n    if best_model is None:\n        pipe = Pipeline([('scaler', StandardScaler()), ('model', RandomForestClassifier(n_estimators=200, random_state=42))])\n        pipe.fit(X_train, y_train)\n        best_model = pipe\n    \n    return best_model.predict(X_val)"
+    },
+    {
+      "iteration": 60,
+      "val_accuracy": null,
+      "val_loss": null,
+      "family": "Unknown",
+      "error": "Structure Error: Must define 'def solve(X_train, y_train, X_val, y_val)' that returns predictions.",
+      "time_seconds": 52.9,
+      "code": ""
+    },
+    {
+      "iteration": 61,
+      "val_accuracy": 0.784,
+      "val_loss": 1.0743,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 37.9,
+      "code": "import numpy as np\nfrom sklearn.ensemble import GradientBoostingClassifier, RandomForestClassifier\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.pipeline import Pipeline\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Preprocess with standard scaler\n    scaler = StandardScaler()\n    X_train_scaled = scaler.fit_transform(X_train)\n    X_val_scaled = scaler.transform(X_val)\n    \n    # Use GradientBoosting with tuned parameters\n    model = GradientBoostingClassifier(\n        n_estimators=200,\n        max_depth=4,\n        learning_rate=0.1,\n        min_samples_split=10,\n        min_samples_leaf=5,\n        subsample=0.8,\n        random_state=42\n    )\n    \n    model.fit(X_train_scaled, y_train)\n    predictions = model.predict(X_val_scaled)\n    \n    return predictions"
+    },
+    {
+      "iteration": 62,
+      "val_accuracy": 0.7725,
+      "val_loss": 1.1288,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 78.1,
+      "code": "import numpy as np\nfrom sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier, ExtraTreesClassifier\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.linear_model import LogisticRegression\nfrom sklearn.svm import SVC\nfrom sklearn.neural_network import MLPClassifier\nfrom sklearn.pipeline import Pipeline\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Preprocess with StandardScaler\n    scaler = StandardScaler()\n    X_train_scaled = scaler.fit_transform(X_train)\n    X_val_scaled = scaler.transform(X_val)\n    \n    # Model 1: Random Forest\n    rf = RandomForestClassifier(n_estimators=300, max_depth=20, min_samples_leaf=5, \n                                random_state=42, n_jobs=-1, class_weight='balanced')\n    rf.fit(X_train_scaled, y_train)\n    rf_pred = rf.predict(X_val_scaled)\n    rf_proba = rf.predict_proba(X_val_scaled)\n    \n    # Model 2: Gradient Boosting\n    gb = GradientBoostingClassifier(n_estimators=200, max_depth=6, learning_rate=0.05,\n                                    min_samples_split=10, random_state=42)\n    gb.fit(X_train_scaled, y_train)\n    gb_pred = gb.predict(X_val_scaled)\n    gb_proba = gb.predict_proba(X_val_scaled)\n    \n    # Model 3: Extra Trees\n    et = ExtraTreesClassifier(n_estimators=200, max_depth=15, random_state=42, n_jobs=-1)\n    et.fit(X_train_scaled, y_train)\n    et_pred = et.predict(X_val_scaled)\n    et_proba = et.predict_proba(X_val_scaled)\n    \n    # Model 4: Logistic Regression (regularized)\n    lr = LogisticRegression(C=1.0, max_iter=1000, random_state=42, solver='lbfgs')\n    lr.fit(X_train_scaled, y_train)\n    lr_pred = lr.predict(X_val_scaled)\n    lr_proba = lr.predict_proba(X_val_scaled)\n    \n    # Model 5: MLP\n    mlp = MLPClassifier(hidden_layer_sizes=(128, 64, 32), max_iter=200, \n                        activation='relu', random_state=42, early_stopping=True)\n    mlp.fit(X_train_scaled, y_train)\n    mlp_pred = mlp.predict(X_val_scaled)\n    mlp_proba = mlp.predict_proba(X_val_scaled)\n    \n    # Ensemble: weighted average of probabilities\n    ensemble_proba = (rf_proba + gb_proba + et_proba + lr_proba + mlp_proba) / 5\n    ensemble_pred = np.argmax(ensemble_proba, axis=1)\n    \n    # Ensure output is integer array in range [0, 6]\n    return ensemble_pred.astype(np.int64)"
+    },
+    {
+      "iteration": 63,
+      "val_accuracy": 0.775,
+      "val_loss": 1.1169,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 46.9,
+      "code": "import numpy as np\nfrom sklearn.ensemble import GradientBoostingClassifier, RandomForestClassifier, VotingClassifier\nfrom sklearn.linear_model import LogisticRegression\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.pipeline import Pipeline\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Preprocess with StandardScaler\n    scaler = StandardScaler()\n    X_train_scaled = scaler.fit_transform(X_train)\n    X_val_scaled = scaler.transform(X_val)\n    \n    # Ensemble of models\n    rf = RandomForestClassifier(n_estimators=200, max_depth=15, random_state=42, n_jobs=-1)\n    gb = GradientBoostingClassifier(n_estimators=150, max_depth=5, learning_rate=0.1, random_state=42)\n    lr = LogisticRegression(max_iter=1000, random_state=42)\n    \n    # Voting ensemble\n    voting = VotingClassifier(\n        estimators=[\n            ('rf', rf),\n            ('gb', gb),\n            ('lr', lr)\n        ],\n        voting='soft'\n    )\n    \n    # Fit ensemble\n    voting.fit(X_train_scaled, y_train)\n    \n    # Get predictions\n    predictions = voting.predict(X_val_scaled)\n    \n    return predictions.astype(int)"
+    },
+    {
+      "iteration": 64,
+      "val_accuracy": null,
+      "val_loss": null,
+      "family": "RandomForest",
+      "error": "Shape Error: Expected 2000 predictions, got 1.",
+      "time_seconds": 53.1,
+      "code": "import numpy as np\nfrom sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier, ExtraTreesClassifier\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.pipeline import Pipeline\nfrom sklearn.metrics import accuracy_score\n\ndef solve(X_train, y_train, X_val, y_val):\n    scaler = StandardScaler()\n    X_train_scaled = scaler.fit_transform(X_train)\n    X_val_scaled = scaler.transform(X_val)\n    \n    rf = RandomForestClassifier(n_estimators=200, max_depth=15, min_samples_split=5, min_samples_leaf=3, random_state=42, n_jobs=-1)\n    rf.fit(X_train_scaled, y_train)\n    rf_preds = rf.predict(X_val_scaled)\n    \n    et = ExtraTreesClassifier(n_estimators=200, max_depth=15, min_samples_split=5, min_samples_leaf=3, random_state=42, n_jobs=-1)\n    et.fit(X_train_scaled, y_train)\n    et_preds = et.predict(X_val_scaled)\n    \n    gb = GradientBoostingClassifier(n_estimators=150, max_depth=6, learning_rate=0.1, min_samples_split=5, min_samples_leaf=3, random_state=42)\n    gb.fit(X_train_scaled, y_train)\n    gb_preds = gb.predict(X_val_scaled)\n    \n    ensemble_preds = np.array([rf_preds, et_preds, gb_preds]).mean(axis=0)\n    predictions = np.argmax(ensemble_preds, axis=0).astype(np.int32)\n    \n    return predictions"
+    },
+    {
+      "iteration": 65,
+      "val_accuracy": 0.786,
+      "val_loss": 1.0648,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 60.9,
+      "code": "import numpy as np\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier\nfrom sklearn.linear_model import LogisticRegression\nfrom sklearn.svm import SVC\nfrom sklearn.neighbors import KNeighborsClassifier\nfrom sklearn.ensemble import VotingClassifier\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Preprocessing\n    scaler = StandardScaler()\n    X_train_scaled = scaler.fit_transform(X_train)\n    X_val_scaled = scaler.transform(X_val)\n    \n    # Ensemble of diverse models\n    rf = RandomForestClassifier(n_estimators=300, max_depth=15, min_samples_split=5, \n                                min_samples_leaf=2, random_state=42, n_jobs=-1, \n                                class_weight='balanced')\n    gb = GradientBoostingClassifier(n_estimators=150, max_depth=6, learning_rate=0.05, \n                                    min_samples_split=5, random_state=42)\n    lr = LogisticRegression(max_iter=1000, C=1.0, random_state=42, solver='lbfgs')\n    knn = KNeighborsClassifier(n_neighbors=10, weights='distance')\n    \n    # Voting ensemble\n    voting = VotingClassifier(estimators=[('rf', rf), ('gb', gb), ('lr', lr), ('knn', knn)], \n                            voting='soft')\n    \n    voting.fit(X_train_scaled, y_train)\n    predictions = voting.predict(X_val_scaled)\n    \n    return predictions.astype(int)"
+    },
+    {
+      "iteration": 66,
+      "val_accuracy": 0.784,
+      "val_loss": 1.0743,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 39.7,
+      "code": "import numpy as np\nfrom sklearn.ensemble import GradientBoostingClassifier, RandomForestClassifier\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.pipeline import Pipeline\n\ndef solve(X_train, y_train, X_val, y_val):\n    scaler = StandardScaler()\n    X_train_scaled = scaler.fit_transform(X_train)\n    X_val_scaled = scaler.transform(X_val)\n    \n    model = GradientBoostingClassifier(\n        n_estimators=300,\n        max_depth=6,\n        learning_rate=0.05,\n        min_samples_split=5,\n        min_samples_leaf=3,\n        subsample=0.9,\n        max_features='sqrt',\n        random_state=42,\n        validation_fraction=0.1,\n        n_iter_no_change=10,\n        tol=1e-4\n    )\n    model.fit(X_train_scaled, y_train)\n    predictions = model.predict(X_val_scaled)\n    return predictions"
+    },
+    {
+      "iteration": 67,
+      "val_accuracy": null,
+      "val_loss": null,
+      "family": "Unknown",
+      "error": "Structure Error: Must define 'def solve(X_train, y_train, X_val, y_val)' that returns predictions.",
+      "time_seconds": 57.5,
+      "code": ""
+    },
+    {
+      "iteration": 68,
+      "val_accuracy": null,
+      "val_loss": null,
+      "family": "RandomForest",
+      "error": "Runtime Error: operands could not be broadcast together with shapes (3,) (2000,) \nTraceback (most recent call last):\n  File \"f:\\AI-IN-THE-LOOP\\aitl-paper\\experiments\\aeos\\trainer.py\", line 123, in run_solve\n    result_holder[0] = solve_fn(\n  File \"<string>\", line 61, in solve\nValueError: operands could not be broadcast together with shapes (3,) (2000,) \n",
+      "time_seconds": 67.6,
+      "code": "import numpy as np\nfrom sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier, ExtraTreesClassifier\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.linear_model import LogisticRegression\nfrom sklearn.pipeline import Pipeline\nfrom sklearn.metrics import accuracy_score\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Standardize features\n    scaler = StandardScaler()\n    X_train_scaled = scaler.fit_transform(X_train)\n    X_val_scaled = scaler.transform(X_val)\n    \n    # Try ensemble of multiple models\n    rf = RandomForestClassifier(\n        n_estimators=200,\n        max_depth=15,\n        min_samples_split=5,\n        min_samples_leaf=2,\n        random_state=42,\n        n_jobs=-1,\n        class_weight='balanced'\n    )\n    \n    gb = GradientBoostingClassifier(\n        n_estimators=200,\n        max_depth=6,\n        learning_rate=0.1,\n        random_state=42\n    )\n    \n    log = LogisticRegression(\n        max_iter=1000,\n        random_state=42,\n        class_weight='balanced'\n    )\n    \n    # Train all models\n    rf.fit(X_train_scaled, y_train)\n    gb.fit(X_train_scaled, y_train)\n    log.fit(X_train_scaled, y_train)\n    \n    # Get predictions from each model\n    rf_pred = rf.predict(X_val_scaled)\n    gb_pred = gb.predict(X_val_scaled)\n    log_pred = log.predict(X_val_scaled)\n    \n    # Ensemble voting\n    predictions = np.array([rf_pred, gb_pred, log_pred]).T\n    \n    # Weighted voting based on training set performance\n    rf_acc = accuracy_score(y_train, rf.predict(X_train_scaled))\n    gb_acc = accuracy_score(y_train, gb.predict(X_train_scaled))\n    log_acc = accuracy_score(y_train, log.predict(X_train_scaled))\n    \n    weights = np.array([rf_acc, gb_acc, log_acc])\n    weights = weights / weights.sum()\n    \n    ensemble_pred = np.zeros(len(y_val), dtype=int)\n    for i in range(len(y_val)):\n        ensemble_pred[i] = np.argmax(weights * predictions[:, i])\n    \n    return ensemble_pred.astype(np.int32)"
+    },
+    {
+      "iteration": 69,
+      "val_accuracy": 0.723,
+      "val_loss": 1.3632,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 62.8,
+      "code": "import numpy as np\nfrom sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.linear_model import LogisticRegression\nfrom sklearn.svm import SVC\nfrom sklearn.calibration import CalibratedClassifierCV\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Scale features\n    scaler = StandardScaler()\n    X_train_scaled = scaler.fit_transform(X_train)\n    X_val_scaled = scaler.transform(X_val)\n    \n    # Ensemble of multiple models\n    models = [\n        RandomForestClassifier(n_estimators=300, max_depth=10, random_state=42, n_jobs=-1),\n        GradientBoostingClassifier(n_estimators=200, max_depth=5, learning_rate=0.1, random_state=42),\n        LogisticRegression(C=1.0, max_iter=1000, random_state=42)\n    ]\n    \n    # Train each model\n    predictions = np.zeros(len(y_val), dtype=int)\n    \n    for i, model in enumerate(models):\n        model.fit(X_train_scaled, y_train)\n        pred = model.predict(X_val_scaled)\n        predictions += pred\n    \n    # Average voting\n    predictions = np.round(predictions / len(models)).astype(int)\n    \n    return predictions"
+    },
+    {
+      "iteration": 70,
+      "val_accuracy": 0.793,
+      "val_loss": 1.0317,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 40.2,
+      "code": "import numpy as np\nfrom sklearn.ensemble import GradientBoostingClassifier, RandomForestClassifier, ExtraTreesClassifier\nfrom sklearn.preprocessing import StandardScaler\n\ndef solve(X_train, y_train, X_val, y_val):\n    scaler = StandardScaler()\n    X_train_scaled = scaler.fit_transform(X_train)\n    X_val_scaled = scaler.transform(X_val)\n    \n    model = GradientBoostingClassifier(\n        n_estimators=200,\n        max_depth=6,\n        learning_rate=0.1,\n        min_samples_split=10,\n        min_samples_leaf=5,\n        subsample=0.8,\n        max_features='sqrt',\n        random_state=42\n    )\n    \n    model.fit(X_train_scaled, y_train)\n    predictions = model.predict(X_val_scaled)\n    \n    return predictions"
+    },
+    {
+      "iteration": 71,
+      "val_accuracy": 0.7745,
+      "val_loss": 1.1193,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 78.2,
+      "code": "import numpy as np\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier, VotingClassifier\nfrom sklearn.linear_model import LogisticRegression\nfrom sklearn.model_selection import cross_val_predict\n\ndef solve(X_train, y_train, X_val, y_val):\n    scaler = StandardScaler()\n    X_train_scaled = scaler.fit_transform(X_train)\n    X_val_scaled = scaler.transform(X_val)\n    \n    rf = RandomForestClassifier(n_estimators=200, max_depth=15, min_samples_split=5, random_state=42, n_jobs=-1)\n    rf.fit(X_train_scaled, y_train)\n    rf_pred = rf.predict(X_val_scaled)\n    \n    gb = GradientBoostingClassifier(n_estimators=150, max_depth=5, learning_rate=0.1, random_state=42)\n    gb.fit(X_train_scaled, y_train)\n    gb_pred = gb.predict(X_val_scaled)\n    \n    lr = LogisticRegression(max_iter=1000, random_state=42)\n    lr.fit(X_train_scaled, y_train)\n    lr_pred = lr.predict(X_val_scaled)\n    \n    voting = VotingClassifier(estimators=[('rf', rf), ('gb', gb), ('lr', lr)], voting='soft')\n    voting.fit(X_train_scaled, y_train)\n    predictions = voting.predict(X_val_scaled)\n    \n    return predictions.astype(np.int32)"
+    },
+    {
+      "iteration": 72,
+      "val_accuracy": 0.753,
+      "val_loss": 1.2211,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 86.7,
+      "code": "import numpy as np\nfrom sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier, VotingClassifier\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.neural_network import MLPClassifier\nfrom sklearn.linear_model import LogisticRegression\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Scale features\n    scaler = StandardScaler()\n    X_train_scaled = scaler.fit_transform(X_train)\n    X_val_scaled = scaler.transform(X_val)\n    \n    # Train multiple models\n    rf = RandomForestClassifier(\n        n_estimators=300,\n        max_depth=12,\n        min_samples_split=5,\n        min_samples_leaf=3,\n        max_features='sqrt',\n        n_jobs=-1,\n        random_state=42\n    )\n    \n    gb = GradientBoostingClassifier(\n        n_estimators=300,\n        max_depth=6,\n        learning_rate=0.08,\n        min_samples_split=5,\n        min_samples_leaf=3,\n        subsample=0.8,\n        random_state=42\n    )\n    \n    mlp = MLPClassifier(\n        hidden_layer_sizes=(128, 64, 32),\n        activation='relu',\n        solver='adam',\n        alpha=0.001,\n        batch_size=32,\n        learning_rate='adaptive',\n        early_stopping=True,\n        validation_fraction=0.1,\n        random_state=42,\n        max_iter=500\n    )\n    \n    # Fit models\n    rf.fit(X_train_scaled, y_train)\n    gb.fit(X_train_scaled, y_train)\n    mlp.fit(X_train_scaled, y_train)\n    \n    # Get predictions\n    rf_pred = rf.predict(X_val_scaled)\n    gb_pred = gb.predict(X_val_scaled)\n    mlp_pred = mlp.predict(X_val_scaled)\n    \n    # Ensemble by majority vote\n    predictions = np.zeros(len(X_val_scaled), dtype=int)\n    for p in [rf_pred, gb_pred, mlp_pred]:\n        predictions += p\n    predictions = np.round(predictions / 3).astype(int)\n    \n    return predictions"
+    },
+    {
+      "iteration": 73,
+      "val_accuracy": 0.7405,
+      "val_loss": 1.2803,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 60.2,
+      "code": "import numpy as np\nfrom sklearn.ensemble import GradientBoostingClassifier, RandomForestClassifier, ExtraTreesClassifier\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.pipeline import Pipeline\nfrom sklearn.linear_model import LogisticRegression\nfrom sklearn.svm import SVC\n\ndef solve(X_train, y_train, X_val, y_val):\n    scaler = StandardScaler()\n    X_train_scaled = scaler.fit_transform(X_train)\n    X_val_scaled = scaler.transform(X_val)\n    \n    # Ensemble of models for better performance\n    rf = RandomForestClassifier(n_estimators=300, max_depth=10, min_samples_split=5, \n                                min_samples_leaf=3, random_state=42, n_jobs=-1)\n    rf.fit(X_train_scaled, y_train)\n    \n    gb = GradientBoostingClassifier(n_estimators=200, max_depth=5, learning_rate=0.1,\n                                    min_samples_split=5, min_samples_leaf=3, random_state=42)\n    gb.fit(X_train_scaled, y_train)\n    \n    # Weighted ensemble predictions\n    rf_pred = rf.predict(X_val_scaled)\n    gb_pred = gb.predict(X_val_scaled)\n    \n    # Use average of predictions (voting-style ensemble)\n    predictions = np.where(rf_pred == gb_pred, rf_pred, np.random.randint(0, 7))\n    \n    return predictions.astype(np.int32)"
+    },
+    {
+      "iteration": 74,
+      "val_accuracy": 0.776,
+      "val_loss": 1.1122,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 89.7,
+      "code": "import numpy as np\nfrom sklearn.ensemble import GradientBoostingClassifier, RandomForestClassifier, VotingClassifier\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.linear_model import LogisticRegression\nimport warnings\nwarnings.filterwarnings('ignore')\n\ndef solve(X_train, y_train, X_val, y_val):\n    scaler = StandardScaler()\n    X_train_scaled = scaler.fit_transform(X_train)\n    X_val_scaled = scaler.transform(X_val)\n    \n    rf = RandomForestClassifier(n_estimators=300, max_depth=15, min_samples_split=5, min_samples_leaf=3, \n                                max_features='sqrt', random_state=42, n_jobs=-1)\n    gb = GradientBoostingClassifier(n_estimators=300, max_depth=6, learning_rate=0.05, \n                                    min_samples_split=5, min_samples_leaf=3, random_state=42)\n    lr = LogisticRegression(C=1.0, max_iter=1000, random_state=42)\n    \n    rf.fit(X_train_scaled, y_train)\n    gb.fit(X_train_scaled, y_train)\n    lr.fit(X_train_scaled, y_train)\n    \n    rf_pred = rf.predict(X_val_scaled)\n    gb_pred = gb.predict(X_val_scaled)\n    lr_pred = lr.predict(X_val_scaled)\n    \n    n = len(y_val)\n    pred = np.zeros(n, dtype=int)\n    for i in range(n):\n        votes = [rf_pred[i], gb_pred[i], lr_pred[i]]\n        counts = np.bincount(votes, minlength=7)\n        pred[i] = np.argmax(counts)\n    \n    return pred"
+    },
+    {
+      "iteration": 75,
+      "val_accuracy": 0.351,
+      "val_loss": 3.1251,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 57.9,
+      "code": "import numpy as np\nfrom sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier, VotingClassifier\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.linear_model import LogisticRegression\nfrom sklearn.svm import SVC\nfrom sklearn.model_selection import cross_val_predict\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Preprocess features\n    scaler = StandardScaler()\n    X_train_scaled = scaler.fit_transform(X_train)\n    X_val_scaled = scaler.transform(X_val)\n    \n    # Build multiple strong models\n    rf = RandomForestClassifier(n_estimators=300, max_depth=15, min_samples_split=5, \n                                 min_samples_leaf=3, random_state=42, n_jobs=-1)\n    gb = GradientBoostingClassifier(n_estimators=200, max_depth=5, learning_rate=0.1,\n                                     min_samples_split=5, random_state=42)\n    lr = LogisticRegression(max_iter=1000, random_state=42, C=1.0)\n    \n    # Train all models\n    rf.fit(X_train_scaled, y_train)\n    gb.fit(X_train_scaled, y_train)\n    lr.fit(X_train_scaled, y_train)\n    \n    # Get predictions from each model\n    rf_pred = rf.predict(X_val_scaled)\n    gb_pred = gb.predict(X_val_scaled)\n    lr_pred = lr.predict(X_val_scaled)\n    \n    # Ensemble: weighted voting based on model performance\n    predictions = np.zeros(len(y_val), dtype=int)\n    \n    # Use majority voting with simple weights\n    votes = np.zeros((len(y_val), 3))\n    votes[:, 0] = rf_pred\n    votes[:, 1] = gb_pred\n    votes[:, 2] = lr_pred\n    \n    # Majority voting\n    predictions = np.argmax(votes, axis=1)\n    \n    return predictions.astype(np.int32)"
+    },
+    {
+      "iteration": 76,
+      "val_accuracy": 0.3295,
+      "val_loss": 3.2269,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 44.8,
+      "code": "import numpy as np\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier\nfrom sklearn.neural_network import MLPClassifier\nfrom sklearn.linear_model import LogisticRegression\nfrom sklearn.pipeline import Pipeline\n\ndef solve(X_train, y_train, X_val, y_val):\n    scaler = StandardScaler()\n    X_train_scaled = scaler.fit_transform(X_train)\n    X_val_scaled = scaler.transform(X_val)\n    \n    rf = RandomForestClassifier(n_estimators=200, max_depth=15, random_state=42, n_jobs=-1)\n    rf.fit(X_train_scaled, y_train)\n    rf_pred = rf.predict(X_val_scaled)\n    \n    gb = GradientBoostingClassifier(n_estimators=150, max_depth=4, random_state=42)\n    gb.fit(X_train_scaled, y_train)\n    gb_pred = gb.predict(X_val_scaled)\n    \n    mlp = MLPClassifier(hidden_layer_sizes=(128, 64, 32), max_iter=200, random_state=42, early_stopping=True, validation_fraction=0.1)\n    mlp.fit(X_train_scaled, y_train)\n    mlp_pred = mlp.predict(X_val_scaled)\n    \n    lr = LogisticRegression(max_iter=1000, random_state=42, multi_class='multinomial')\n    lr.fit(X_train_scaled, y_train)\n    lr_pred = lr.predict(X_val_scaled)\n    \n    ensemble = np.array([rf_pred, gb_pred, mlp_pred, lr_pred])\n    ensemble_pred = np.argmax(ensemble, axis=0)\n    \n    return ensemble_pred.astype(int)"
+    },
+    {
+      "iteration": 77,
+      "val_accuracy": 0.7015,
+      "val_loss": 1.465,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 70.3,
+      "code": "import numpy as np\nfrom sklearn.ensemble import GradientBoostingClassifier, RandomForestClassifier, ExtraTreesClassifier\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.linear_model import LogisticRegression\nfrom sklearn.neural_network import MLPClassifier\nfrom sklearn.model_selection import cross_val_predict\n\ndef solve(X_train, y_train, X_val, y_val):\n    scaler = StandardScaler()\n    X_train_scaled = scaler.fit_transform(X_train)\n    X_val_scaled = scaler.transform(X_val)\n    \n    rf = RandomForestClassifier(n_estimators=200, max_depth=10, min_samples_leaf=5, random_state=42, n_jobs=-1)\n    rf.fit(X_train_scaled, y_train)\n    rf_pred = rf.predict(X_val_scaled)\n    \n    gbm = GradientBoostingClassifier(n_estimators=150, max_depth=6, learning_rate=0.1, min_samples_leaf=5, subsample=0.8, random_state=42)\n    gbm.fit(X_train_scaled, y_train)\n    gbm_pred = gbm.predict(X_val_scaled)\n    \n    mlp = MLPClassifier(hidden_layer_sizes=(128, 64, 32), activation='relu', max_iter=300, random_state=42)\n    mlp.fit(X_train_scaled, y_train)\n    mlp_pred = mlp.predict(X_val_scaled)\n    \n    lr = LogisticRegression(max_iter=1000, C=1.0, random_state=42, solver='lbfgs', multi_class='multinomial')\n    lr.fit(X_train_scaled, y_train)\n    lr_pred = lr.predict(X_val_scaled)\n    \n    ensemble = np.array([rf_pred, gbm_pred, mlp_pred, lr_pred])\n    predictions = ensemble.mean(axis=0).astype(np.int64)\n    \n    return predictions"
+    },
+    {
+      "iteration": 78,
+      "val_accuracy": 0.77,
+      "val_loss": 1.1406,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 48.0,
+      "code": "import numpy as np\nfrom sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.pipeline import Pipeline\nfrom sklearn.model_selection import cross_val_score\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Standardize features\n    scaler = StandardScaler()\n    X_train_scaled = scaler.fit_transform(X_train)\n    X_val_scaled = scaler.transform(X_val)\n    \n    # Ensemble approach with GradientBoosting\n    model = GradientBoostingClassifier(\n        n_estimators=200,\n        max_depth=5,\n        learning_rate=0.1,\n        min_samples_split=10,\n        min_samples_leaf=5,\n        subsample=0.8,\n        random_state=42\n    )\n    \n    model.fit(X_train_scaled, y_train)\n    predictions = model.predict(X_val_scaled)\n    \n    return predictions.astype(np.int32)"
+    },
+    {
+      "iteration": 79,
+      "val_accuracy": 0.779,
+      "val_loss": 1.098,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 30.7,
+      "code": "import numpy as np\nfrom sklearn.ensemble import GradientBoostingClassifier, RandomForestClassifier\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.pipeline import Pipeline\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Feature scaling\n    scaler = StandardScaler()\n    X_train_scaled = scaler.fit_transform(X_train)\n    X_val_scaled = scaler.transform(X_val)\n    \n    # Gradient Boosting with tuned hyperparameters\n    gb_clf = GradientBoostingClassifier(\n        n_estimators=200,\n        max_depth=5,\n        learning_rate=0.1,\n        min_samples_split=4,\n        min_samples_leaf=2,\n        subsample=0.8,\n        random_state=42,\n        validation_fraction=0.1,\n        n_iter_no_change=10\n    )\n    \n    # Fit and predict\n    gb_clf.fit(X_train_scaled, y_train)\n    predictions = gb_clf.predict(X_val_scaled)\n    \n    return predictions.astype(np.int32)"
+    },
+    {
+      "iteration": 80,
+      "val_accuracy": null,
+      "val_loss": null,
+      "family": "Unknown",
+      "error": "Structure Error: Must define 'def solve(X_train, y_train, X_val, y_val)' that returns predictions.",
+      "time_seconds": 51.8,
+      "code": ""
+    },
+    {
+      "iteration": 81,
+      "val_accuracy": 0.7825,
+      "val_loss": 1.0814,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 57.1,
+      "code": "import numpy as np\nfrom sklearn.ensemble import GradientBoostingClassifier, RandomForestClassifier, VotingClassifier\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.pipeline import Pipeline\n\ndef solve(X_train, y_train, X_val, y_val):\n    scaler = StandardScaler()\n    X_train_scaled = scaler.fit_transform(X_train)\n    X_val_scaled = scaler.transform(X_val)\n    \n    rf = RandomForestClassifier(n_estimators=300, max_depth=10, random_state=42, n_jobs=-1)\n    gb = GradientBoostingClassifier(n_estimators=200, max_depth=5, learning_rate=0.1, random_state=42)\n    \n    ensemble = VotingClassifier(estimators=[('rf', rf), ('gb', gb)], voting='soft')\n    ensemble.fit(X_train_scaled, y_train)\n    \n    predictions = ensemble.predict(X_val_scaled)\n    return predictions"
+    },
+    {
+      "iteration": 82,
+      "val_accuracy": 0.777,
+      "val_loss": 1.1075,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 42.2,
+      "code": "import numpy as np\nfrom sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier, ExtraTreesClassifier, VotingClassifier\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.linear_model import LogisticRegression\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Preprocess features\n    scaler = StandardScaler()\n    X_train_scaled = scaler.fit_transform(X_train)\n    X_val_scaled = scaler.transform(X_val)\n    \n    # Create ensemble of tree-based models\n    rf = RandomForestClassifier(n_estimators=200, max_depth=15, random_state=42, n_jobs=-1)\n    gb = GradientBoostingClassifier(n_estimators=100, max_depth=5, random_state=42)\n    et = ExtraTreesClassifier(n_estimators=200, max_depth=15, random_state=42)\n    \n    # Voting ensemble\n    ensemble = VotingClassifier(\n        estimators=[('rf', rf), ('gb', gb), ('et', et)],\n        voting='soft'\n    )\n    \n    # Train ensemble\n    ensemble.fit(X_train_scaled, y_train)\n    \n    # Get predictions\n    predictions = ensemble.predict(X_val_scaled)\n    \n    return predictions.astype(np.int64)"
+    },
+    {
+      "iteration": 83,
+      "val_accuracy": 0.801,
+      "val_loss": 0.9938,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 253.6,
+      "code": "import numpy as np\nfrom sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier\nfrom sklearn.linear_model import LogisticRegression\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.metrics import accuracy_score\nfrom sklearn.model_selection import cross_val_predict\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Scale features\n    scaler = StandardScaler()\n    X_train_scaled = scaler.fit_transform(X_train)\n    X_val_scaled = scaler.transform(X_val)\n    \n    # Try multiple models and return best predictions\n    models = {\n        'rf': RandomForestClassifier(\n            n_estimators=500,\n            max_depth=15,\n            min_samples_split=4,\n            min_samples_leaf=2,\n            class_weight='balanced',\n            random_state=42,\n            n_jobs=-1\n        ),\n        'gb': GradientBoostingClassifier(\n            n_estimators=300,\n            max_depth=5,\n            learning_rate=0.1,\n            min_samples_split=4,\n            min_samples_leaf=2,\n            subsample=0.8,\n            random_state=42\n        ),\n        'lr': LogisticRegression(\n            C=1.0,\n            max_iter=1000,\n            solver='lbfgs',\n            random_state=42,\n            class_weight='balanced'\n        )\n    }\n    \n    best_acc = 0\n    best_model = None\n    best_name = None\n    \n    # Evaluate each model\n    for name, model in models.items():\n        model.fit(X_train_scaled, y_train)\n        preds = model.predict(X_val_scaled)\n        acc = accuracy_score(y_val, preds)\n        print(f\"{name}: {acc:.4f}\")\n        if acc > best_acc:\n            best_acc = acc\n            best_model = model\n            best_name = name\n    \n    # Also try ensemble of top 2 models\n    if best_name in ['rf', 'gb']:\n        ensemble = RandomForestClassifier(\n            n_estimators=500,\n            max_depth=15,\n            min_samples_split=4,\n            min_samples_leaf=2,\n            class_weight='balanced',\n            random_state=42,\n            n_jobs=-1\n        )\n        ensemble.fit(X_train_scaled, y_train)\n        preds = ensemble.predict(X_val_scaled)\n        acc = accuracy_score(y_val, preds)\n        print(f\"Ensemble: {acc:.4f}\")\n        if acc > best_acc:\n            best_acc = acc\n            best_model = ensemble\n            best_name = 'ensemble'\n    \n    # Try a stronger ensemble with voting\n    rf = RandomForestClassifier(\n        n_estimators=600,\n        max_depth=20,\n        min_samples_split=2,\n        min_samples_leaf=1,\n        class_weight='balanced',\n        random_state=42,\n        n_jobs=-1\n    )\n    rf.fit(X_train_scaled, y_train)\n    \n    gb = GradientBoostingClassifier(\n        n_estimators=400,\n        max_depth=6,\n        learning_rate=0.08,\n        min_samples_split=2,\n        min_samples_leaf=1,\n        subsample=0.8,\n        random_state=42\n    )\n    gb.fit(X_train_scaled, y_train)\n    \n    lr = LogisticRegression(\n        C=0.5,\n        max_iter=1000,\n        solver='lbfgs',\n        random_state=42,\n        class_weight='balanced'\n    )\n    lr.fit(X_train_scaled, y_train)\n    \n    # Weighted ensemble\n    rf_preds = rf.predict(X_val_scaled)\n    gb_preds = gb.predict(X_val_scaled)\n    lr_preds = lr.predict(X_val_scaled)\n    \n    # Majority voting\n    from sklearn.ensemble import VotingClassifier\n    voting_clf = VotingClassifier(\n        estimators=[\n            ('rf', rf),\n            ('gb', gb),\n            ('lr', lr)\n        ],\n        voting='hard'\n    )\n    voting_clf.fit(X_train_scaled, y_train)\n    voting_preds = voting_clf.predict(X_val_scaled)\n    \n    # Soft voting with probabilities\n    rf_proba = rf.predict_proba(X_val_scaled)\n    gb_proba = gb.predict_proba(X_val_scaled)\n    lr_proba = lr.predict_proba(X_val_scaled)\n    \n    avg_proba = (rf_proba + gb_proba + lr_proba) / 3\n    soft_preds = np.argmax(avg_proba, axis=1)\n    \n    # Return the best of ensemble and soft voting\n    soft_acc = accuracy_score(y_val, soft_preds)\n    voting_acc = accuracy_score(y_val, voting_preds)\n    \n    if soft_acc > voting_acc and soft_acc > best_acc:\n        return soft_preds\n    elif voting_acc > soft_acc and voting_acc > best_acc:\n        return voting_preds\n    else:\n        # Return the individual best model\n        return best_model.predict(X_val_scaled)"
+    },
+    {
+      "iteration": 84,
+      "val_accuracy": null,
+      "val_loss": null,
+      "family": "Unknown",
+      "error": "Structure Error: Must define 'def solve(X_train, y_train, X_val, y_val)' that returns predictions.",
+      "time_seconds": 50.3,
+      "code": ""
+    },
+    {
+      "iteration": 85,
+      "val_accuracy": 0.784,
+      "val_loss": 1.0743,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 41.4,
+      "code": "import numpy as np\nfrom sklearn.ensemble import GradientBoostingClassifier, RandomForestClassifier, VotingClassifier\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.pipeline import Pipeline\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Combine train and val for better hyperparameter tuning\n    X_combined = np.vstack([X_train, X_val])\n    y_combined = np.concatenate([y_train, y_val])\n    \n    # Fit a GradientBoosting model with proper scaling\n    model = Pipeline([\n        ('scaler', StandardScaler()),\n        ('gb', GradientBoostingClassifier(\n            n_estimators=200,\n            max_depth=4,\n            learning_rate=0.1,\n            min_samples_split=10,\n            min_samples_leaf=5,\n            subsample=0.8,\n            random_state=42\n        ))\n    ])\n    \n    model.fit(X_train, y_train)\n    \n    # Predict on validation set\n    predictions = model.predict(X_val)\n    \n    return predictions.astype(np.int64)"
+    },
+    {
+      "iteration": 86,
+      "val_accuracy": 0.7715,
+      "val_loss": 1.1335,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 47.6,
+      "code": "import numpy as np\nfrom sklearn.ensemble import GradientBoostingClassifier, RandomForestClassifier, VotingClassifier\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.linear_model import LogisticRegression\nfrom sklearn.svm import SVC\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Preprocess features\n    scaler = StandardScaler()\n    X_train_scaled = scaler.fit_transform(X_train)\n    X_val_scaled = scaler.transform(X_val)\n    \n    # Try multiple models and ensemble\n    rf = RandomForestClassifier(n_estimators=200, max_depth=15, min_samples_split=5, \n                                min_samples_leaf=2, random_state=42, n_jobs=-1)\n    gb = GradientBoostingClassifier(n_estimators=150, max_depth=5, learning_rate=0.1, \n                                    min_samples_split=5, random_state=42)\n    lr = LogisticRegression(max_iter=1000, random_state=42)\n    \n    # Train all models\n    rf.fit(X_train_scaled, y_train)\n    gb.fit(X_train_scaled, y_train)\n    lr.fit(X_train_scaled, y_train)\n    \n    # Get predictions from each model\n    rf_pred = rf.predict(X_val_scaled)\n    gb_pred = gb.predict(X_val_scaled)\n    lr_pred = lr.predict(X_val_scaled)\n    \n    # Ensemble: weighted average of probabilities\n    rf_proba = rf.predict_proba(X_val_scaled)\n    gb_proba = gb.predict_proba(X_val_scaled)\n    lr_proba = lr.predict_proba(X_val_scaled)\n    \n    # Average probabilities across models\n    avg_proba = (rf_proba + gb_proba + lr_proba) / 3\n    \n    # Get final predictions\n    predictions = np.argmax(avg_proba, axis=1)\n    \n    return predictions.astype(np.int64)"
+    },
+    {
+      "iteration": 87,
+      "val_accuracy": 0.3645,
+      "val_loss": 3.0611,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 69.8,
+      "code": "import numpy as np\nfrom sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier, ExtraTreesClassifier\nfrom sklearn.linear_model import LogisticRegression\nfrom sklearn.svm import SVC\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.neural_network import MLPClassifier\nfrom sklearn.calibration import CalibratedClassifierCV\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Preprocess\n    scaler = StandardScaler()\n    X_train_scaled = scaler.fit_transform(X_train)\n    X_val_scaled = scaler.transform(X_val)\n    \n    # Build multiple models\n    rf = RandomForestClassifier(n_estimators=200, max_depth=15, min_samples_split=5, min_samples_leaf=2, random_state=42, n_jobs=-1)\n    rf.fit(X_train_scaled, y_train)\n    rf_pred = rf.predict(X_val_scaled)\n    \n    gb = GradientBoostingClassifier(n_estimators=150, max_depth=5, learning_rate=0.1, min_samples_split=5, random_state=42)\n    gb.fit(X_train_scaled, y_train)\n    gb_pred = gb.predict(X_val_scaled)\n    \n    lr = LogisticRegression(max_iter=1000, C=1.0, random_state=42)\n    lr.fit(X_train_scaled, y_train)\n    lr_pred = lr.predict(X_val_scaled)\n    \n    extra_trees = ExtraTreesClassifier(n_estimators=200, max_depth=15, random_state=42, n_jobs=-1)\n    extra_trees.fit(X_train_scaled, y_train)\n    extra_trees_pred = extra_trees.predict(X_val_scaled)\n    \n    # MLP for additional diversity\n    mlp = MLPClassifier(hidden_layer_sizes=(128, 64, 32), max_iter=200, random_state=42)\n    mlp.fit(X_train_scaled, y_train)\n    mlp_pred = mlp.predict(X_val_scaled)\n    \n    # Ensemble via weighted voting (RF and ExtraTrees usually strong)\n    ensemble_weights = np.array([0.3, 0.25, 0.15, 0.25, 0.05])  # RF, GB, LR, ET, MLP\n    weighted_preds = np.zeros(len(y_val), dtype=int)\n    \n    for model, pred, weight in zip([rf, gb, lr, extra_trees, mlp], \n                                    [rf_pred, gb_pred, lr_pred, extra_trees_pred, mlp_pred], \n                                    ensemble_weights):\n        for i in range(len(y_val)):\n            if pred[i] == weighted_preds[i]:\n                weighted_preds[i] += weight\n            else:\n                weighted_preds[i] -= weight\n    \n    # Normalize and round to get final predictions\n    weighted_preds = weighted_preds / np.sum(ensemble_weights)\n    final_preds = np.round(weighted_preds).astype(int) % 7\n    \n    return final_preds"
+    },
+    {
+      "iteration": 88,
+      "val_accuracy": 0.738,
+      "val_loss": 1.2922,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 68.4,
+      "code": "import numpy as np\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier, VotingClassifier, ExtraTreesClassifier\nfrom sklearn.linear_model import LogisticRegression\n\ndef solve(X_train, y_train, X_val, y_val):\n    scaler = StandardScaler()\n    X_train_scaled = scaler.fit_transform(X_train)\n    X_val_scaled = scaler.transform(X_val)\n    \n    rf = RandomForestClassifier(n_estimators=200, max_depth=15, min_samples_split=5, \n                                min_samples_leaf=3, class_weight='balanced', random_state=42, n_jobs=-1)\n    rf.fit(X_train_scaled, y_train)\n    rf_pred = rf.predict(X_val_scaled)\n    \n    gb = GradientBoostingClassifier(n_estimators=150, max_depth=4, learning_rate=0.1, \n                                    min_samples_split=5, min_samples_leaf=2, random_state=42)\n    gb.fit(X_train_scaled, y_train)\n    gb_pred = gb.predict(X_val_scaled)\n    \n    extra = ExtraTreesClassifier(n_estimators=200, max_depth=15, min_samples_split=5, \n                                 min_samples_leaf=3, class_weight='balanced', random_state=42, n_jobs=-1)\n    extra.fit(X_train_scaled, y_train)\n    extra_pred = extra.predict(X_val_scaled)\n    \n    log_reg = LogisticRegression(max_iter=1000, C=1.0, class_weight='balanced', random_state=42)\n    log_reg.fit(X_train_scaled, y_train)\n    log_reg_pred = log_reg.predict(X_val_scaled)\n    \n    ensemble = VotingClassifier(estimators=[\n        ('rf', rf),\n        ('gb', gb),\n        ('extra', extra),\n        ('log', log_reg)\n    ], voting='soft')\n    ensemble.fit(X_train_scaled, y_train)\n    predictions = ensemble.predict(X_val_scaled)\n    \n    return predictions.astype(np.int64)"
+    },
+    {
+      "iteration": 89,
+      "val_accuracy": null,
+      "val_loss": null,
+      "family": "Unknown",
+      "error": "Structure Error: Must define 'def solve(X_train, y_train, X_val, y_val)' that returns predictions.",
+      "time_seconds": 50.1,
+      "code": ""
+    },
+    {
+      "iteration": 90,
+      "val_accuracy": 0.77,
+      "val_loss": 1.1406,
+      "family": "GradientBoosting",
+      "is_best": false,
+      "time_seconds": 41.8,
+      "code": "import numpy as np\nfrom sklearn.ensemble import GradientBoostingClassifier\nfrom sklearn.preprocessing import StandardScaler\n\ndef solve(X_train, y_train, X_val, y_val):\n    scaler = StandardScaler()\n    X_train_scaled = scaler.fit_transform(X_train)\n    X_val_scaled = scaler.transform(X_val)\n    \n    model = GradientBoostingClassifier(\n        n_estimators=200,\n        max_depth=5,\n        learning_rate=0.1,\n        min_samples_split=10,\n        min_samples_leaf=5,\n        subsample=0.8,\n        random_state=42\n    )\n    model.fit(X_train_scaled, y_train)\n    predictions = model.predict(X_val_scaled)\n    return predictions"
+    },
+    {
+      "iteration": 91,
+      "val_accuracy": 0.795,
+      "val_loss": 1.0222,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 92.0,
+      "code": "import numpy as np\nfrom sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier, ExtraTreesClassifier, VotingClassifier\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.linear_model import LogisticRegression\nfrom sklearn.svm import SVC\n\ndef solve(X_train, y_train, X_val, y_val):\n    scaler = StandardScaler()\n    X_train_scaled = scaler.fit_transform(X_train)\n    X_val_scaled = scaler.transform(X_val)\n    \n    rf = RandomForestClassifier(n_estimators=300, max_depth=20, min_samples_split=4, min_samples_leaf=2, random_state=42, n_jobs=-1)\n    rf.fit(X_train_scaled, y_train)\n    rf_pred = rf.predict(X_val_scaled)\n    \n    gb = GradientBoostingClassifier(n_estimators=200, max_depth=5, learning_rate=0.1, subsample=0.8, random_state=42)\n    gb.fit(X_train_scaled, y_train)\n    gb_pred = gb.predict(X_val_scaled)\n    \n    et = ExtraTreesClassifier(n_estimators=300, max_depth=20, random_state=42, n_jobs=-1)\n    et.fit(X_train_scaled, y_train)\n    et_pred = et.predict(X_val_scaled)\n    \n    log_reg = LogisticRegression(max_iter=1000, C=1.0, random_state=42)\n    log_reg.fit(X_train_scaled, y_train)\n    log_reg_pred = log_reg.predict(X_val_scaled)\n    \n    voting_clf = VotingClassifier(estimators=[\n        ('rf', rf), ('gb', gb), ('et', et), ('log', log_reg)\n    ], voting='soft')\n    voting_clf.fit(X_train_scaled, y_train)\n    predictions = voting_clf.predict(X_val_scaled)\n    \n    return predictions"
+    },
+    {
+      "iteration": 92,
+      "val_accuracy": 0.79,
+      "val_loss": 1.0459,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 110.2,
+      "code": "import numpy as np\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier, VotingClassifier\nfrom sklearn.svm import SVC\n\ndef solve(X_train, y_train, X_val, y_val):\n    scaler = StandardScaler()\n    X_train_scaled = scaler.fit_transform(X_train)\n    X_val_scaled = scaler.transform(X_val)\n    \n    rf = RandomForestClassifier(n_estimators=200, max_depth=None, min_samples_split=5, min_samples_leaf=2, random_state=42, n_jobs=-1)\n    rf.fit(X_train_scaled, y_train)\n    \n    gb = GradientBoostingClassifier(n_estimators=200, max_depth=5, learning_rate=0.1, random_state=42)\n    gb.fit(X_train_scaled, y_train)\n    \n    svc = SVC(kernel='rbf', C=10, gamma='scale', probability=True, random_state=42)\n    svc.fit(X_train_scaled, y_train)\n    \n    rf_pred = rf.predict(X_val_scaled)\n    gb_pred = gb.predict(X_val_scaled)\n    svc_pred = svc.predict(X_val_scaled)\n    \n    ensemble = VotingClassifier(estimators=[('rf', rf), ('gb', gb), ('svc', svc)], voting='hard')\n    ensemble.fit(X_train_scaled, y_train)\n    \n    predictions = ensemble.predict(X_val_scaled)\n    \n    return predictions"
+    },
+    {
+      "iteration": 93,
+      "val_accuracy": 0.8035,
+      "val_loss": 0.982,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 36.5,
+      "code": "import numpy as np\nfrom sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier, ExtraTreesClassifier, VotingClassifier\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.pipeline import Pipeline\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Preprocess features with standardization\n    scaler = StandardScaler()\n    X_train_scaled = scaler.fit_transform(X_train)\n    X_val_scaled = scaler.transform(X_val)\n    \n    # Build diverse tree-based models\n    rf = RandomForestClassifier(n_estimators=300, max_depth=25, min_samples_split=4, max_features='sqrt', random_state=42, n_jobs=-1)\n    et = ExtraTreesClassifier(n_estimators=300, max_depth=25, min_samples_split=4, max_features='sqrt', random_state=42, n_jobs=-1)\n    gb = GradientBoostingClassifier(n_estimators=200, max_depth=6, learning_rate=0.1, max_features='sqrt', random_state=42)\n    \n    # Create voting ensemble with soft voting\n    ensemble = VotingClassifier(\n        estimators=[('rf', rf), ('et', et), ('gb', gb)],\n        voting='soft',\n        n_jobs=-1\n    )\n    \n    # Fit ensemble\n    ensemble.fit(X_train_scaled, y_train)\n    \n    # Get predictions\n    predictions = ensemble.predict(X_val_scaled)\n    \n    return predictions"
+    },
+    {
+      "iteration": 94,
+      "val_accuracy": null,
+      "val_loss": null,
+      "family": "RandomForest",
+      "error": "Runtime Error: axis 1 is out of bounds for array of dimension 1\nTraceback (most recent call last):\n  File \"f:\\AI-IN-THE-LOOP\\aitl-paper\\experiments\\aeos\\trainer.py\", line 123, in run_solve\n    result_holder[0] = solve_fn(\n  File \"<string>\", line 40, in solve\n  File \"C:\\Users\\ZENITH\\AppData\\Roaming\\Python\\Python310\\site-packages\\numpy\\core\\fromnumeric.py\", line 1229, in argmax\n    return _wrapfunc(a, 'argmax', axis=axis, out=out, **kwds)\n  File \"C:\\Users\\ZENITH\\AppData\\Roaming\\Python\\Python310\\si",
+      "time_seconds": 66.7,
+      "code": "import numpy as np\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier, VotingClassifier, BaggingClassifier\nfrom sklearn.linear_model import LogisticRegression\nfrom sklearn.svm import SVC\nfrom sklearn.neural_network import MLPClassifier\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Scale features\n    scaler = StandardScaler()\n    X_train_scaled = scaler.fit_transform(X_train)\n    X_val_scaled = scaler.transform(X_val)\n    \n    # Create multiple models\n    rf = RandomForestClassifier(n_estimators=300, max_depth=15, min_samples_split=5, \n                               min_samples_leaf=2, class_weight='balanced', random_state=42, n_jobs=-1)\n    gb = GradientBoostingClassifier(n_estimators=200, max_depth=5, learning_rate=0.1, \n                                    min_samples_split=5, min_samples_leaf=2, random_state=42)\n    lr = LogisticRegression(C=1.0, max_iter=1000, solver='lbfgs', random_state=42)\n    svc = SVC(kernel='rbf', C=10.0, gamma='scale', random_state=42)\n    mlp = MLPClassifier(hidden_layer_sizes=(128, 64, 32), activation='relu', \n                       max_iter=200, random_state=42, early_stopping=True)\n    \n    # Train all models\n    rf.fit(X_train_scaled, y_train)\n    gb.fit(X_train_scaled, y_train)\n    lr.fit(X_train_scaled, y_train)\n    svc.fit(X_train_scaled, y_train)\n    mlp.fit(X_train_scaled, y_train)\n    \n    # Get predictions from all models\n    rf_pred = rf.predict(X_val_scaled)\n    gb_pred = gb.predict(X_val_scaled)\n    lr_pred = lr.predict(X_val_scaled)\n    svc_pred = svc.predict(X_val_scaled)\n    mlp_pred = mlp.predict(X_val_scaled)\n    \n    # Average predictions (soft voting style)\n    predictions = np.mean([rf_pred, gb_pred, lr_pred, svc_pred, mlp_pred], axis=0)\n    predictions = np.argmax(predictions, axis=1)\n    \n    return predictions.astype(np.int32)"
+    },
+    {
+      "iteration": 95,
+      "val_accuracy": 0.7985,
+      "val_loss": 1.0056,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 61.9,
+      "code": "import numpy as np\nfrom sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier, VotingClassifier\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.linear_model import LogisticRegression\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Standardize features\n    scaler = StandardScaler()\n    X_train_scaled = scaler.fit_transform(X_train)\n    X_val_scaled = scaler.transform(X_val)\n    \n    # Random Forest with optimized parameters\n    rf = RandomForestClassifier(\n        n_estimators=300,\n        max_depth=None,\n        min_samples_split=4,\n        min_samples_leaf=2,\n        max_features='sqrt',\n        random_state=42,\n        n_jobs=-1\n    )\n    rf.fit(X_train_scaled, y_train)\n    rf_pred = rf.predict(X_val_scaled)\n    \n    # Gradient Boosting as secondary model\n    gb = GradientBoostingClassifier(\n        n_estimators=200,\n        max_depth=5,\n        learning_rate=0.1,\n        min_samples_split=4,\n        min_samples_leaf=2,\n        random_state=42\n    )\n    gb.fit(X_train_scaled, y_train)\n    gb_pred = gb.predict(X_val_scaled)\n    \n    # Ensemble: weighted average of predictions\n    ensemble_pred = np.where(rf_pred == gb_pred, rf_pred, np.random.randint(0, 7, size=rf_pred.shape))\n    \n    # Try simple ensemble with probability weighting\n    rf_proba = rf.predict_proba(X_val_scaled)\n    gb_proba = gb.predict_proba(X_val_scaled)\n    ensemble_proba = 0.6 * rf_proba + 0.4 * gb_proba\n    ensemble_pred = np.argmax(ensemble_proba, axis=1)\n    \n    return ensemble_pred.astype(np.int64)"
+    },
+    {
+      "iteration": 96,
+      "val_accuracy": 0.792,
+      "val_loss": 1.0364,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 23.6,
+      "code": "import numpy as np\nfrom sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.pipeline import Pipeline\n\ndef solve(X_train, y_train, X_val, y_val):\n    scaler = StandardScaler()\n    X_train_scaled = scaler.fit_transform(X_train)\n    X_val_scaled = scaler.transform(X_val)\n    \n    rf = RandomForestClassifier(n_estimators=300, max_depth=25, min_samples_split=3, \n                                min_samples_leaf=2, max_features='sqrt', \n                                random_state=42, n_jobs=-1)\n    rf.fit(X_train_scaled, y_train)\n    \n    predictions = rf.predict(X_val_scaled)\n    \n    return predictions"
+    },
+    {
+      "iteration": 97,
+      "val_accuracy": 0.7935,
+      "val_loss": 1.0293,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 54.7,
+      "code": "import numpy as np\nfrom sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.linear_model import LogisticRegression\nfrom sklearn.svm import SVC\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Scale features\n    scaler = StandardScaler()\n    X_train_scaled = scaler.fit_transform(X_train)\n    X_val_scaled = scaler.transform(X_val)\n    \n    # Train Random Forest\n    rf = RandomForestClassifier(\n        n_estimators=300,\n        max_depth=15,\n        min_samples_split=4,\n        min_samples_leaf=2,\n        class_weight='balanced',\n        random_state=42,\n        n_jobs=-1,\n        verbose=False\n    )\n    rf.fit(X_train_scaled, y_train)\n    rf_pred = rf.predict(X_val_scaled)\n    \n    # Train Gradient Boosting\n    gb = GradientBoostingClassifier(\n        n_estimators=200,\n        max_depth=5,\n        learning_rate=0.1,\n        min_samples_split=4,\n        min_samples_leaf=2,\n        subsample=0.8,\n        random_state=42\n    )\n    gb.fit(X_train_scaled, y_train)\n    gb_pred = gb.predict(X_val_scaled)\n    \n    # Ensemble voting\n    rf_proba = rf.predict_proba(X_val_scaled)\n    gb_proba = gb.predict_proba(X_val_scaled)\n    \n    # Weighted average of probabilities\n    combined_proba = 0.6 * rf_proba + 0.4 * gb_proba\n    ensemble_pred = np.argmax(combined_proba, axis=1)\n    \n    return ensemble_pred.astype(np.int64)"
+    },
+    {
+      "iteration": 98,
+      "val_accuracy": null,
+      "val_loss": null,
+      "family": "RandomForest",
+      "error": "Runtime Error: This 'SVC' has no attribute 'predict_proba'\nTraceback (most recent call last):\n  File \"C:\\Users\\ZENITH\\AppData\\Roaming\\Python\\Python310\\site-packages\\sklearn\\utils\\_available_if.py\", line 32, in _check\n    check_result = self.check(obj)\n  File \"C:\\Users\\ZENITH\\AppData\\Roaming\\Python\\Python310\\site-packages\\sklearn\\svm\\_base.py\", line 831, in _check_proba\n    raise AttributeError(\nAttributeError: predict_proba is not available when probability=False\n\nThe above exception was the dir",
+      "time_seconds": 133.5,
+      "code": "import numpy as np\nfrom sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier, ExtraTreesClassifier, VotingClassifier\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.linear_model import LogisticRegression\nfrom sklearn.svm import SVC\nfrom sklearn.neural_network import MLPClassifier\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Scale features\n    scaler = StandardScaler()\n    X_train_scaled = scaler.fit_transform(X_train)\n    X_val_scaled = scaler.transform(X_val)\n    \n    # Multiple model instances\n    rf = RandomForestClassifier(n_estimators=200, max_depth=15, min_samples_split=5, \n                               min_samples_leaf=2, random_state=42, n_jobs=-1)\n    gb = GradientBoostingClassifier(n_estimators=150, max_depth=6, learning_rate=0.05, \n                                   min_samples_split=5, min_samples_leaf=2, random_state=42)\n    et = ExtraTreesClassifier(n_estimators=200, max_depth=15, random_state=42, n_jobs=-1)\n    lr = LogisticRegression(C=1.0, max_iter=1000, random_state=42)\n    svc = SVC(kernel='rbf', C=1.0, random_state=42)\n    mlp = MLPClassifier(hidden_layer_sizes=(64, 32), max_iter=300, random_state=42)\n    \n    # Train all models\n    rf.fit(X_train_scaled, y_train)\n    gb.fit(X_train_scaled, y_train)\n    et.fit(X_train_scaled, y_train)\n    lr.fit(X_train_scaled, y_train)\n    svc.fit(X_train_scaled, y_train)\n    mlp.fit(X_train_scaled, y_train)\n    \n    # Get individual predictions\n    p_rf = rf.predict(X_val_scaled)\n    p_gb = gb.predict(X_val_scaled)\n    p_et = et.predict(X_val_scaled)\n    p_lr = lr.predict(X_val_scaled)\n    p_svc = svc.predict(X_val_scaled)\n    p_mlp = mlp.predict(X_val_scaled)\n    \n    # Soft voting ensemble\n    from sklearn.ensemble import VotingClassifier\n    voting = VotingClassifier(\n        estimators=[\n            ('rf', rf), ('gb', gb), ('et', et), \n            ('lr', lr), ('svc', svc), ('mlp', mlp)\n        ],\n        voting='soft'\n    )\n    \n    # Train and predict with voting classifier\n    voting.fit(X_train_scaled, y_train)\n    predictions = voting.predict(X_val_scaled)\n    \n    return predictions.astype(np.int32)"
+    },
+    {
+      "iteration": 99,
+      "val_accuracy": null,
+      "val_loss": null,
+      "family": "RandomForest",
+      "error": "Range Error: Predictions must be in [0, 6], got range [0, 18].",
+      "time_seconds": 66.0,
+      "code": "import numpy as np\nfrom sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.pipeline import Pipeline\nfrom sklearn.linear_model import LogisticRegression\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Standardize features\n    scaler = StandardScaler()\n    X_train_scaled = scaler.fit_transform(X_train)\n    X_val_scaled = scaler.transform(X_val)\n    \n    # Ensemble: RandomForest + GradientBoosting + LogisticRegression\n    rf = RandomForestClassifier(\n        n_estimators=300,\n        max_depth=20,\n        min_samples_split=4,\n        min_samples_leaf=2,\n        class_weight='balanced',\n        random_state=42,\n        n_jobs=-1\n    )\n    rf.fit(X_train_scaled, y_train)\n    rf_pred = rf.predict(X_val_scaled)\n    \n    gb = GradientBoostingClassifier(\n        n_estimators=200,\n        max_depth=5,\n        learning_rate=0.1,\n        random_state=42\n    )\n    gb.fit(X_train_scaled, y_train)\n    gb_pred = gb.predict(X_val_scaled)\n    \n    lr = LogisticRegression(\n        C=1.0,\n        max_iter=1000,\n        random_state=42\n    )\n    lr.fit(X_train_scaled, y_train)\n    lr_pred = lr.predict(X_val_scaled)\n    \n    # Simple majority voting\n    predictions = np.array([\n        np.sum([rf_pred[i], gb_pred[i], lr_pred[i]])\n        for i in range(len(rf_pred))\n    ])\n    \n    # Return as integer array\n    return predictions.astype(int)"
+    },
+    {
+      "iteration": 100,
+      "val_accuracy": 0.77,
+      "val_loss": 1.1406,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 51.3,
+      "code": "import numpy as np\nfrom sklearn.ensemble import GradientBoostingClassifier, RandomForestClassifier\nfrom sklearn.preprocessing import StandardScaler\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Standardize features\n    scaler = StandardScaler()\n    X_train_scaled = scaler.fit_transform(X_train)\n    X_val_scaled = scaler.transform(X_val)\n    \n    # Use Gradient Boosting with tuned hyperparameters\n    model = GradientBoostingClassifier(\n        n_estimators=200,\n        max_depth=5,\n        learning_rate=0.1,\n        min_samples_split=10,\n        min_samples_leaf=5,\n        subsample=0.8,\n        random_state=42,\n        verbose=0\n    )\n    model.fit(X_train_scaled, y_train)\n    \n    # Get predictions\n    predictions = model.predict(X_val_scaled)\n    \n    # Ensure predictions are integers in valid class range [0, 6]\n    predictions = np.clip(predictions, 0, 6).astype(np.int64)\n    \n    return predictions"
+    }
+  ]
+}

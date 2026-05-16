@@ -1,0 +1,88 @@
+{
+  "completed": 5,
+  "failed": 1,
+  "skipped": 0,
+  "results": [
+    {
+      "exp_id": "1.13",
+      "model": "claude-haiku-4-5-20251001",
+      "dataset": "tabular",
+      "best_accuracy": 0.809,
+      "total_iterations": 42,
+      "waste_count": 4,
+      "sunk_cost_episodes": 4,
+      "total_time": 851.7,
+      "families": [
+        "RandomForest",
+        "sklearn_MLP",
+        "GradientBoosting",
+        "SVM",
+        "ExtraTrees"
+      ]
+    },
+    {
+      "exp_id": "1.14",
+      "model": "claude-haiku-4-5-20251001",
+      "dataset": "text",
+      "best_accuracy": 0.8173,
+      "total_iterations": 45,
+      "waste_count": 7,
+      "sunk_cost_episodes": 4,
+      "total_time": 3642.3,
+      "families": [
+        "LogisticRegression",
+        "RandomForest",
+        "sklearn_MLP",
+        "GradientBoosting",
+        "ExtraTrees",
+        "SVM"
+      ]
+    },
+    {
+      "exp_id": "1.15",
+      "model": "claude-haiku-4-5-20251001",
+      "dataset": "vision",
+      "best_accuracy": 0.9885,
+      "total_iterations": 47,
+      "waste_count": 6,
+      "sunk_cost_episodes": 8,
+      "total_time": 2131.3,
+      "families": [
+        "SVM",
+        "GradientBoosting",
+        "ExtraTrees",
+        "PyTorch_NN",
+        "RandomForest"
+      ]
+    },
+    {
+      "exp_id": "1.16",
+      "model": "claude-sonnet-4-6",
+      "dataset": "tabular",
+      "best_accuracy": 0.8165,
+      "total_iterations": 20,
+      "waste_count": 2,
+      "sunk_cost_episodes": 5,
+      "total_time": 454.0,
+      "families": [
+        "RandomForest"
+      ]
+    },
+    {
+      "exp_id": "1.17",
+      "model": "claude-sonnet-4-6",
+      "dataset": "text",
+      "best_accuracy": 0.8418,
+      "total_iterations": 20,
+      "waste_count": 1,
+      "sunk_cost_episodes": 1,
+      "total_time": 643.9,
+      "families": [
+        "GradientBoosting",
+        "SVM",
+        "RandomForest",
+        "LogisticRegression"
+      ]
+    }
+  ]
+}

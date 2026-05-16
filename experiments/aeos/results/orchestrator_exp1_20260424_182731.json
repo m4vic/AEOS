@@ -1,0 +1,21 @@
+{
+  "completed": 1,
+  "failed": 0,
+  "skipped": 0,
+  "results": [
+    {
+      "exp_id": "1.18",
+      "model": "claude-sonnet-4-6",
+      "dataset": "vision",
+      "best_accuracy": 0.996,
+      "total_iterations": 30,
+      "waste_count": 5,
+      "sunk_cost_episodes": 6,
+      "total_time": 1485.7,
+      "families": [
+        "PyTorch_NN",
+        "sklearn_MLP"
+      ]
+    }
+  ]
+}

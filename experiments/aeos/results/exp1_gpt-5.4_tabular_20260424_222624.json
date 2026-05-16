@@ -1,0 +1,21 @@
+{
+  "run_id": "20260424_222624",
+  "backend": "openai",
+  "model": "openai/gpt-5.4",
+  "dataset": "tabular",
+  "n_features": 54,
+  "n_classes": 7,
+  "n_train": 8000,
+  "n_val": 2000,
+  "best_accuracy": 0.0,
+  "best_loss": Infinity,
+  "best_iteration": null,
+  "best_code": null,
+  "total_iterations": 200,
+  "stop_reason": "Safety cap reached (200 iterations)",
+  "total_time_seconds": 0.2,
+  "model_families_explored": [],
+  "sunk_cost_episodes": 0,
+  "waste_count": 0,
+  "iterations": []
+}

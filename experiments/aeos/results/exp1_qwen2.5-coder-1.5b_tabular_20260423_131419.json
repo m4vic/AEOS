@@ -1,0 +1,60 @@
+{
+  "run_id": "20260423_131419",
+  "backend": "ollama",
+  "model": "ollama/qwen2.5-coder:1.5b",
+  "dataset": "tabular",
+  "n_features": 54,
+  "n_classes": 7,
+  "n_train": 8000,
+  "n_val": 2000,
+  "best_accuracy": 0.743,
+  "best_loss": 1.2685,
+  "best_iteration": 1,
+  "best_code": "import numpy as np\nfrom sklearn.tree import DecisionTreeClassifier\nfrom sklearn.metrics import accuracy_score\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Define the baseline model\n    model = DecisionTreeClassifier(max_depth=10)\n    \n    # Fit the model to the training data\n    model.fit(X_train, y_train)\n    \n    # Make predictions on the validation data\n    predictions = model.predict(X_val)\n    \n    return predictions",
+  "total_iterations": 5,
+  "stop_reason": "Agent autonomously stopped at iteration 5",
+  "total_time_seconds": 27.5,
+  "model_families_explored": [
+    "DecisionTree"
+  ],
+  "sunk_cost_episodes": 0,
+  "waste_count": 1,
+  "iterations": [
+    {
+      "iteration": 1,
+      "val_accuracy": 0.743,
+      "val_loss": 1.2685,
+      "family": "DecisionTree",
+      "is_best": true,
+      "time_seconds": 22.1,
+      "code": "import numpy as np\nfrom sklearn.tree import DecisionTreeClassifier\nfrom sklearn.metrics import accuracy_score\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Define the baseline model\n    model = DecisionTreeClassifier(max_depth=10)\n    \n    # Fit the model to the training data\n    model.fit(X_train, y_train)\n    \n    # Make predictions on the validation data\n    predictions = model.predict(X_val)\n    \n    return predictions"
+    },
+    {
+      "iteration": 2,
+      "val_accuracy": 0.7265,
+      "val_loss": 1.3466,
+      "family": "DecisionTree",
+      "is_best": false,
+      "time_seconds": 0.9,
+      "code": "from sklearn.tree import DecisionTreeClassifier\n\ndef solve(X_train, y_train, X_val, y_val):\n    clf = DecisionTreeClassifier(random_state=42) # Random state for reproducibility\n    clf.fit(X_train, y_train)\n    predictions = clf.predict(X_val)\n    return predictions"
+    },
+    {
+      "iteration": 3,
+      "val_accuracy": null,
+      "val_loss": null,
+      "family": "RandomForest",
+      "error": "Execution Error: cannot import name 'ExtraTreesClassifier' from 'sklearn.tree' (C:\\Users\\ZENITH\\AppData\\Roaming\\Python\\Python310\\site-packages\\sklearn\\tree\\__init__.py)\nTraceback (most recent call last):\n  File \"F:\\AI-IN-THE-LOOP\\aitl-paper\\experiments\\aeos\\trainer.py\", line 103, in execute_agent_code\n    exec(code_str, exec_namespace)\n  File \"<string>\", line 6, in <module>\nImportError: cannot import name 'ExtraTreesClassifier' from 'sklearn.tree' (C:\\Users\\ZENITH\\AppData\\Roaming\\Python\\Python31",
+      "time_seconds": 2.8,
+      "code": "import numpy as np\nfrom sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier\nfrom sklearn.svm import SVC\nfrom sklearn.linear_model import LogisticRegression\nfrom sklearn.neighbors import KNeighborsClassifier\nfrom sklearn.tree import ExtraTreesClassifier\n\ndef solve(X_train, y_train, X_val, y_val):\n    models = [\n        RandomForestClassifier(n_estimators=100),\n        GradientBoostingClassifier(n_estimators=100),\n        SVC(kernel='linear'),\n        LogisticRegression(max_iter=200),\n        KNeighborsClassifier(n_neighbors=5),\n        ExtraTreesClassifier(n_estimators=100)\n    ]\n\n    best_model = None\n    highest_accuracy = 0\n\n    for model in models:\n        model.fit(X_train, y_train)\n        predictions = model.predict(X_val)\n\n        accuracy = np.mean(predictions == y_val)\n        if accuracy > highest_accuracy:\n            highest_accuracy = accuracy\n            best_model = model\n\n    return best_model.predict(X_val) if best_model else None"
+    },
+    {
+      "iteration": 4,
+      "val_accuracy": 0.7215,
+      "val_loss": 1.3703,
+      "family": "DecisionTree",
+      "is_best": false,
+      "time_seconds": 1.4,
+      "code": "from sklearn.tree import DecisionTreeClassifier\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Initialize the model with default parameters\n    model = DecisionTreeClassifier()\n    \n    # Fit the model to the training data\n    model.fit(X_train, y_train)\n    \n    # Predict the target values for the validation set\n    predictions = model.predict(X_val)\n    \n    return predictions"
+    }
+  ]
+}

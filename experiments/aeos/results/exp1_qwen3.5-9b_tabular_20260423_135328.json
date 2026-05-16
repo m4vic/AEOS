@@ -1,0 +1,42 @@
+{
+  "run_id": "20260423_135328",
+  "backend": "ollama",
+  "model": "ollama/qwen3.5:9b",
+  "dataset": "tabular",
+  "n_features": 54,
+  "n_classes": 7,
+  "n_train": 8000,
+  "n_val": 2000,
+  "best_accuracy": 0.8065,
+  "best_loss": 0.9677,
+  "best_iteration": 3,
+  "best_code": "import numpy as np\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.ensemble import RandomForestClassifier\nfrom sklearn.pipeline import Pipeline\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Create a pipeline with preprocessing and model\n    pipeline = Pipeline([\n        ('scaler', StandardScaler()),\n        ('clf', RandomForestClassifier(n_estimators=100, random_state=42, n_jobs=-1))\n    ])\n    \n    # Train the model\n    pipeline.fit(X_train, y_train)\n    \n    # Get predictions\n    predictions = pipeline.predict(X_val)\n    \n    # Ensure predictions are numpy array of integers\n    predictions = np.array(predictions, dtype=np.int64)\n    \n    return predictions",
+  "total_iterations": 3,
+  "stop_reason": "Experiment crashed: 'charmap' codec can't encode character '\\u2605' in position 80: character maps to <undefined>",
+  "total_time_seconds": 144.8,
+  "model_families_explored": [
+    "RandomForest"
+  ],
+  "sunk_cost_episodes": 0,
+  "waste_count": 2,
+  "iterations": [
+    {
+      "iteration": 1,
+      "val_accuracy": null,
+      "val_loss": null,
+      "family": "Unknown",
+      "error": "Structure Error: Must define 'def solve(X_train, y_train, X_val, y_val)' that returns predictions.",
+      "time_seconds": 71.0,
+      "code": ""
+    },
+    {
+      "iteration": 2,
+      "val_accuracy": null,
+      "val_loss": null,
+      "family": "Unknown",
+      "error": "Structure Error: Must define 'def solve(X_train, y_train, X_val, y_val)' that returns predictions.",
+      "time_seconds": 56.7,
+      "code": ""
+    }
+  ]
+}

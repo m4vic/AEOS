@@ -1,0 +1,336 @@
+{
+  "summary": {
+    "total_files": 59,
+    "valid_files": 47,
+    "invalid_files": 12,
+    "expected_pairs": 32,
+    "pairs_with_valid_latest": 32,
+    "missing_pairs": [],
+    "invalid_reason_counts": {
+      "non_positive_best_accuracy": 1,
+      "out_of_phase1_scope": 11
+    }
+  },
+  "latest_valid_runs": [
+    {
+      "model": "claude-haiku-4-5-20251001",
+      "dataset": "tabular",
+      "file": "F:\\AI-IN-THE-LOOP\\aitl-paper\\experiments\\aeos\\results\\exp1_claude-haiku-4-5-20251001_tabular_20260424_143620.json",
+      "timestamp": "20260424_143620",
+      "best_accuracy": 0.809,
+      "best_iteration": 24,
+      "total_iterations": 42,
+      "waste_count": 4
+    },
+    {
+      "model": "claude-haiku-4-5-20251001",
+      "dataset": "text",
+      "file": "F:\\AI-IN-THE-LOOP\\aitl-paper\\experiments\\aeos\\results\\exp1_claude-haiku-4-5-20251001_text_20260424_145047.json",
+      "timestamp": "20260424_145047",
+      "best_accuracy": 0.8173,
+      "best_iteration": 25,
+      "total_iterations": 45,
+      "waste_count": 7
+    },
+    {
+      "model": "claude-haiku-4-5-20251001",
+      "dataset": "vision",
+      "file": "F:\\AI-IN-THE-LOOP\\aitl-paper\\experiments\\aeos\\results\\exp1_claude-haiku-4-5-20251001_vision_20260424_155146.json",
+      "timestamp": "20260424_155146",
+      "best_accuracy": 0.9885,
+      "best_iteration": 28,
+      "total_iterations": 47,
+      "waste_count": 6
+    },
+    {
+      "model": "claude-sonnet-4-6",
+      "dataset": "tabular",
+      "file": "F:\\AI-IN-THE-LOOP\\aitl-paper\\experiments\\aeos\\results\\exp1_claude-sonnet-4-6_tabular_20260424_163732.json",
+      "timestamp": "20260424_163732",
+      "best_accuracy": 0.8165,
+      "best_iteration": 3,
+      "total_iterations": 20,
+      "waste_count": 2
+    },
+    {
+      "model": "claude-sonnet-4-6",
+      "dataset": "text",
+      "file": "F:\\AI-IN-THE-LOOP\\aitl-paper\\experiments\\aeos\\results\\exp1_claude-sonnet-4-6_text_20260424_164527.json",
+      "timestamp": "20260424_164527",
+      "best_accuracy": 0.8418,
+      "best_iteration": 3,
+      "total_iterations": 20,
+      "waste_count": 1
+    },
+    {
+      "model": "claude-sonnet-4-6",
+      "dataset": "vision",
+      "file": "F:\\AI-IN-THE-LOOP\\aitl-paper\\experiments\\aeos\\results\\exp1_claude-sonnet-4-6_vision_20260424_180048.json",
+      "timestamp": "20260424_180048",
+      "best_accuracy": 0.996,
+      "best_iteration": 11,
+      "total_iterations": 30,
+      "waste_count": 5
+    },
+    {
+      "model": "gpt-4o",
+      "dataset": "tabular",
+      "file": "F:\\AI-IN-THE-LOOP\\aitl-paper\\experiments\\aeos\\results\\exp1_gpt-4o_tabular_20260424_134506.json",
+      "timestamp": "20260424_134506",
+      "best_accuracy": 0.813,
+      "best_iteration": 11,
+      "total_iterations": 27,
+      "waste_count": 0
+    },
+    {
+      "model": "gpt-4o",
+      "dataset": "text",
+      "file": "F:\\AI-IN-THE-LOOP\\aitl-paper\\experiments\\aeos\\results\\exp1_gpt-4o_text_20260424_135720.json",
+      "timestamp": "20260424_135720",
+      "best_accuracy": 0.823,
+      "best_iteration": 18,
+      "total_iterations": 37,
+      "waste_count": 3
+    },
+    {
+      "model": "gpt-4o",
+      "dataset": "vision",
+      "file": "F:\\AI-IN-THE-LOOP\\aitl-paper\\experiments\\aeos\\results\\exp1_gpt-4o_vision_20260424_141608.json",
+      "timestamp": "20260424_141608",
+      "best_accuracy": 0.951,
+      "best_iteration": 4,
+      "total_iterations": 14,
+      "waste_count": 0
+    },
+    {
+      "model": "gpt-4o-mini",
+      "dataset": "tabular",
+      "file": "F:\\AI-IN-THE-LOOP\\aitl-paper\\experiments\\aeos\\results\\exp1_gpt-4o-mini_tabular_20260425_124512.json",
+      "timestamp": "20260425_124512",
+      "best_accuracy": 0.8105,
+      "best_iteration": 3,
+      "total_iterations": 20,
+      "waste_count": 1
+    },
+    {
+      "model": "gpt-4o-mini",
+      "dataset": "text",
+      "file": "F:\\AI-IN-THE-LOOP\\aitl-paper\\experiments\\aeos\\results\\exp1_gpt-4o-mini_text_20260424_010732.json",
+      "timestamp": "20260424_010732",
+      "best_accuracy": 0.8436,
+      "best_iteration": 6,
+      "total_iterations": 23,
+      "waste_count": 2
+    },
+    {
+      "model": "gpt-4o-mini",
+      "dataset": "vision",
+      "file": "F:\\AI-IN-THE-LOOP\\aitl-paper\\experiments\\aeos\\results\\exp1_gpt-4o-mini_vision_20260424_122220.json",
+      "timestamp": "20260424_122220",
+      "best_accuracy": 0.9555,
+      "best_iteration": 9,
+      "total_iterations": 36,
+      "waste_count": 12
+    },
+    {
+      "model": "gpt-5.4-2026-03-05",
+      "dataset": "tabular",
+      "file": "F:\\AI-IN-THE-LOOP\\aitl-paper\\experiments\\aeos\\results\\exp1_gpt-5.4-2026-03-05_tabular_20260425_002525.json",
+      "timestamp": "20260425_002525",
+      "best_accuracy": 0.8275,
+      "best_iteration": 3,
+      "total_iterations": 19,
+      "waste_count": 0
+    },
+    {
+      "model": "gpt-5.4-2026-03-05",
+      "dataset": "text",
+      "file": "F:\\AI-IN-THE-LOOP\\aitl-paper\\experiments\\aeos\\results\\exp1_gpt-5.4-2026-03-05_text_20260425_003724.json",
+      "timestamp": "20260425_003724",
+      "best_accuracy": 0.8602,
+      "best_iteration": 2,
+      "total_iterations": 18,
+      "waste_count": 0
+    },
+    {
+      "model": "gpt-5.4-2026-03-05",
+      "dataset": "vision",
+      "file": "F:\\AI-IN-THE-LOOP\\aitl-paper\\experiments\\aeos\\results\\exp1_gpt-5.4-2026-03-05_vision_20260425_004821.json",
+      "timestamp": "20260425_004821",
+      "best_accuracy": 0.993,
+      "best_iteration": 57,
+      "total_iterations": 75,
+      "waste_count": 6
+    },
+    {
+      "model": "gpt-5.4-mini-2026-03-17",
+      "dataset": "tabular",
+      "file": "F:\\AI-IN-THE-LOOP\\aitl-paper\\experiments\\aeos\\results\\exp1_gpt-5.4-mini-2026-03-17_tabular_20260424_225509.json",
+      "timestamp": "20260424_225509",
+      "best_accuracy": 0.821,
+      "best_iteration": 24,
+      "total_iterations": 40,
+      "waste_count": 1
+    },
+    {
+      "model": "gpt-5.4-mini-2026-03-17",
+      "dataset": "text",
+      "file": "F:\\AI-IN-THE-LOOP\\aitl-paper\\experiments\\aeos\\results\\exp1_gpt-5.4-mini-2026-03-17_text_20260424_232346.json",
+      "timestamp": "20260424_232346",
+      "best_accuracy": 0.8659,
+      "best_iteration": 43,
+      "total_iterations": 61,
+      "waste_count": 3
+    },
+    {
+      "model": "gpt-5.4-mini-2026-03-17",
+      "dataset": "vision",
+      "file": "F:\\AI-IN-THE-LOOP\\aitl-paper\\experiments\\aeos\\results\\exp1_gpt-5.4-mini-2026-03-17_vision_20260425_001646.json",
+      "timestamp": "20260425_001646",
+      "best_accuracy": 0.9545,
+      "best_iteration": 3,
+      "total_iterations": 10,
+      "waste_count": 1
+    },
+    {
+      "model": "qwen2.5-coder-1.5b",
+      "dataset": "tabular",
+      "file": "F:\\AI-IN-THE-LOOP\\aitl-paper\\experiments\\aeos\\results\\exp1_qwen2.5-coder-1.5b_tabular_20260423_131419.json",
+      "timestamp": "20260423_131419",
+      "best_accuracy": 0.743,
+      "best_iteration": 1,
+      "total_iterations": 5,
+      "waste_count": 1
+    },
+    {
+      "model": "qwen2.5-coder-1.5b",
+      "dataset": "text",
+      "file": "F:\\AI-IN-THE-LOOP\\aitl-paper\\experiments\\aeos\\results\\exp1_qwen2.5-coder-1.5b_text_20260424_184405.json",
+      "timestamp": "20260424_184405",
+      "best_accuracy": 0.8032,
+      "best_iteration": 2,
+      "total_iterations": 5,
+      "waste_count": 1
+    },
+    {
+      "model": "qwen2.5-coder-1.5b",
+      "dataset": "vision",
+      "file": "F:\\AI-IN-THE-LOOP\\aitl-paper\\experiments\\aeos\\results\\exp1_qwen2.5-coder-1.5b_vision_20260423_134617.json",
+      "timestamp": "20260423_134617",
+      "best_accuracy": 0.943,
+      "best_iteration": 1,
+      "total_iterations": 1,
+      "waste_count": 0
+    },
+    {
+      "model": "qwen2.5-coder-14b",
+      "dataset": "tabular",
+      "file": "F:\\AI-IN-THE-LOOP\\aitl-paper\\experiments\\aeos\\results\\exp1_qwen2.5-coder-14b_tabular_20260425_135849.json",
+      "timestamp": "20260425_135849",
+      "best_accuracy": 0.8065,
+      "best_iteration": 1,
+      "total_iterations": 7,
+      "waste_count": 0
+    },
+    {
+      "model": "qwen2.5-coder-14b",
+      "dataset": "text",
+      "file": "F:\\AI-IN-THE-LOOP\\aitl-paper\\experiments\\aeos\\results\\exp1_qwen2.5-coder-14b_text_20260424_190018.json",
+      "timestamp": "20260424_190018",
+      "best_accuracy": 0.798,
+      "best_iteration": 1,
+      "total_iterations": 6,
+      "waste_count": 0
+    },
+    {
+      "model": "qwen2.5-coder-14b",
+      "dataset": "vision",
+      "file": "F:\\AI-IN-THE-LOOP\\aitl-paper\\experiments\\aeos\\results\\exp1_qwen2.5-coder-14b_vision_20260424_190430.json",
+      "timestamp": "20260424_190430",
+      "best_accuracy": 0.9625,
+      "best_iteration": 2,
+      "total_iterations": 6,
+      "waste_count": 0
+    },
+    {
+      "model": "qwen2.5-coder-7b",
+      "dataset": "tabular",
+      "file": "F:\\AI-IN-THE-LOOP\\aitl-paper\\experiments\\aeos\\results\\exp1_qwen2.5-coder-7b_tabular_20260425_141614.json",
+      "timestamp": "20260425_141614",
+      "best_accuracy": 0.807,
+      "best_iteration": 1,
+      "total_iterations": 6,
+      "waste_count": 0
+    },
+    {
+      "model": "qwen2.5-coder-7b",
+      "dataset": "text",
+      "file": "F:\\AI-IN-THE-LOOP\\aitl-paper\\experiments\\aeos\\results\\exp1_qwen2.5-coder-7b_text_20260424_184740.json",
+      "timestamp": "20260424_184740",
+      "best_accuracy": 0.798,
+      "best_iteration": 5,
+      "total_iterations": 6,
+      "waste_count": 0
+    },
+    {
+      "model": "qwen2.5-coder-7b",
+      "dataset": "vision",
+      "file": "F:\\AI-IN-THE-LOOP\\aitl-paper\\experiments\\aeos\\results\\exp1_qwen2.5-coder-7b_vision_20260424_185328.json",
+      "timestamp": "20260424_185328",
+      "best_accuracy": 0.9475,
+      "best_iteration": 2,
+      "total_iterations": 6,
+      "waste_count": 1
+    },
+    {
+      "model": "qwen3.5-4b",
+      "dataset": "tabular",
+      "file": "F:\\AI-IN-THE-LOOP\\aitl-paper\\experiments\\aeos\\results\\exp1_qwen3.5-4b_tabular_20260423_134701.json",
+      "timestamp": "20260423_134701",
+      "best_accuracy": 0.752,
+      "best_iteration": 3,
+      "total_iterations": 3,
+      "waste_count": 2
+    },
+    {
+      "model": "qwen3.5-4b",
+      "dataset": "text",
+      "file": "F:\\AI-IN-THE-LOOP\\aitl-paper\\experiments\\aeos\\results\\exp1_qwen3.5-4b_text_20260424_210904.json",
+      "timestamp": "20260424_210904",
+      "best_accuracy": 0.8291,
+      "best_iteration": 6,
+      "total_iterations": 20,
+      "waste_count": 10
+    },
+    {
+      "model": "qwen3.5-4b",
+      "dataset": "vision",
+      "file": "F:\\AI-IN-THE-LOOP\\aitl-paper\\experiments\\aeos\\results\\exp1_qwen3.5-4b_vision_20260423_134930.json",
+      "timestamp": "20260423_134930",
+      "best_accuracy": 0.943,
+      "best_iteration": 6,
+      "total_iterations": 6,
+      "waste_count": 5
+    },
+    {
+      "model": "qwen3.5-9b",
+      "dataset": "tabular",
+      "file": "F:\\AI-IN-THE-LOOP\\aitl-paper\\experiments\\aeos\\results\\exp1_qwen3.5-9b_tabular_20260425_152954.json",
+      "timestamp": "20260425_152954",
+      "best_accuracy": 0.8095,
+      "best_iteration": 28,
+      "total_iterations": 100,
+      "waste_count": 29
+    },
+    {
+      "model": "qwen3.5-9b",
+      "dataset": "text",
+      "file": "F:\\AI-IN-THE-LOOP\\aitl-paper\\experiments\\aeos\\results\\exp1_qwen3.5-9b_text_20260424_212024.json",
+      "timestamp": "20260424_212024",
+      "best_accuracy": 0.8212,
+      "best_iteration": 21,
+      "total_iterations": 50,
+      "waste_count": 23
+    }
+  ]
+}

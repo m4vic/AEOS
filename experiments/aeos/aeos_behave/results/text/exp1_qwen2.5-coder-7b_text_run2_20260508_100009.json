@@ -1,0 +1,62 @@
+{
+  "run_id": "20260508_100009",
+  "backend": "ollama",
+  "model": "ollama/qwen2.5-coder:7b",
+  "dataset": "text",
+  "n_features": 0,
+  "n_classes": 6,
+  "n_train": 3427,
+  "n_val": 2282,
+  "best_accuracy": 0.7445,
+  "best_loss": 1.2147,
+  "best_iteration": 2,
+  "best_code": "def solve(X_train, y_train, X_val, y_val):\n    from sklearn.feature_extraction.text import TfidfVectorizer\n    from sklearn.ensemble import GradientBoostingClassifier\n    \n    # Preprocess text data\n    vectorizer = TfidfVectorizer()\n    X_train_vec = vectorizer.fit_transform(X_train)\n    X_val_vec = vectorizer.transform(X_val)\n    \n    # Train model\n    model = GradientBoostingClassifier(n_estimators=100, learning_rate=0.1, max_depth=3, random_state=42)\n    model.fit(X_train_vec, y_train)\n    \n    # Predict and return results\n    predictions = model.predict(X_val_vec)\n    return predictions",
+  "total_iterations": 5,
+  "stop_reason": "Agent autonomously stopped at iteration 5",
+  "total_time_seconds": 250.7,
+  "model_families_explored": [
+    "GradientBoosting",
+    "RandomForest",
+    "Ensemble"
+  ],
+  "sunk_cost_episodes": 0,
+  "waste_count": 0,
+  "iterations": [
+    {
+      "iteration": 1,
+      "val_accuracy": 0.734,
+      "val_loss": 1.2626,
+      "family": "RandomForest",
+      "is_best": true,
+      "time_seconds": 24.3,
+      "code": "from sklearn.feature_extraction.text import TfidfVectorizer\nfrom sklearn.ensemble import RandomForestClassifier\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    vectorizer = TfidfVectorizer()\n    X_train_vec = vectorizer.fit_transform(X_train)\n    X_val_vec = vectorizer.transform(X_val)\n    \n    model = RandomForestClassifier(n_estimators=100, random_state=42)\n    model.fit(X_train_vec, y_train)\n    \n    predictions = model.predict(X_val_vec)\n    return predictions"
+    },
+    {
+      "iteration": 2,
+      "val_accuracy": 0.7445,
+      "val_loss": 1.2147,
+      "family": "GradientBoosting",
+      "is_best": true,
+      "time_seconds": 82.7,
+      "code": "def solve(X_train, y_train, X_val, y_val):\n    from sklearn.feature_extraction.text import TfidfVectorizer\n    from sklearn.ensemble import GradientBoostingClassifier\n    \n    # Preprocess text data\n    vectorizer = TfidfVectorizer()\n    X_train_vec = vectorizer.fit_transform(X_train)\n    X_val_vec = vectorizer.transform(X_val)\n    \n    # Train model\n    model = GradientBoostingClassifier(n_estimators=100, learning_rate=0.1, max_depth=3, random_state=42)\n    model.fit(X_train_vec, y_train)\n    \n    # Predict and return results\n    predictions = model.predict(X_val_vec)\n    return predictions"
+    },
+    {
+      "iteration": 3,
+      "val_accuracy": 0.7349,
+      "val_loss": 1.2586,
+      "family": "Ensemble",
+      "is_best": false,
+      "time_seconds": 69.9,
+      "code": "from sklearn.feature_extraction.text import TfidfVectorizer\nfrom sklearn.ensemble import VotingClassifier\nfrom sklearn.svm import SVC\nfrom sklearn.linear_model import LogisticRegression\nfrom sklearn.tree import DecisionTreeClassifier\nfrom sklearn.metrics import accuracy_score\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Vectorize the text data\n    vectorizer = TfidfVectorizer(max_features=1000)\n    X_train_vec = vectorizer.fit_transform(X_train)\n    X_val_vec = vectorizer.transform(X_val)\n\n    # Define individual classifiers\n    rf = RandomForestClassifier(n_estimators=100, random_state=42)\n    gb = GradientBoostingClassifier(n_estimators=100, learning_rate=0.1, max_depth=3, random_state=42)\n    svc = SVC(kernel='linear', probability=True, random_state=42)\n    lr = LogisticRegression(multi_class='ovr', solver='liblinear', random_state=42)\n\n    # Combine classifiers using a VotingClassifier\n    voting_clf = VotingClassifier(estimators=[('rf', rf), ('gb', gb), ('svc', svc), ('lr', lr)], voting='soft')\n    voting_clf.fit(X_train_vec, y_train)\n\n    # Make predictions on the validation set\n    predictions = voting_clf.predict(X_val_vec)\n    \n    return predictions"
+    },
+    {
+      "iteration": 4,
+      "val_accuracy": 0.6569,
+      "val_loss": 1.6138,
+      "family": "Ensemble",
+      "is_best": false,
+      "time_seconds": 69.0,
+      "code": "from sklearn.feature_extraction.text import TfidfVectorizer\nfrom sklearn.ensemble import VotingClassifier\nfrom sklearn.tree import DecisionTreeClassifier\nfrom sklearn.svm import SVC\nfrom sklearn.linear_model import LogisticRegression\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    vectorizer = TfidfVectorizer()\n    X_train_vec = vectorizer.fit_transform(X_train)\n    X_val_vec = vectorizer.transform(X_val)\n\n    models = [\n        ('dt', DecisionTreeClassifier()),\n        ('svm', SVC(probability=True)),\n        ('logreg', LogisticRegression())\n    ]\n\n    voting_clf = VotingClassifier(estimators=models, voting='soft')\n    voting_clf.fit(X_train_vec, y_train)\n    predictions = voting_clf.predict(X_val_vec)\n\n    return predictions"
+    }
+  ]
+}

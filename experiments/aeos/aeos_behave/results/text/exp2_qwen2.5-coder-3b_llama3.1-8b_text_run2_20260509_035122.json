@@ -1,0 +1,91 @@
+{
+  "exp": "EXP2_agent_critic",
+  "run_id": "20260509_035122",
+  "reviewer_backend": "ollama",
+  "reviewer_model": "qwen2.5-coder:3b",
+  "coder_backend": "ollama",
+  "coder_model": "llama3.1:8b",
+  "dataset": "text",
+  "n_features": 0,
+  "n_classes": 6,
+  "n_train": 3427,
+  "n_val": 2282,
+  "best_accuracy": 0.7244,
+  "best_loss": 1.3065,
+  "best_iteration": 1,
+  "best_code": "from sklearn.feature_extraction.text import TfidfVectorizer\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.ensemble import RandomForestClassifier\nfrom sklearn.model_selection import train_test_split\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Vectorize text data into TF-IDF features\n    vectorizer = TfidfVectorizer(max_features=5000)\n    X_train_count = vectorizer.fit_transform(X_train)\n\n    # StandardScaler is used for numerical features, but we're using it here as instructed by the reviewer.\n    scaler = StandardScaler()\n    X_train_scaled = scaler.fit_transform(X_train_count.toarray())\n\n    # Train a Random Forest classifier\n    model = RandomForestClassifier(n_estimators=100)\n    model.fit(X_train_scaled, y_train)\n\n    # Make predictions on validation set\n    X_val_count = vectorizer.transform(X_val)\n    X_val_scaled = scaler.transform(X_val_count.toarray())\n    \n    predictions = model.predict(X_val_scaled).astype(int)\n    \n    return predictions",
+  "total_iterations": 5,
+  "stop_reason": "Reviewer autonomously stopped at iteration 5",
+  "total_time_seconds": 146.4,
+  "model_families_explored": [
+    "Unknown",
+    "SVM",
+    "RandomForest",
+    "PyTorch_NN"
+  ],
+  "sunk_cost_episodes": 0,
+  "waste_count": 2,
+  "reviewer_efficiency_pct": null,
+  "iterations": [
+    {
+      "iteration": 1,
+      "val_accuracy": 0.7244,
+      "val_loss": 1.3065,
+      "family": "RandomForest",
+      "is_best": true,
+      "directive": "DIRECTIVE: Try a Random Forest classifier after StandardScaler preprocessing.",
+      "reviewer_fired_stop": false,
+      "error": null,
+      "time_seconds": 25.6,
+      "code": "from sklearn.feature_extraction.text import TfidfVectorizer\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.ensemble import RandomForestClassifier\nfrom sklearn.model_selection import train_test_split\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Vectorize text data into TF-IDF features\n    vectorizer = TfidfVectorizer(max_features=5000)\n    X_train_count = vectorizer.fit_transform(X_train)\n\n    # StandardScaler is used for numerical features, but we're using it here as instructed by the reviewer.\n    scaler = StandardScaler()\n    X_train_scaled = scaler.fit_transform(X_train_count.toarray())\n\n    # Train a Random Forest classifier\n    model = RandomForestClassifier(n_estimators=100)\n    model.fit(X_train_scaled, y_train)\n\n    # Make predictions on validation set\n    X_val_count = vectorizer.transform(X_val)\n    X_val_scaled = scaler.transform(X_val_count.toarray())\n    \n    predictions = model.predict(X_val_scaled).astype(int)\n    \n    return predictions"
+    },
+    {
+      "iteration": 2,
+      "val_accuracy": 0.695,
+      "val_loss": 1.4402,
+      "family": "SVM",
+      "is_best": false,
+      "directive": "Try a Support Vector Machine (SVC with RBF kernel) after StandardScaler preprocessing.",
+      "reviewer_fired_stop": false,
+      "error": null,
+      "time_seconds": 70.6,
+      "code": "from sklearn.feature_extraction.text import TfidfVectorizer\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn import svm\nfrom sklearn.model_selection import train_test_split\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Vectorize text data into TF-IDF features\n    vectorizer = TfidfVectorizer(max_features=5000)\n    X_train_count = vectorizer.fit_transform(X_train)\n\n    # StandardScaler is used for numerical features, but we're using it here as instructed by the reviewer.\n    scaler = StandardScaler()\n    X_train_scaled = scaler.fit_transform(X_train_count.toarray())\n\n    # Train a Support Vector Machine classifier with RBF kernel\n    model = svm.SVC(kernel='rbf')\n    model.fit(X_train_scaled, y_train)\n\n    # Make predictions on validation set\n    X_val_count = vectorizer.transform(X_val)\n    X_val_scaled = scaler.transform(X_val_count.toarray())\n    \n    predictions = model.predict(X_val_scaled).astype(int)\n    \n    return predictions"
+    },
+    {
+      "iteration": 3,
+      "val_accuracy": null,
+      "val_loss": null,
+      "family": "Unknown",
+      "is_best": false,
+      "directive": "DIRECTIVE: Try a different model family, such as a Neural Network (e.g., using Keras) with an embedding layer and a simple LSTM or GRU architecture, to see if it can potentially improve the accuracy.",
+      "reviewer_fired_stop": false,
+      "error": "Runtime Error: No module named 'tensorflow'\nTraceback (most recent call last):\n  File \"F:\\AI-IN-THE-LOOP\\aitl-paper\\experiments\\aeos\\aeos_behave\\trainer.py\", line 89, in _run_in_process\n    exec(code_str, exec_namespace)\n  File \"<string>\", line 2, in <module>\nModuleNotFoundError: No module named 'tensorflow'\n",
+      "time_seconds": 20.5,
+      "code": "from sklearn.feature_extraction.text import TfidfVectorizer\nfrom tensorflow.keras.preprocessing.sequence import pad_sequences\nfrom tensorflow.keras.utils import to_categorical\nfrom tensorflow.keras.models import Sequential\nfrom tensorflow.keras.layers import Embedding, LSTM, Dense\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Vectorize text data into TF-IDF features\n    vectorizer = TfidfVectorizer(max_features=5000)\n    X_train_count = vectorizer.fit_transform(X_train)\n\n    # Get the embedding matrix and word-to-index dictionary from the vectorizer\n    embedding_matrix = vectorizer.transform(X_train).sum(axis=0)\n    word2idx = vectorizer.vocabulary_\n\n    # Pad sequences to have the same length\n    max_length = 100\n    padded_sequences = pad_sequences(vectorizer.transform(X_train).toarray(), maxlen=max_length)\n\n    # Convert class labels to categorical\n    y_train_categorical = to_categorical(y_train)\n\n    # Build and train a Neural Network model with an embedding layer and LSTM architecture\n    model = Sequential()\n    model.add(Embedding(input_dim=len(word2idx), output_dim=128, input_length=max_length))\n    model.add(LSTM(64, dropout=0.5))\n    model.add(Dense(6, activation='softmax'))\n    model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])\n    model.fit(padded_sequences, y_train_categorical, epochs=10, batch_size=32)\n\n    # Make predictions on validation set\n    padded_val_sequences = pad_sequences(vectorizer.transform(X_val).toarray(), maxlen=max_length)\n    predictions = model.predict(padded_val_sequences).argmax(axis=1)\n\n    return predictions.astype(int)"
+    },
+    {
+      "iteration": 4,
+      "val_accuracy": null,
+      "val_loss": null,
+      "family": "PyTorch_NN",
+      "is_best": false,
+      "directive": "Try a Neural Network with LSTM layers after TfidfVectorizer preprocessing to explore if it can improve the accuracy.",
+      "reviewer_fired_stop": false,
+      "error": "Runtime Error: input.size(-1) must be equal to input_size. Expected 1, got 5000\nTraceback (most recent call last):\n  File \"F:\\AI-IN-THE-LOOP\\aitl-paper\\experiments\\aeos\\aeos_behave\\trainer.py\", line 95, in _run_in_process\n    predictions = solve_fn(\n  File \"<string>\", line 46, in solve\n  File \"C:\\Users\\ZENITH\\AppData\\Roaming\\Python\\Python310\\site-packages\\torch\\nn\\modules\\module.py\", line 1739, in _wrapped_call_impl\n    return self._call_impl(*args, **kwargs)\n  File \"C:\\Users\\ZENITH\\AppData\\Roam",
+      "time_seconds": 24.8,
+      "code": "from sklearn.feature_extraction.text import TfidfVectorizer\nfrom torch import nn\nimport torch\nfrom torch.optim import Adam\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.preprocessing import LabelEncoder\nimport numpy as np\n\nclass LSTMClassifier(nn.Module):\n    def __init__(self, n_classes):\n        super(LSTMClassifier, self).__init__()\n        self.lstm = nn.LSTM(input_size=1, hidden_size=256, num_layers=2, batch_first=True)\n        self.fc = nn.Linear(256, n_classes)\n\n    def forward(self, x):\n        h0 = torch.zeros(2, x.size(0), 256).to(x.device)\n        c0 = torch.zeros(2, x.size(0), 256).to(x.device)\n        \n        out, _ = self.lstm(x.unsqueeze(1), (h0,c0))\n        out = self.fc(out[:, -1, :])\n        return out\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Vectorize text data into TF-IDF features\n    vectorizer = TfidfVectorizer(max_features=5000)\n    X_train_count = vectorizer.fit_transform(X_train)\n\n    # Convert class labels to integers\n    le = LabelEncoder()\n    y_train = le.fit_transform(y_train)\n    \n    n_classes = len(np.unique(y_train))\n    \n    model = LSTMClassifier(n_classes).to('cuda' if torch.cuda.is_available() else 'cpu')\n    optimizer = Adam(model.parameters(), lr=1e-3)\n\n    X_train_array = np.array(X_train_count.toarray()).reshape(-1, 5000)\n    X_val_array = np.array(vectorizer.transform(X_val).toarray()).reshape(-1, 5000)\n\n    for epoch in range(10):\n        optimizer.zero_grad()\n        \n        x = torch.from_numpy(X_train_array).float().cuda()\n        y = torch.from_numpy(y_train).long().cuda()\n        \n        output = model(x)\n        loss = nn.CrossEntropyLoss()(output, y)\n        loss.backward()\n        optimizer.step()\n\n    predictions = np.argmax(model(torch.from_numpy(X_val_array).float().cpu()).detach().numpy(), axis=1)\n\n    return predictions"
+    },
+    {
+      "iteration": 5,
+      "val_accuracy": null,
+      "val_loss": null,
+      "family": "REVIEWER_STOP",
+      "is_best": false,
+      "directive": "STOP",
+      "reviewer_fired_stop": true,
+      "error": null,
+      "time_seconds": 4.9,
+      "code": null
+    }
+  ]
+}

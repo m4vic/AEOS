@@ -1,0 +1,69 @@
+{
+  "run_id": "20260423_134930",
+  "backend": "ollama",
+  "model": "ollama/qwen3.5:4b",
+  "dataset": "vision",
+  "n_features": 784,
+  "n_classes": 10,
+  "n_train": 8000,
+  "n_val": 2000,
+  "best_accuracy": 0.943,
+  "best_loss": 0.3444,
+  "best_iteration": 6,
+  "best_code": "def solve(X_train, y_train, X_val, y_val):\n    from sklearn.ensemble import RandomForestClassifier\n    from sklearn.preprocessing import StandardScaler\n    import numpy as np\n    \n    # Normalize pixel values to [0, 1] range\n    X_train_scaled = X_train.astype(np.float32) / 255.0\n    X_val_scaled = X_val.astype(np.float32) / 255.0\n    \n    # Train a RandomForest classifier\n    model = RandomForestClassifier(n_estimators=100, random_state=42, n_jobs=-1)\n    model.fit(X_train_scaled, y_train)\n    \n    # Make predictions on validation set\n    predictions = model.predict(X_val_scaled)\n    \n    return predictions",
+  "total_iterations": 6,
+  "stop_reason": "Experiment crashed: 'charmap' codec can't encode character '\\u2605' in position 80: character maps to <undefined>",
+  "total_time_seconds": 220.7,
+  "model_families_explored": [
+    "RandomForest"
+  ],
+  "sunk_cost_episodes": 0,
+  "waste_count": 5,
+  "iterations": [
+    {
+      "iteration": 1,
+      "val_accuracy": null,
+      "val_loss": null,
+      "family": "Unknown",
+      "error": "Structure Error: Must define 'def solve(X_train, y_train, X_val, y_val)' that returns predictions.",
+      "time_seconds": 46.9,
+      "code": ""
+    },
+    {
+      "iteration": 2,
+      "val_accuracy": null,
+      "val_loss": null,
+      "family": "Unknown",
+      "error": "Structure Error: Must define 'def solve(X_train, y_train, X_val, y_val)' that returns predictions.",
+      "time_seconds": 38.4,
+      "code": ""
+    },
+    {
+      "iteration": 3,
+      "val_accuracy": null,
+      "val_loss": null,
+      "family": "Unknown",
+      "error": "Structure Error: Must define 'def solve(X_train, y_train, X_val, y_val)' that returns predictions.",
+      "time_seconds": 40.5,
+      "code": ""
+    },
+    {
+      "iteration": 4,
+      "val_accuracy": null,
+      "val_loss": null,
+      "family": "Unknown",
+      "error": "Structure Error: Must define 'def solve(X_train, y_train, X_val, y_val)' that returns predictions.",
+      "time_seconds": 40.6,
+      "code": ""
+    },
+    {
+      "iteration": 5,
+      "val_accuracy": null,
+      "val_loss": null,
+      "family": "Unknown",
+      "error": "Structure Error: Must define 'def solve(X_train, y_train, X_val, y_val)' that returns predictions.",
+      "time_seconds": 40.7,
+      "code": ""
+    }
+  ]
+}

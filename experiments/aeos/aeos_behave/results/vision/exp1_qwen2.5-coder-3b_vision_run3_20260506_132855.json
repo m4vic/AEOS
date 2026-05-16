@@ -1,0 +1,844 @@
+{
+  "run_id": "20260506_132855",
+  "backend": "ollama",
+  "model": "ollama/qwen2.5-coder:3b",
+  "dataset": "vision",
+  "n_features": 784,
+  "n_classes": 10,
+  "n_train": 8000,
+  "n_val": 2000,
+  "best_accuracy": 0.9565,
+  "best_loss": 0.275,
+  "best_iteration": 38,
+  "best_code": "import numpy as np\nfrom sklearn.pipeline import Pipeline\nfrom sklearn.preprocessing import StandardScaler, MinMaxScaler\nfrom sklearn.svm import SVC\nfrom sklearn.ensemble import RandomForestClassifier\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Define the pipeline with standardization and SVM classifier\n    model = Pipeline([\n        ('scaler', MinMaxScaler()),  # Use MinMaxScaler for better performance on SVM\n        ('svc', SVC(probability=True, random_state=42))\n    ])\n    \n    # Train the model\n    model.fit(X_train, y_train)\n    \n    # Get predictions on validation set\n    predictions = model.predict(X_val)\n    \n    return predictions",
+  "total_iterations": 92,
+  "stop_reason": "System forced stop (no improvement in 30 iterations)",
+  "total_time_seconds": 7583.8,
+  "model_families_explored": [
+    "SVM",
+    "RandomForest"
+  ],
+  "sunk_cost_episodes": 14,
+  "waste_count": 37,
+  "iterations": [
+    {
+      "iteration": 1,
+      "val_accuracy": 0.943,
+      "val_loss": 0.3444,
+      "family": "RandomForest",
+      "is_best": true,
+      "time_seconds": 19.0,
+      "code": "import numpy as np\nfrom sklearn.ensemble import RandomForestClassifier\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Initialize the Random Forest Classifier\n    rf = RandomForestClassifier(n_estimators=100, random_state=42)\n    \n    # Train the model\n    rf.fit(X_train, y_train)\n    \n    # Make predictions on validation set\n    predictions = rf.predict(X_val)\n    \n    return predictions"
+    },
+    {
+      "iteration": 2,
+      "val_accuracy": 0.943,
+      "val_loss": 0.3444,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 17.6,
+      "code": "import numpy as np\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.preprocessing import StandardScaler, MinMaxScaler\nfrom sklearn.metrics import classification_report, accuracy_score\nfrom sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier\nfrom sklearn.svm import SVC\nfrom sklearn.linear_model import LogisticRegression\nfrom sklearn.neighbors import KNeighborsClassifier\nfrom sklearn.tree import DecisionTreeClassifier\nimport torch\nimport torch.nn as nn\nimport torch.optim as optim\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Define the model\n    model = RandomForestClassifier(n_estimators=100, random_state=42)\n    \n    # Train the model\n    model.fit(X_train, y_train)\n    \n    # Predict on validation set\n    predictions = model.predict(X_val)\n    \n    return predictions\n\n# Example usage:\n# X_train, y_train, X_val, y_val = load_your_dataset()\n# predictions = solve(X_train, y_train, X_val, y_val)"
+    },
+    {
+      "iteration": 3,
+      "val_accuracy": null,
+      "val_loss": null,
+      "family": "RandomForest",
+      "error": "Timeout Error: Code execution exceeded 300 seconds. Process terminated.",
+      "time_seconds": 313.3,
+      "code": "import numpy as np\nfrom sklearn.ensemble import RandomForestClassifier\nfrom sklearn.model_selection import train_test_split, GridSearchCV\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Split the training data into train and validation sets for hyperparameter tuning\n    X_train, X_val, y_train, y_val = train_test_split(X_train, y_train, test_size=0.2, random_state=42)\n    \n    # Define a parameter grid for RandomForestClassifier\n    param_grid = {\n        'n_estimators': [100, 200],\n        'max_depth': [None, 50, 100],\n        'min_samples_split': [2, 5, 10],\n        'min_samples_leaf': [1, 2, 4]\n    }\n    \n    # Initialize RandomForestClassifier\n    rf = RandomForestClassifier(random_state=42)\n    \n    # Perform grid search with cross-validation to find the best parameters\n    grid_search = GridSearchCV(rf, param_grid, cv=5, scoring='accuracy')\n    grid_search.fit(X_train, y_train)\n    \n    # Use the best model for predictions on validation set\n    best_rf = grid_search.best_estimator_\n    predictions = best_rf.predict(X_val)\n    \n    return predictions"
+    },
+    {
+      "iteration": 4,
+      "val_accuracy": 0.943,
+      "val_loss": 0.3444,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 18.1,
+      "code": "import numpy as np\nfrom sklearn.ensemble import RandomForestClassifier\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Initialize and train a RandomForestClassifier with default parameters\n    model = RandomForestClassifier(random_state=42)\n    model.fit(X_train, y_train)\n    \n    # Make predictions on the validation set\n    predictions = model.predict(X_val)\n    \n    return predictions"
+    },
+    {
+      "iteration": 5,
+      "val_accuracy": null,
+      "val_loss": null,
+      "family": "RandomForest",
+      "error": "Timeout Error: Code execution exceeded 300 seconds. Process terminated.",
+      "time_seconds": 313.6,
+      "code": "import numpy as np\nfrom sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier\nfrom sklearn.model_selection import train_test_split, cross_val_score\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.metrics import accuracy_score\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Split the data into training and validation sets for cross-validation\n    X_train_cv, _, y_train_cv, _ = train_test_split(X_train, y_train, test_size=0.2, random_state=42)\n    \n    # Standardize the features\n    scaler = StandardScaler()\n    X_train_scaled = scaler.fit_transform(X_train_cv)\n    X_val_scaled = scaler.transform(X_val)\n    \n    # Define a list of models to try\n    models = [\n        RandomForestClassifier(n_estimators=100, random_state=42),\n        GradientBoostingClassifier(random_state=42)\n    ]\n    \n    best_model = None\n    best_accuracy = 0.0\n    \n    for model in models:\n        # Train the model using cross-validation to get an unbiased estimate of accuracy\n        scores = cross_val_score(model, X_train_scaled, y_train_cv, cv=5, scoring='accuracy')\n        mean_accuracy = np.mean(scores)\n        \n        if mean_accuracy > best_accuracy:\n            best_accuracy = mean_accuracy\n            best_model = model\n    \n    # Train the best model on the full training set\n    best_model.fit(X_train_scaled, y_train_cv)\n    \n    # Make predictions on the validation set\n    predictions = best_model.predict(X_val_scaled)\n    \n    return predictions"
+    },
+    {
+      "iteration": 6,
+      "val_accuracy": 0.943,
+      "val_loss": 0.3444,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 20.3,
+      "code": "import numpy as np\nfrom sklearn.ensemble import RandomForestClassifier\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Initialize and train a RandomForestClassifier\n    rf_model = RandomForestClassifier(n_estimators=100, random_state=42)\n    rf_model.fit(X_train, y_train)\n\n    # Make predictions on the validation set\n    predictions = rf_model.predict(X_val)\n\n    return predictions"
+    },
+    {
+      "iteration": 7,
+      "val_accuracy": null,
+      "val_loss": null,
+      "family": "RandomForest",
+      "error": "Timeout Error: Code execution exceeded 300 seconds. Process terminated.",
+      "time_seconds": 313.1,
+      "code": "import numpy as np\nfrom sklearn.model_selection import train_test_split, GridSearchCV\nfrom sklearn.ensemble import RandomForestClassifier\nfrom sklearn.metrics import accuracy_score\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Split the training data into training and validation sets\n    X_train, X_val, y_train, y_val = train_test_split(X_train, y_train, test_size=0.2, random_state=42)\n    \n    # Define the parameter grid for hyperparameter tuning\n    param_grid = {\n        'n_estimators': [100, 200],\n        'max_depth': [None, 50, 100],\n        'min_samples_split': [2, 5, 10]\n    }\n    \n    # Initialize the RandomForestClassifier with default parameters\n    rf = RandomForestClassifier(random_state=42)\n    \n    # Use GridSearchCV for hyperparameter tuning\n    grid_search = GridSearchCV(rf, param_grid, cv=3, scoring='accuracy', n_jobs=-1)\n    \n    # Fit the model to the training data\n    grid_search.fit(X_train, y_train)\n    \n    # Predict on the validation set\n    predictions = grid_search.predict(X_val)\n    \n    return predictions"
+    },
+    {
+      "iteration": 8,
+      "val_accuracy": 0.943,
+      "val_loss": 0.3444,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 19.8,
+      "code": "import numpy as np\nfrom sklearn.ensemble import RandomForestClassifier\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.metrics import accuracy_score, classification_report\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Standardize the features to improve model performance\n    scaler = StandardScaler()\n    X_train_scaled = scaler.fit_transform(X_train)\n    X_val_scaled = scaler.transform(X_val)\n\n    # Initialize and train the RandomForestClassifier\n    clf = RandomForestClassifier(n_estimators=100, random_state=42)\n    clf.fit(X_train_scaled, y_train)\n\n    # Make predictions on the validation set\n    predictions = clf.predict(X_val_scaled)\n\n    return predictions"
+    },
+    {
+      "iteration": 9,
+      "val_accuracy": 0.9455,
+      "val_loss": 0.3315,
+      "family": "RandomForest",
+      "is_best": true,
+      "time_seconds": 20.5,
+      "code": "import numpy as np\nfrom sklearn.ensemble import RandomForestClassifier\n\ndef solve(X_train, y_train, X_val, y_val):\n    model = RandomForestClassifier(n_estimators=200, max_depth=None, min_samples_split=2, random_state=42)\n    model.fit(X_train, y_train)\n    predictions = model.predict(X_val)\n    return predictions"
+    },
+    {
+      "iteration": 10,
+      "val_accuracy": 0.943,
+      "val_loss": 0.3444,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 17.4,
+      "code": "from sklearn.ensemble import RandomForestClassifier\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    model = RandomForestClassifier(n_estimators=100, random_state=42)\n    model.fit(X_train, y_train)\n    predictions = model.predict(X_val)\n    return predictions"
+    },
+    {
+      "iteration": 11,
+      "val_accuracy": null,
+      "val_loss": null,
+      "family": "RandomForest",
+      "error": "Timeout Error: Code execution exceeded 300 seconds. Process terminated.",
+      "time_seconds": 314.2,
+      "code": "import numpy as np\nfrom sklearn.model_selection import train_test_split, GridSearchCV\nfrom sklearn.ensemble import RandomForestClassifier\nfrom sklearn.metrics import accuracy_score\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Split the training data into training and validation sets (just for demonstration)\n    X_train, _, y_train, _ = train_test_split(X_train, y_train, test_size=0.2, random_state=42)\n\n    # Initialize the RandomForestClassifier\n    model = RandomForestClassifier(n_estimators=100, random_state=42)\n\n    # Use GridSearchCV to find the best hyperparameters\n    param_grid = {\n        'n_estimators': [50, 100, 200],\n        'max_depth': [None, 10, 20, 30],\n        'min_samples_split': [2, 5, 10]\n    }\n    grid_search = GridSearchCV(model, param_grid, cv=5, scoring='accuracy', verbose=1)\n    grid_search.fit(X_train, y_train)\n\n    # Get the best model\n    best_model = grid_search.best_estimator_\n\n    # Train the best model on the full training data\n    best_model.fit(X_train, y_train)\n\n    # Predict on the validation set\n    predictions = best_model.predict(X_val)\n\n    return predictions.astype(int)"
+    },
+    {
+      "iteration": 12,
+      "val_accuracy": 0.943,
+      "val_loss": 0.3444,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 18.7,
+      "code": "import numpy as np\nfrom sklearn.ensemble import RandomForestClassifier\nfrom sklearn.model_selection import train_test_split\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Convert to 2D array for Random Forest\n    X_train = X_train.reshape(-1, 784)\n    X_val = X_val.reshape(-1, 784)\n    \n    # Initialize and train the RandomForest model\n    rf_model = RandomForestClassifier(n_estimators=100, random_state=42)\n    rf_model.fit(X_train, y_train)\n    \n    # Make predictions on validation set\n    predictions = rf_model.predict(X_val)\n    \n    return predictions"
+    },
+    {
+      "iteration": 13,
+      "val_accuracy": null,
+      "val_loss": null,
+      "family": "RandomForest",
+      "error": "Timeout Error: Code execution exceeded 300 seconds. Process terminated.",
+      "time_seconds": 313.5,
+      "code": "import numpy as np\nfrom sklearn.ensemble import RandomForestClassifier\nfrom sklearn.model_selection import train_test_split, GridSearchCV\nfrom sklearn.metrics import accuracy_score\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Split data into training and validation sets\n    X_train, X_val, y_train, y_val = train_test_split(X_train, y_train, test_size=0.2, random_state=42)\n    \n    # Initialize the RandomForestClassifier\n    rf = RandomForestClassifier(random_state=42)\n    \n    # Define parameter grid for GridSearchCV\n    param_grid = {\n        'n_estimators': [100, 200, 300],\n        'max_depth': [None, 10, 20, 30],\n        'min_samples_split': [2, 5, 10]\n    }\n    \n    # Perform GridSearchCV with cross-validation\n    grid_search = GridSearchCV(estimator=rf, param_grid=param_grid, cv=3, scoring='accuracy', n_jobs=-1)\n    grid_search.fit(X_train, y_train)\n    \n    # Get the best model from GridSearchCV\n    best_rf = grid_search.best_estimator_\n    \n    # Train the best model on the entire training set\n    best_rf.fit(X_train, y_train)\n    \n    # Make predictions on the validation set\n    predictions = best_rf.predict(X_val)\n    \n    return predictions"
+    },
+    {
+      "iteration": 14,
+      "val_accuracy": null,
+      "val_loss": null,
+      "family": "RandomForest",
+      "error": "Shape Error: Expected 2000 predictions, got 1600.",
+      "time_seconds": 18.8,
+      "code": "import numpy as np\nfrom sklearn.ensemble import RandomForestClassifier\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.preprocessing import StandardScaler, MinMaxScaler\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Feature scaling: Normalize the data to a range of [0, 1]\n    scaler = MinMaxScaler()\n    X_train = scaler.fit_transform(X_train)\n    X_val = scaler.transform(X_val)\n\n    # Split the data into training and validation sets\n    X_train, X_val, y_train, y_val = train_test_split(X_train, y_train, test_size=0.2, random_state=42)\n\n    # Build and train a Random Forest classifier\n    model = RandomForestClassifier(n_estimators=100, random_state=42)\n    model.fit(X_train, y_train)\n\n    # Make predictions on the validation set\n    predictions = model.predict(X_val)\n\n    return predictions"
+    },
+    {
+      "iteration": 15,
+      "val_accuracy": null,
+      "val_loss": null,
+      "family": "RandomForest",
+      "error": "Timeout Error: Code execution exceeded 300 seconds. Process terminated.",
+      "time_seconds": 312.8,
+      "code": "import numpy as np\nfrom sklearn.model_selection import train_test_split, GridSearchCV\nfrom sklearn.ensemble import RandomForestClassifier\nfrom sklearn.metrics import accuracy_score\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Reshape data to (n_samples, n_features) if necessary\n    X_train = X_train.reshape(-1, 784)\n    X_val = X_val.reshape(-1, 784)\n\n    # Initialize and train the RandomForestClassifier with grid search for hyperparameter tuning\n    model = RandomForestClassifier()\n    param_grid = {\n        'n_estimators': [50, 100, 200],\n        'max_depth': [None, 5, 10, 15],\n        'min_samples_split': [2, 5, 10]\n    }\n    grid_search = GridSearchCV(model, param_grid, cv=3, n_jobs=-1)\n    grid_search.fit(X_train, y_train)\n\n    # Get the best model from the grid search\n    best_model = grid_search.best_estimator_\n\n    # Make predictions on the validation set\n    predictions = best_model.predict(X_val)\n\n    return predictions"
+    },
+    {
+      "iteration": 16,
+      "val_accuracy": 0.943,
+      "val_loss": 0.3444,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 21.0,
+      "code": "import numpy as np\nfrom sklearn.model_selection import train_test_split, StratifiedKFold\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.ensemble import RandomForestClassifier\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Reshape the input data for compatibility with PyTorch\n    X_train = X_train.reshape(-1, 28, 28)\n    X_val = X_val.reshape(-1, 28, 28)\n\n    # Standardize the features\n    scaler = StandardScaler()\n    X_train_scaled = scaler.fit_transform(X_train.reshape(-1, 784))\n    X_val_scaled = scaler.transform(X_val.reshape(-1, 784))\n\n    # Initialize and train the model\n    model = RandomForestClassifier(n_estimators=100, random_state=42)\n    model.fit(X_train_scaled, y_train)\n\n    # Predict on the validation set\n    predictions = model.predict(X_val_scaled)\n\n    return predictions"
+    },
+    {
+      "iteration": 17,
+      "val_accuracy": 0.943,
+      "val_loss": 0.3444,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 17.9,
+      "code": "import numpy as np\nfrom sklearn.ensemble import RandomForestClassifier\nfrom sklearn.metrics import accuracy_score\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Initialize the model\n    clf = RandomForestClassifier(n_estimators=100, random_state=42)\n    \n    # Train the model\n    clf.fit(X_train, y_train)\n    \n    # Make predictions on validation set\n    predictions = clf.predict(X_val)\n    \n    return predictions\n\n# Example usage:\n# X_train, y_train, X_val, y_val = load_your_data()  # Load your dataset here\n# predictions = solve(X_train, y_train, X_val, y_val)"
+    },
+    {
+      "iteration": 18,
+      "val_accuracy": 0.943,
+      "val_loss": 0.3444,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 17.7,
+      "code": "import numpy as np\nfrom sklearn.ensemble import RandomForestClassifier\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Standardize features\n    scaler = StandardScaler()\n    X_train_scaled = scaler.fit_transform(X_train)\n    X_val_scaled = scaler.transform(X_val)\n\n    # Train a Random Forest classifier\n    clf = RandomForestClassifier(n_estimators=100, random_state=42)\n    clf.fit(X_train_scaled, y_train)\n\n    # Predict on the validation set\n    predictions = clf.predict(X_val_scaled)\n\n    return predictions"
+    },
+    {
+      "iteration": 19,
+      "val_accuracy": null,
+      "val_loss": null,
+      "family": "SVM",
+      "error": "Timeout Error: Code execution exceeded 300 seconds. Process terminated.",
+      "time_seconds": 316.0,
+      "code": "import numpy as np\nfrom sklearn.preprocessing import StandardScaler, PolynomialFeatures\nfrom sklearn.pipeline import Pipeline\nfrom sklearn.svm import SVC\nfrom sklearn.model_selection import train_test_split, GridSearchCV\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Preprocess the data: standardize and add polynomial features\n    scaler = StandardScaler()\n    poly = PolynomialFeatures(degree=2)\n    \n    pipe = Pipeline([\n        ('scaler', scaler),\n        ('poly', poly),\n        ('svc', SVC(kernel='rbf', C=1.0, probability=True))\n    ])\n    \n    # Define the parameter grid for GridSearchCV\n    param_grid = {\n        'svc__C': [0.1, 1, 10],\n        'poly__degree': [2, 3, 4]\n    }\n    \n    # Perform grid search with cross-validation\n    grid_search = GridSearchCV(pipe, param_grid, cv=5, scoring='accuracy')\n    grid_search.fit(X_train, y_train)\n    \n    best_model = grid_search.best_estimator_\n    predictions = best_model.predict(X_val)\n    \n    return predictions"
+    },
+    {
+      "iteration": 20,
+      "val_accuracy": 0.943,
+      "val_loss": 0.3444,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 24.3,
+      "code": "import numpy as np\nfrom sklearn.ensemble import RandomForestClassifier\nfrom sklearn.model_selection import train_test_split, cross_val_score\nfrom sklearn.metrics import accuracy_score\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Split data into training and validation sets\n    X_train, X_val = np.array(X_train), np.array(X_val)\n    y_train, y_val = np.array(y_train), np.array(y_val)\n\n    # Initialize the model\n    model = RandomForestClassifier(random_state=42)\n\n    # Train the model\n    model.fit(X_train, y_train)\n\n    # Make predictions on validation set\n    predictions = model.predict(X_val)\n\n    return predictions\n\n# Example usage:\n# X_train, y_train, X_val, y_val = load_data()  # Implement your own data loading function\n# predictions = solve(X_train, y_train, X_val, y_val)"
+    },
+    {
+      "iteration": 21,
+      "val_accuracy": null,
+      "val_loss": null,
+      "family": "RandomForest",
+      "error": "Shape Error: Expected 2000 predictions, got 1600.",
+      "time_seconds": 17.0,
+      "code": "import numpy as np\nfrom sklearn.ensemble import RandomForestClassifier\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.preprocessing import StandardScaler\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Split the training data for cross-validation\n    X_train_cv, X_val_cv, y_train_cv, y_val_cv = train_test_split(X_train, y_train, test_size=0.2, random_state=42)\n    \n    # Standardize the features\n    scaler = StandardScaler()\n    X_train_scaled = scaler.fit_transform(X_train_cv)\n    X_val_scaled = scaler.transform(X_val_cv)\n    \n    # Initialize and train the RandomForestClassifier\n    model = RandomForestClassifier(n_estimators=100, random_state=42)\n    model.fit(X_train_scaled, y_train_cv)\n    \n    # Make predictions on the validation set\n    predictions = model.predict(X_val_scaled)\n    \n    return predictions"
+    },
+    {
+      "iteration": 22,
+      "val_accuracy": 0.943,
+      "val_loss": 0.3444,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 16.5,
+      "code": "import numpy as np\nfrom sklearn.ensemble import RandomForestClassifier\nfrom sklearn.metrics import accuracy_score\n\ndef solve(X_train, y_train, X_val, y_val):\n    model = RandomForestClassifier(n_estimators=100, random_state=42)\n    model.fit(X_train, y_train)\n    predictions = model.predict(X_val)\n    \n    if len(predictions) != len(y_val):\n        raise ValueError(\"Shape Error: Expected 2000 predictions, got {}.\".format(len(predictions)))\n    \n    return predictions"
+    },
+    {
+      "iteration": 23,
+      "val_accuracy": null,
+      "val_loss": null,
+      "family": "RandomForest",
+      "error": "Timeout Error: Code execution exceeded 300 seconds. Process terminated.",
+      "time_seconds": 313.7,
+      "code": "import numpy as np\nfrom sklearn.ensemble import RandomForestClassifier\nfrom sklearn.model_selection import train_test_split, GridSearchCV\nfrom sklearn.metrics import accuracy_score\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Split the data into training and validation sets (if needed)\n    X_train, X_val, y_train, y_val = train_test_split(X_train, y_train, test_size=0.2, random_state=42)\n\n    # Initialize the RandomForestClassifier\n    rf = RandomForestClassifier(random_state=42)\n\n    # Define a parameter grid for GridSearchCV\n    param_grid = {\n        'n_estimators': [100, 200, 300],\n        'max_depth': [None, 5, 10, 20],\n        'min_samples_split': [2, 5, 10]\n    }\n\n    # Perform GridSearchCV to find the best parameters\n    grid_search = GridSearchCV(rf, param_grid, cv=3, n_jobs=-1)\n    grid_search.fit(X_train, y_train)\n\n    # Use the best estimator to make predictions on the validation set\n    best_rf = grid_search.best_estimator_\n    predictions = best_rf.predict(X_val)\n\n    return predictions\n\n# Example usage:\n# X_train, y_train, X_val, y_val = load_your_dataset()  # Load your dataset here\n# predictions = solve(X_train, y_train, X_val, y_val)"
+    },
+    {
+      "iteration": 24,
+      "val_accuracy": 0.943,
+      "val_loss": 0.3444,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 18.2,
+      "code": "from sklearn.ensemble import RandomForestClassifier\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Ensure input shapes are correct\n    assert X_train.shape[0] == len(y_train)\n    assert X_val.shape[0] == len(y_val)\n    \n    # Initialize and train the Random Forest Classifier\n    model = RandomForestClassifier(n_estimators=100, random_state=42)\n    model.fit(X_train, y_train)\n    \n    # Predict on the validation set\n    predictions = model.predict(X_val)\n    \n    return predictions"
+    },
+    {
+      "iteration": 25,
+      "val_accuracy": 0.943,
+      "val_loss": 0.3444,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 16.5,
+      "code": "import numpy as np\nfrom sklearn.ensemble import RandomForestClassifier\nfrom sklearn.model_selection import train_test_split\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Split the training data into training and validation sets (if needed)\n    # X_train, y_train = train_test_split(X_train, y_train, test_size=0.2, random_state=42)\n    \n    # Initialize and train the model\n    model = RandomForestClassifier(n_estimators=100, max_depth=50, random_state=42)\n    model.fit(X_train, y_train)\n    \n    # Make predictions on the validation set\n    predictions = model.predict(X_val)\n    \n    return predictions"
+    },
+    {
+      "iteration": 26,
+      "val_accuracy": 0.943,
+      "val_loss": 0.3444,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 16.7,
+      "code": "import numpy as np\nfrom sklearn.ensemble import RandomForestClassifier\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.pipeline import Pipeline\nfrom sklearn.metrics import classification_report, accuracy_score\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Initialize the model\n    model = RandomForestClassifier(n_estimators=100, random_state=42)\n    \n    # Define a pipeline for feature scaling and model training\n    pipeline = Pipeline([\n        ('scaler', StandardScaler()),\n        ('classifier', model)\n    ])\n    \n    # Train the model\n    pipeline.fit(X_train, y_train)\n    \n    # Make predictions on the validation set\n    predictions = pipeline.predict(X_val)\n    \n    return predictions"
+    },
+    {
+      "iteration": 27,
+      "val_accuracy": null,
+      "val_loss": null,
+      "family": "SVM",
+      "error": "Shape Error: Expected 2000 predictions, got 1600.",
+      "time_seconds": 18.4,
+      "code": "import numpy as np\nfrom sklearn.model_selection import train_test_split, cross_val_score\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.pipeline import Pipeline\nfrom sklearn.svm import SVC\nfrom sklearn.metrics import accuracy_score\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Split the data into training and validation sets\n    X_train, X_val, y_train, y_val = train_test_split(X_train, y_train, test_size=0.2, random_state=42)\n\n    # Define a pipeline with StandardScaler and SVC\n    model = Pipeline([\n        ('scaler', StandardScaler()),\n        ('svc', SVC(kernel='rbf', C=1.0, random_state=42))\n    ])\n\n    # Train the model\n    model.fit(X_train, y_train)\n\n    # Make predictions on the validation set\n    predictions = model.predict(X_val)\n\n    return predictions"
+    },
+    {
+      "iteration": 28,
+      "val_accuracy": 0.938,
+      "val_loss": 0.3701,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 16.6,
+      "code": "import numpy as np\nfrom sklearn.ensemble import RandomForestClassifier\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.metrics import accuracy_score\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Split the data into training and validation sets\n    X_train, _, y_train, _ = train_test_split(X_train, y_train, test_size=0.25, random_state=42)\n    \n    # Standardize the features\n    scaler = StandardScaler()\n    X_train = scaler.fit_transform(X_train)\n    X_val = scaler.transform(X_val)\n    \n    # Initialize and train the RandomForestClassifier\n    model = RandomForestClassifier(n_estimators=100, random_state=42)\n    model.fit(X_train, y_train)\n    \n    # Make predictions on the validation set\n    predictions = model.predict(X_val)\n    \n    return predictions"
+    },
+    {
+      "iteration": 29,
+      "val_accuracy": 0.9395,
+      "val_loss": 0.3624,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 15.9,
+      "code": "import numpy as np\nfrom sklearn.ensemble import RandomForestClassifier\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.metrics import accuracy_score, classification_report\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Split data into training and validation sets if not already done\n    X_train, _, y_train, _ = train_test_split(X_train, y_train, test_size=0.2)\n\n    # Initialize the model\n    model = RandomForestClassifier(n_estimators=100, random_state=42)\n\n    # Train the model\n    model.fit(X_train, y_train)\n\n    # Predict on validation set\n    predictions = model.predict(X_val)\n\n    return predictions"
+    },
+    {
+      "iteration": 30,
+      "val_accuracy": 0.94,
+      "val_loss": 0.3598,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 16.3,
+      "code": "import numpy as np\nfrom sklearn.ensemble import RandomForestClassifier\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.metrics import accuracy_score\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Split into training and validation sets (just in case they were not already split)\n    X_train, _, y_train, _ = train_test_split(X_train, y_train, test_size=0.2, random_state=42)\n    \n    # Initialize the model\n    model = RandomForestClassifier(n_estimators=100, max_depth=None, min_samples_split=2, min_samples_leaf=1, random_state=42)\n    \n    # Train the model\n    model.fit(X_train, y_train)\n    \n    # Predict on the validation set\n    predictions = model.predict(X_val)\n    \n    return predictions"
+    },
+    {
+      "iteration": 31,
+      "val_accuracy": null,
+      "val_loss": null,
+      "family": "PyTorch_NN",
+      "error": "Runtime Error: 'numpy.ndarray' object has no attribute 'unsqueeze'\nTraceback (most recent call last):\n  File \"F:\\AI-IN-THE-LOOP\\aitl-paper\\experiments\\aeos\\aeos_behave\\trainer.py\", line 95, in _run_in_process\n    predictions = solve_fn(\n  File \"<string>\", line 53, in solve\n  File \"C:\\Users\\ZENITH\\AppData\\Roaming\\Python\\Python310\\site-packages\\torch\\nn\\modules\\module.py\", line 1739, in _wrapped_call_impl\n    return self._call_impl(*args, **kwargs)\n  File \"C:\\Users\\ZENITH\\AppData\\Roaming\\Python\\Py",
+      "time_seconds": 20.1,
+      "code": "from sklearn.model_selection import train_test_split\nfrom sklearn.preprocessing import StandardScaler, MinMaxScaler\nfrom sklearn.decomposition import PCA\nfrom sklearn.metrics import accuracy_score\nimport numpy as np\nimport torch\nimport torch.nn as nn\nimport torch.optim as optim\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Split the data into training and validation sets\n    X_train, X_val, y_train, y_val = train_test_split(X_train, y_train, test_size=0.2, random_state=42)\n\n    # Standardize features\n    scaler = StandardScaler()\n    X_train_scaled = scaler.fit_transform(X_train)\n    X_val_scaled = scaler.transform(X_val)\n\n    # Apply PCA for dimensionality reduction\n    pca = PCA(n_components=150)  # Experiment with different numbers of components\n    X_train_pca = pca.fit_transform(X_train_scaled)\n    X_val_pca = pca.transform(X_val_scaled)\n\n    # Build and train a Convolutional Neural Network (CNN) using PyTorch\n    class CNN(nn.Module):\n        def __init__(self):\n            super(CNN, self).__init__()\n            self.conv1 = nn.Conv2d(1, 32, kernel_size=3, stride=1, padding=1)\n            self.relu1 = nn.ReLU()\n            self.pool1 = nn.MaxPool2d(kernel_size=2, stride=2)\n            self.conv2 = nn.Conv2d(32, 64, kernel_size=3, stride=1, padding=1)\n            self.relu2 = nn.ReLU()\n            self.pool2 = nn.MaxPool2d(kernel_size=2, stride=2)\n            self.fc1 = nn.Linear(64 * 7 * 7, 128)\n            self.relu3 = nn.ReLU()\n            self.fc2 = nn.Linear(128, 10)\n\n        def forward(self, x):\n            x = x.unsqueeze(1)  # Add channel dimension\n            x = self.pool1(self.relu1(self.conv1(x)))\n            x = self.pool2(self.relu2(self.conv2(x)))\n            x = x.view(-1, 64 * 7 * 7)\n            x = self.relu3(self.fc1(x))\n            return self.fc2(x)\n\n    model = CNN()\n    criterion = nn.CrossEntropyLoss()\n    optimizer = optim.Adam(model.parameters(), lr=0.001)\n\n    # Train the model\n    for epoch in range(10):\n        model.train()\n        y_pred_train = model(X_train_pca).argmax(dim=1)\n        loss = criterion(model(X_train_pca), y_train)\n        optimizer.zero_grad()\n        loss.backward()\n        optimizer.step()\n\n        print(f'Epoch {epoch+1}, Loss: {loss.item():.4f}')\n\n    # Evaluate the model on the validation set\n    model.eval()\n    with torch.no_grad():\n        y_pred_val = model(X_val_pca).argmax(dim=1)\n\n    # Convert predictions to numpy array\n    predictions = y_pred_val.numpy()\n\n    return predictions"
+    },
+    {
+      "iteration": 32,
+      "val_accuracy": 0.924,
+      "val_loss": 0.4421,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 20.6,
+      "code": "import numpy as np\nfrom sklearn.ensemble import RandomForestClassifier\nfrom sklearn.preprocessing import StandardScaler, MinMaxScaler\nfrom sklearn.decomposition import PCA\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Feature scaling and dimensionality reduction\n    scaler = MinMaxScaler()\n    X_train_scaled = scaler.fit_transform(X_train)\n    X_val_scaled = scaler.transform(X_val)\n\n    pca = PCA(n_components=100)  # Reduce dimensions to 100\n    X_train_pca = pca.fit_transform(X_train_scaled)\n    X_val_pca = pca.transform(X_val_scaled)\n\n    # Train a Random Forest model\n    model = RandomForestClassifier(max_depth=50, n_estimators=100)\n    model.fit(X_train_pca, y_train)\n\n    # Get predictions on the validation set\n    predictions = model.predict(X_val_pca)\n\n    return predictions"
+    },
+    {
+      "iteration": 33,
+      "val_accuracy": 0.9455,
+      "val_loss": 0.3315,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 18.9,
+      "code": "from sklearn.ensemble import RandomForestClassifier\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    model = RandomForestClassifier(n_estimators=200, random_state=42)\n    model.fit(X_train, y_train)\n    predictions = model.predict(X_val)\n    return predictions"
+    },
+    {
+      "iteration": 34,
+      "val_accuracy": null,
+      "val_loss": null,
+      "family": "SVM",
+      "error": "Runtime Error: Invalid parameter 'svm' for estimator Pipeline(steps=[('standardscaler', StandardScaler()),\n                ('svc', SVC(random_state=42))]). Valid parameters are: ['memory', 'steps', 'transform_input', 'verbose'].\nTraceback (most recent call last):\n  File \"F:\\AI-IN-THE-LOOP\\aitl-paper\\experiments\\aeos\\aeos_behave\\trainer.py\", line 95, in _run_in_process\n    predictions = solve_fn(\n  File \"<string>\", line 15, in solve\n  File \"C:\\Users\\ZENITH\\AppData\\Roaming\\Python\\Python310\\site-pa",
+      "time_seconds": 14.7,
+      "code": "import numpy as np\nfrom sklearn.model_selection import train_test_split, cross_val_score\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.pipeline import make_pipeline\nfrom sklearn.svm import SVC\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Pipeline for feature scaling and SVM with rbf kernel\n    pipeline = make_pipeline(StandardScaler(), SVC(kernel='rbf', C=1.0, random_state=42))\n    \n    # Cross-validation to find the best C parameter\n    c_values = np.logspace(-5, 5, num=10)\n    cv_scores = []\n    for c in c_values:\n        pipeline.set_params(svm__C=c)\n        scores = cross_val_score(pipeline, X_train, y_train, cv=5, scoring='accuracy')\n        cv_scores.append(np.mean(scores))\n    \n    # Find the optimal C value\n    optimal_c = c_values[np.argmax(cv_scores)]\n    \n    # Train the model with the optimal C value\n    pipeline.set_params(svm__C=optimal_c)\n    pipeline.fit(X_train, y_train)\n    \n    # Make predictions on the validation set\n    predictions = pipeline.predict(X_val)\n    return predictions"
+    },
+    {
+      "iteration": 35,
+      "val_accuracy": 0.943,
+      "val_loss": 0.3444,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 16.7,
+      "code": "import numpy as np\nfrom sklearn.ensemble import RandomForestClassifier\nfrom sklearn.pipeline import Pipeline\nfrom sklearn.preprocessing import StandardScaler\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Initialize and train the RandomForest model\n    clf = Pipeline([\n        ('scaler', StandardScaler()),\n        ('rf', RandomForestClassifier(n_estimators=100, random_state=42))\n    ])\n    \n    clf.fit(X_train, y_train)\n    \n    # Make predictions on the validation set\n    predictions = clf.predict(X_val)\n    \n    return predictions"
+    },
+    {
+      "iteration": 36,
+      "val_accuracy": 0.9425,
+      "val_loss": 0.3469,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 266.6,
+      "code": "import numpy as np\nfrom sklearn.pipeline import Pipeline\nfrom sklearn.preprocessing import StandardScaler, MinMaxScaler\nfrom sklearn.svm import SVC\nfrom sklearn.tree import DecisionTreeClassifier\nfrom sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier\nfrom sklearn.metrics import accuracy_score\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Define different model families to explore\n    models = {\n        'RandomForest': RandomForestClassifier(random_state=42),\n        'GradientBoosting': GradientBoostingClassifier(n_estimators=100, learning_rate=0.01, random_state=42),\n        'DecisionTree': DecisionTreeClassifier(max_depth=None, min_samples_split=2, random_state=42)\n    }\n    \n    best_acc = 0\n    best_model = None\n    \n    for model_name, model in models.items():\n        # Standardize features\n        scaler = MinMaxScaler()\n        X_train_scaled = scaler.fit_transform(X_train)\n        X_val_scaled = scaler.transform(X_val)\n        \n        # Train the model\n        model.fit(X_train_scaled, y_train)\n        \n        # Make predictions and calculate accuracy\n        y_pred = model.predict(X_val_scaled)\n        acc = accuracy_score(y_val, y_pred)\n        \n        # Update best model if current one is better\n        if acc > best_acc:\n            best_acc = acc\n            best_model = model\n    \n    # Final evaluation on the validation set with the best model\n    final_preds = best_model.predict(X_val_scaled)\n    \n    return final_preds"
+    },
+    {
+      "iteration": 37,
+      "val_accuracy": null,
+      "val_loss": null,
+      "family": "RandomForest",
+      "error": "Shape Error: Expected 2000 predictions, got 1600.",
+      "time_seconds": 14.3,
+      "code": "from sklearn.model_selection import train_test_split\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.ensemble import RandomForestClassifier\nfrom sklearn.metrics import accuracy_score\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Split the training data into training and validation sets\n    X_train, X_val, y_train, y_val = train_test_split(X_train, y_train, test_size=0.2, random_state=42)\n\n    # Initialize the model\n    model = RandomForestClassifier(n_estimators=100, max_depth=50, min_samples_split=2, n_jobs=-1)\n\n    # Train the model\n    model.fit(X_train, y_train)\n\n    # Make predictions on the validation set\n    predictions = model.predict(X_val)\n\n    # Calculate accuracy\n    accuracy = accuracy_score(y_val, predictions)\n\n    return predictions"
+    },
+    {
+      "iteration": 38,
+      "val_accuracy": 0.9565,
+      "val_loss": 0.275,
+      "family": "RandomForest",
+      "is_best": true,
+      "time_seconds": 31.1,
+      "code": "import numpy as np\nfrom sklearn.pipeline import Pipeline\nfrom sklearn.preprocessing import StandardScaler, MinMaxScaler\nfrom sklearn.svm import SVC\nfrom sklearn.ensemble import RandomForestClassifier\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Define the pipeline with standardization and SVM classifier\n    model = Pipeline([\n        ('scaler', MinMaxScaler()),  # Use MinMaxScaler for better performance on SVM\n        ('svc', SVC(probability=True, random_state=42))\n    ])\n    \n    # Train the model\n    model.fit(X_train, y_train)\n    \n    # Get predictions on validation set\n    predictions = model.predict(X_val)\n    \n    return predictions"
+    },
+    {
+      "iteration": 39,
+      "val_accuracy": 0.943,
+      "val_loss": 0.3444,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 17.2,
+      "code": "import numpy as np\nfrom sklearn.ensemble import RandomForestClassifier\nfrom sklearn.pipeline import Pipeline\nfrom sklearn.preprocessing import StandardScaler\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Define the model using a pipeline with StandardScaler and RandomForestClassifier\n    model = Pipeline(steps=[('standardscaler', StandardScaler()),\n                            ('rf', RandomForestClassifier(random_state=42))])\n    \n    # Train the model\n    model.fit(X_train, y_train)\n    \n    # Make predictions on the validation set\n    predictions = model.predict(X_val)\n    \n    return predictions\n\n# Example usage:\n# X_train, y_train, X_val, y_val = load_your_dataset()  # Load your dataset here\n# predictions = solve(X_train, y_train, X_val, y_val)"
+    },
+    {
+      "iteration": 40,
+      "val_accuracy": null,
+      "val_loss": null,
+      "family": "RandomForest",
+      "error": "Runtime Error: 'return' outside function (<string>, line 36)\nTraceback (most recent call last):\n  File \"F:\\AI-IN-THE-LOOP\\aitl-paper\\experiments\\aeos\\aeos_behave\\trainer.py\", line 89, in _run_in_process\n    exec(code_str, exec_namespace)\n  File \"<string>\", line 36\nSyntaxError: 'return' outside function\n",
+      "time_seconds": 15.1,
+      "code": "import numpy as np\nfrom sklearn.datasets import load_digits\nfrom sklearn.model_selection import train_test_split, GridSearchCV\nfrom sklearn.ensemble import RandomForestClassifier\nfrom sklearn.pipeline import Pipeline\nfrom sklearn.preprocessing import StandardScaler\n\n# Load and preprocess data\ndigits = load_digits()\nX, y = digits.data, digits.target\n\n# Split the data into training and validation sets\nX_train, X_val, y_train, y_val = train_test_split(X, y, test_size=0.2, random_state=42)\n\n# Define a pipeline with PCA for dimensionality reduction and RandomForestClassifier\npipeline = Pipeline([\n    ('scaler', StandardScaler()),\n    ('pca', PCA(n_components=150)),  # Experiment with different n_components\n    ('classifier', RandomForestClassifier(random_state=42))\n])\n\n# Set up grid search to find the best parameters\nparam_grid = {\n    'pca__n_components': [100, 150, 200],\n    'classifier__n_estimators': [100, 200, 300],\n    'classifier__max_depth': [None, 10, 20]\n}\n\ngrid_search = GridSearchCV(pipeline, param_grid, cv=5, scoring='accuracy', n_jobs=-1)\ngrid_search.fit(X_train, y_train)\n\n# Get the best model and make predictions\nbest_model = grid_search.best_estimator_\npredictions = best_model.predict(X_val)\n\nreturn predictions"
+    },
+    {
+      "iteration": 41,
+      "val_accuracy": 0.943,
+      "val_loss": 0.3444,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 16.2,
+      "code": "import numpy as np\nfrom sklearn.ensemble import RandomForestClassifier\nfrom sklearn.metrics import accuracy_score, classification_report\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Initialize the model\n    model = RandomForestClassifier(n_estimators=100, random_state=42)\n    \n    # Train the model\n    model.fit(X_train, y_train)\n    \n    # Make predictions on the validation set\n    predictions = model.predict(X_val)\n    \n    return predictions"
+    },
+    {
+      "iteration": 42,
+      "val_accuracy": null,
+      "val_loss": null,
+      "family": "RandomForest",
+      "error": "Timeout Error: Code execution exceeded 300 seconds. Process terminated.",
+      "time_seconds": 312.8,
+      "code": "import numpy as np\nfrom sklearn.ensemble import RandomForestClassifier\nfrom sklearn.model_selection import train_test_split, GridSearchCV\nfrom sklearn.metrics import accuracy_score\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Split data into training and validation sets if needed\n    # X_train, y_train, X_val, y_val = train_test_split(X, y, test_size=0.2, random_state=42)\n\n    # Initialize RandomForestClassifier\n    rf_classifier = RandomForestClassifier(n_estimators=100, max_depth=50, random_state=42)\n\n    # Perform grid search for hyperparameter tuning\n    param_grid = {\n        'n_estimators': [50, 100, 200],\n        'max_depth': [None, 20, 30, 50],\n        'min_samples_split': [2, 5, 10]\n    }\n    \n    grid_search = GridSearchCV(estimator=rf_classifier, param_grid=param_grid, cv=5, scoring='accuracy')\n    grid_search.fit(X_train, y_train)\n\n    # Get the best model from grid search\n    best_rf_model = grid_search.best_estimator_\n\n    # Evaluate the best model on the validation set\n    predictions = best_rf_model.predict(X_val)\n    val_accuracy = accuracy_score(y_val, predictions)\n\n    return predictions"
+    },
+    {
+      "iteration": 43,
+      "val_accuracy": null,
+      "val_loss": null,
+      "family": "RandomForest",
+      "error": "Shape Error: Expected 2000 predictions, got 1600.",
+      "time_seconds": 18.4,
+      "code": "import numpy as np\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.ensemble import RandomForestClassifier\nfrom sklearn.metrics import accuracy_score, classification_report\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Splitting the training data into training and validation sets\n    X_train, X_val, y_train, y_val = train_test_split(X_train, y_train, test_size=0.2, random_state=42)\n    \n    # Initialize the RandomForestClassifier\n    model = RandomForestClassifier(n_estimators=100, random_state=42)\n    \n    # Train the model\n    model.fit(X_train, y_train)\n    \n    # Make predictions on the validation set\n    predictions = model.predict(X_val)\n    \n    # Calculate accuracy and classification report\n    accuracy = accuracy_score(y_val, predictions)\n    print(f\"Accuracy: {accuracy}\")\n    print(\"Classification Report:\")\n    print(classification_report(y_val, predictions))\n    \n    return predictions\n\n# Call the function with your data\n# solve(X_train, y_train, X_val, y_val)"
+    },
+    {
+      "iteration": 44,
+      "val_accuracy": 0.943,
+      "val_loss": 0.3444,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 16.7,
+      "code": "import numpy as np\nfrom sklearn.model_selection import train_test_split, cross_val_score\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.pipeline import Pipeline\nfrom sklearn.ensemble import RandomForestClassifier\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Define the model\n    model = RandomForestClassifier(n_estimators=100, random_state=42)\n    \n    # Preprocess data\n    scaler = StandardScaler()\n    X_train_scaled = scaler.fit_transform(X_train)\n    X_val_scaled = scaler.transform(X_val)\n    \n    # Train the model\n    model.fit(X_train_scaled, y_train)\n    \n    # Predict on validation set\n    predictions = model.predict(X_val_scaled)\n    \n    return predictions"
+    },
+    {
+      "iteration": 45,
+      "val_accuracy": null,
+      "val_loss": null,
+      "family": "RandomForest",
+      "error": "Shape Error: Expected 2000 predictions, got 1600.",
+      "time_seconds": 17.1,
+      "code": "import numpy as np\nfrom sklearn.ensemble import RandomForestClassifier\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.metrics import accuracy_score, confusion_matrix\nfrom sklearn.preprocessing import StandardScaler\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Split the training data into features and target\n    X = X_train\n    y = y_train\n    \n    # Apply standardization to numerical features\n    scaler = StandardScaler()\n    X = scaler.fit_transform(X)\n    \n    # Split the dataset into train and val sets for cross-validation\n    X_train, X_val, y_train, y_val = train_test_split(X, y, test_size=0.2, random_state=42)\n    \n    # Initialize the RandomForestClassifier\n    model = RandomForestClassifier(n_estimators=100, random_state=42)\n    \n    # Train the model\n    model.fit(X_train, y_train)\n    \n    # Make predictions on the validation set\n    predictions = model.predict(X_val)\n    \n    # Return the predicted labels as a numpy array of integers in range [0, 9]\n    return predictions\n\n# Example usage:\n# X_train, y_train, X_val, y_val = load_your_dataset()\n# predictions = solve(X_train, y_train, X_val, y_val)"
+    },
+    {
+      "iteration": 46,
+      "val_accuracy": 0.943,
+      "val_loss": 0.3444,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 17.4,
+      "code": "import numpy as np\nfrom sklearn.ensemble import RandomForestClassifier\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.preprocessing import StandardScaler\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Split the training data into features and labels\n    X_train, X_val = X_train.reshape(-1, 784), X_val.reshape(-1, 784)\n    \n    # Scale the features to have zero mean and unit variance\n    scaler = StandardScaler()\n    X_train_scaled = scaler.fit_transform(X_train)\n    X_val_scaled = scaler.transform(X_val)\n    \n    # Initialize the Random Forest Classifier with default parameters\n    model = RandomForestClassifier(random_state=42)\n    \n    # Train the model\n    model.fit(X_train_scaled, y_train)\n    \n    # Make predictions on the validation set\n    predictions = model.predict(X_val_scaled)\n    \n    return predictions\n\n# Example usage:\n# X_train, y_train, X_val, y_val = load_your_data()\n# predictions = solve(X_train, y_train, X_val, y_val)"
+    },
+    {
+      "iteration": 47,
+      "val_accuracy": 0.943,
+      "val_loss": 0.3444,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 17.2,
+      "code": "import numpy as np\nfrom sklearn.ensemble import RandomForestClassifier\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.metrics import accuracy_score, classification_report\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Split data into training and validation sets if needed (though not necessary here)\n    # X_train, y_train = train_test_split(X_train, y_train, test_size=0.2, random_state=42)\n    \n    # Initialize the model\n    model = RandomForestClassifier(n_estimators=100, random_state=42)\n    \n    # Train the model\n    model.fit(X_train, y_train)\n    \n    # Make predictions on the validation set\n    predictions = model.predict(X_val)\n    \n    return predictions\n\n# Example usage:\n# X_train, y_train, X_val, y_val = ...  # Load your dataset here\n# predictions = solve(X_train, y_train, X_val, y_val)"
+    },
+    {
+      "iteration": 48,
+      "val_accuracy": null,
+      "val_loss": null,
+      "family": "GradientBoosting",
+      "error": "Timeout Error: Code execution exceeded 300 seconds. Process terminated.",
+      "time_seconds": 314.1,
+      "code": "import numpy as np\nfrom sklearn.model_selection import train_test_split, GridSearchCV\nfrom sklearn.pipeline import Pipeline\nfrom sklearn.preprocessing import StandardScaler, PolynomialFeatures\nfrom sklearn.ensemble import GradientBoostingClassifier\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Define the pipeline with standardization and polynomial features\n    model = Pipeline([\n        ('scaler', StandardScaler()),\n        ('poly', PolynomialFeatures(degree=2)),  # Increase degree to capture more complex relationships\n        ('gbm', GradientBoostingClassifier(random_state=42))\n    ])\n    \n    # Use GridSearchCV for hyperparameter tuning\n    param_grid = {\n        'gbm__n_estimators': [50, 100, 150],\n        'gbm__learning_rate': [0.01, 0.1, 0.2]\n    }\n    \n    grid_search = GridSearchCV(model, param_grid, cv=5, scoring='accuracy', n_jobs=-1)\n    grid_search.fit(X_train, y_train)\n    \n    # Get the best model and predictions on validation set\n    best_model = grid_search.best_estimator_\n    predictions = best_model.predict(X_val)\n    \n    return predictions"
+    },
+    {
+      "iteration": 49,
+      "val_accuracy": null,
+      "val_loss": null,
+      "family": "RandomForest",
+      "error": "Runtime Error: name 'y_pred' is not defined\nTraceback (most recent call last):\n  File \"F:\\AI-IN-THE-LOOP\\aitl-paper\\experiments\\aeos\\aeos_behave\\trainer.py\", line 95, in _run_in_process\n    predictions = solve_fn(\n  File \"<string>\", line 7, in solve\nNameError: name 'y_pred' is not defined\n",
+      "time_seconds": 30.5,
+      "code": "import numpy as np\nfrom sklearn.ensemble import RandomForestClassifier\nfrom sklearn.metrics import accuracy_score\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Check if shapes match for predictions\n    if len(y_pred) != len(y_val):\n        raise ValueError(\"Shape Error: Expected {} predictions, got {}\".format(len(y_val), len(y_pred)))\n    \n    return y_pred"
+    },
+    {
+      "iteration": 50,
+      "val_accuracy": 0.9265,
+      "val_loss": 0.4292,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 20.3,
+      "code": "import numpy as np\nfrom sklearn.ensemble import RandomForestClassifier\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.metrics import accuracy_score\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Split data into training and validation sets\n    X_train, _, y_train, _ = train_test_split(X_train, y_train, test_size=0.5, random_state=42)\n    \n    # Initialize the RandomForestClassifier\n    clf = RandomForestClassifier(n_estimators=100, random_state=42)\n    \n    # Train the model\n    clf.fit(X_train, y_train)\n    \n    # Make predictions on the validation set\n    y_pred = clf.predict(X_val)\n    \n    return y_pred\n\n# Example usage:\n# X_train, y_train, X_val, y_val = load_your_data()  # Replace with actual data loading\n# predictions = solve(X_train, y_train, X_val, y_val)"
+    },
+    {
+      "iteration": 51,
+      "val_accuracy": 0.9065,
+      "val_loss": 0.532,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 24.5,
+      "code": "import numpy as np\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.decomposition import PCA\nfrom sklearn.pipeline import Pipeline\nfrom sklearn.ensemble import RandomForestClassifier\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Split the data into training and validation sets\n    X_train, _, y_train, _ = train_test_split(X_train, y_train, test_size=0.2, random_state=42)\n\n    # Standardize features\n    scaler = StandardScaler()\n    X_train = scaler.fit_transform(X_train)\n    X_val = scaler.transform(X_val)\n\n    # Apply PCA for dimensionality reduction\n    pca = PCA(n_components=150)  # Adjust the number of components as needed\n    X_train = pca.fit_transform(X_train)\n    X_val = pca.transform(X_val)\n\n    # Build and train a RandomForestClassifier\n    model = RandomForestClassifier(n_estimators=100, random_state=42)\n    model.fit(X_train, y_train)\n\n    # Make predictions on the validation set\n    y_pred = model.predict(X_val)\n\n    return y_pred"
+    },
+    {
+      "iteration": 52,
+      "val_accuracy": null,
+      "val_loss": null,
+      "family": "RandomForest",
+      "error": "Timeout Error: Code execution exceeded 300 seconds. Process terminated.",
+      "time_seconds": 315.9,
+      "code": "import numpy as np\nfrom sklearn.model_selection import train_test_split, GridSearchCV\nfrom sklearn.ensemble import RandomForestClassifier\nfrom sklearn.metrics import accuracy_score\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Split data into training and validation sets\n    X_train, X_val, y_train, y_val = train_test_split(X_train, y_train, test_size=0.2, random_state=42)\n\n    # Initialize the model\n    rf_classifier = RandomForestClassifier(random_state=42)\n\n    # Define the parameter grid for hyperparameter tuning\n    param_grid = {\n        'n_estimators': [100, 200, 300],\n        'max_depth': [None, 5, 10, 15],\n        'min_samples_split': [2, 5, 10]\n    }\n\n    # Perform grid search with cross-validation\n    grid_search = GridSearchCV(estimator=rf_classifier, param_grid=param_grid, cv=3, n_jobs=-1)\n    grid_search.fit(X_train, y_train)\n\n    # Get the best model\n    best_model = grid_search.best_estimator_\n\n    # Make predictions on the validation set\n    y_pred = best_model.predict(X_val)\n\n    return y_pred"
+    },
+    {
+      "iteration": 53,
+      "val_accuracy": null,
+      "val_loss": null,
+      "family": "RandomForest",
+      "error": "Shape Error: Expected 2000 predictions, got 1600.",
+      "time_seconds": 37.6,
+      "code": "import numpy as np\nfrom sklearn.ensemble import RandomForestClassifier\nfrom sklearn.model_selection import train_test_split\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Split the training data into training and validation sets if needed\n    X_train, X_val, y_train, y_val = train_test_split(X_train, y_train, test_size=0.2, random_state=42)\n    \n    # Initialize the RandomForestClassifier\n    model = RandomForestClassifier(n_estimators=100, random_state=42)\n    \n    # Train the model\n    model.fit(X_train, y_train)\n    \n    # Make predictions on the validation set\n    y_pred = model.predict(X_val)\n    \n    return y_pred"
+    },
+    {
+      "iteration": 54,
+      "val_accuracy": 0.94,
+      "val_loss": 0.3598,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 19.5,
+      "code": "import numpy as np\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.preprocessing import StandardScaler, MinMaxScaler\nfrom sklearn.ensemble import RandomForestClassifier\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Split data into training and validation sets\n    X_train, _, y_train, _ = train_test_split(X_train, y_train, test_size=0.2, random_state=42)\n    \n    # Standardize features\n    scaler = MinMaxScaler()\n    X_train = scaler.fit_transform(X_train)\n    X_val = scaler.transform(X_val)\n    \n    # Train the model\n    clf = RandomForestClassifier(n_estimators=100, random_state=42)\n    clf.fit(X_train, y_train)\n    \n    # Predict on validation set\n    y_pred = clf.predict(X_val)\n    \n    return y_pred"
+    },
+    {
+      "iteration": 55,
+      "val_accuracy": 0.906,
+      "val_loss": 0.5346,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 29.0,
+      "code": "from sklearn.preprocessing import StandardScaler, MinMaxScaler, RobustScaler\nfrom sklearn.decomposition import PCA\nfrom sklearn.ensemble import RandomForestClassifier\nfrom sklearn.metrics import accuracy_score\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Feature scaling\n    scaler = StandardScaler()\n    X_train_scaled = scaler.fit_transform(X_train)\n    X_val_scaled = scaler.transform(X_val)\n\n    # PCA for dimensionality reduction\n    pca = PCA(n_components=0.95)  # Keep at least 95% of variance\n    X_train_pca = pca.fit_transform(X_train_scaled)\n    X_val_pca = pca.transform(X_val_scaled)\n\n    # Train the model\n    model = RandomForestClassifier(n_estimators=100, random_state=42)\n    model.fit(X_train_pca, y_train)\n\n    # Predict on validation set\n    predictions = model.predict(X_val_pca)\n\n    return predictions"
+    },
+    {
+      "iteration": 56,
+      "val_accuracy": null,
+      "val_loss": null,
+      "family": "RandomForest",
+      "error": "Shape Error: Expected 2000 predictions, got 1600.",
+      "time_seconds": 16.9,
+      "code": "import numpy as np\nfrom sklearn.ensemble import RandomForestClassifier\nfrom sklearn.model_selection import train_test_split, cross_val_score\nfrom sklearn.metrics import classification_report\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Split the data into training and validation sets\n    X_train, X_val, y_train, y_val = train_test_split(X_train, y_train, test_size=0.2, random_state=42)\n    \n    # Initialize a RandomForestClassifier\n    model = RandomForestClassifier(n_estimators=100, random_state=42)\n    \n    # Train the model\n    model.fit(X_train, y_train)\n    \n    # Make predictions on the validation set\n    predictions = model.predict(X_val)\n    \n    return predictions"
+    },
+    {
+      "iteration": 57,
+      "val_accuracy": null,
+      "val_loss": null,
+      "family": "RandomForest",
+      "error": "Runtime Error: cannot import name 'PCA' from 'sklearn.preprocessing' (C:\\Users\\ZENITH\\AppData\\Roaming\\Python\\Python310\\site-packages\\sklearn\\preprocessing\\__init__.py)\nTraceback (most recent call last):\n  File \"F:\\AI-IN-THE-LOOP\\aitl-paper\\experiments\\aeos\\aeos_behave\\trainer.py\", line 89, in _run_in_process\n    exec(code_str, exec_namespace)\n  File \"<string>\", line 3, in <module>\nImportError: cannot import name 'PCA' from 'sklearn.preprocessing' (C:\\Users\\ZENITH\\AppData\\Roaming\\Python\\Python310",
+      "time_seconds": 21.2,
+      "code": "import numpy as np\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.preprocessing import StandardScaler, MinMaxScaler, PCA\nfrom sklearn.ensemble import RandomForestClassifier\nfrom sklearn.metrics import accuracy_score\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Normalize features using minmax scaling\n    scaler = MinMaxScaler()\n    X_train_scaled = scaler.fit_transform(X_train)\n    X_val_scaled = scaler.transform(X_val)\n\n    # Perform PCA for dimensionality reduction (optional, try with different n_components)\n    pca = PCA(n_components=0.95)  # Adjust the value of 0.95 as needed\n    X_train_pca = pca.fit_transform(X_train_scaled)\n    X_val_pca = pca.transform(X_val_scaled)\n\n    # Initialize and train a Random Forest model\n    rf_model = RandomForestClassifier(n_estimators=100, random_state=42)\n    rf_model.fit(X_train_pca, y_train)\n\n    # Make predictions on the validation set\n    predictions = rf_model.predict(X_val_pca)\n\n    return predictions\n\n# Example usage:\n# X_train, y_train, X_val, y_val = load_your_dataset()  # Replace with your dataset loading logic\n# predictions = solve(X_train, y_train, X_val, y_val)"
+    },
+    {
+      "iteration": 58,
+      "val_accuracy": 0.943,
+      "val_loss": 0.3444,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 20.8,
+      "code": "import numpy as np\nfrom sklearn.ensemble import RandomForestClassifier\nfrom sklearn.metrics import accuracy_score, confusion_matrix\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Convert 2D to 1D arrays for compatibility with sklearn models\n    X_train = X_train.flatten()\n    X_val = X_val.flatten()\n\n    # Initialize the model\n    model = RandomForestClassifier(n_estimators=100, random_state=42)\n\n    # Train the model\n    model.fit(X_train.reshape(-1, 784), y_train)\n\n    # Make predictions on the validation set\n    predictions = model.predict(X_val.reshape(-1, 784))\n\n    return predictions"
+    },
+    {
+      "iteration": 59,
+      "val_accuracy": null,
+      "val_loss": null,
+      "family": "RandomForest",
+      "error": "Timeout Error: Code execution exceeded 300 seconds. Process terminated.",
+      "time_seconds": 315.3,
+      "code": "import numpy as np\nfrom sklearn.model_selection import train_test_split, GridSearchCV\nfrom sklearn.preprocessing import StandardScaler, PolynomialFeatures\nfrom sklearn.pipeline import Pipeline\nfrom sklearn.ensemble import RandomForestClassifier\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Define the pipeline with polynomial features and Random Forest classifier\n    model = Pipeline([\n        ('scaler', StandardScaler()),  # Use StandardScaler for better performance on Random Forest\n        ('poly_features', PolynomialFeatures(degree=2)),  # Add polynomial features up to degree 2\n        ('rf', RandomForestClassifier(random_state=42))\n    ])\n    \n    # Set the parameter grid for GridSearchCV\n    param_grid = {\n        'poly_features__degree': [1, 2, 3],\n        'rf__n_estimators': [50, 100, 200]\n    }\n    \n    # Perform grid search with cross-validation\n    grid_search = GridSearchCV(model, param_grid, cv=5, scoring='accuracy')\n    grid_search.fit(X_train, y_train)\n    \n    # Get the best model and its parameters\n    best_model = grid_search.best_estimator_\n    \n    # Get predictions on validation set\n    predictions = best_model.predict(X_val)\n    \n    return predictions"
+    },
+    {
+      "iteration": 60,
+      "val_accuracy": null,
+      "val_loss": null,
+      "family": "RandomForest",
+      "error": "Timeout Error: Code execution exceeded 300 seconds. Process terminated.",
+      "time_seconds": 323.3,
+      "code": "import numpy as np\nfrom sklearn.model_selection import train_test_split, GridSearchCV\nfrom sklearn.ensemble import RandomForestClassifier\nfrom sklearn.metrics import classification_report\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Split the training data into training and validation sets for cross-validation\n    X_train_cv, X_val_cv, y_train_cv, y_val_cv = train_test_split(\n        X_train, y_train, test_size=0.2, random_state=42)\n\n    # Initialize a RandomForestClassifier with hyperparameter tuning\n    model = RandomForestClassifier(random_state=42)\n    param_grid = {\n        'n_estimators': [100, 200, 300],\n        'max_depth': [None, 50, 100],\n        'min_samples_split': [2, 5, 10]\n    }\n    grid_search = GridSearchCV(estimator=model, param_grid=param_grid, cv=3, n_jobs=-1)\n    \n    # Fit the model with cross-validation\n    grid_search.fit(X_train_cv, y_train_cv)\n\n    # Get the best model from the grid search\n    best_model = grid_search.best_estimator_\n\n    # Train the best model on the entire training set\n    best_model.fit(X_train, y_train)\n\n    # Predict on the validation set\n    predictions = best_model.predict(X_val)\n\n    return predictions"
+    },
+    {
+      "iteration": 61,
+      "val_accuracy": 0.943,
+      "val_loss": 0.3444,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 30.1,
+      "code": "import numpy as np\nfrom sklearn.ensemble import RandomForestClassifier\nfrom sklearn.metrics import accuracy_score, classification_report\n\ndef solve(X_train, y_train, X_val, y_val):\n    model = RandomForestClassifier(n_estimators=100, random_state=42)\n    model.fit(X_train, y_train)\n    predictions = model.predict(X_val)\n    \n    # Check if the predictions shape is correct\n    assert predictions.shape == (y_val.size,), f\"Expected 2000 predictions, got {predictions.shape}...\"\n    \n    return predictions"
+    },
+    {
+      "iteration": 62,
+      "val_accuracy": 0.9455,
+      "val_loss": 0.3315,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 21.8,
+      "code": "import numpy as np\nfrom sklearn.ensemble import RandomForestClassifier\nfrom sklearn.metrics import accuracy_score\n\ndef solve(X_train, y_train, X_val, y_val):\n    model = RandomForestClassifier(n_estimators=200, random_state=42)\n    model.fit(X_train, y_train)\n    predictions = model.predict(X_val)\n    \n    return predictions"
+    },
+    {
+      "iteration": 63,
+      "val_accuracy": 0.943,
+      "val_loss": 0.3444,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 18.2,
+      "code": "import numpy as np\nfrom sklearn.ensemble import RandomForestClassifier\n\ndef solve(X_train, y_train, X_val, y_val):\n    model = RandomForestClassifier(n_estimators=100, random_state=42)\n    model.fit(X_train, y_train)\n    predictions = model.predict(X_val)\n    return predictions"
+    },
+    {
+      "iteration": 64,
+      "val_accuracy": null,
+      "val_loss": null,
+      "family": "RandomForest",
+      "error": "Shape Error: Expected 2000 predictions, got 1600.",
+      "time_seconds": 228.3,
+      "code": "import numpy as np\nfrom sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.metrics import accuracy_score\nfrom sklearn.preprocessing import StandardScaler\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Split the data into training and validation sets\n    X_train, X_val, y_train, y_val = train_test_split(X_train, y_train, test_size=0.2, random_state=42)\n    \n    # Standardize features\n    scaler = StandardScaler()\n    X_train = scaler.fit_transform(X_train)\n    X_val = scaler.transform(X_val)\n    \n    # Train a Gradient Boosting Classifier with early stopping to avoid overfitting\n    gbc = GradientBoostingClassifier(n_estimators=100, learning_rate=0.1, max_depth=3, random_state=42)\n    gbc.fit(X_train, y_train)\n    \n    # Make predictions on the validation set\n    predictions = gbc.predict(X_val)\n    \n    return predictions"
+    },
+    {
+      "iteration": 65,
+      "val_accuracy": 0.943,
+      "val_loss": 0.3444,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 22.1,
+      "code": "import numpy as np\nfrom sklearn.ensemble import RandomForestClassifier\nfrom sklearn.preprocessing import StandardScaler, MinMaxScaler\nfrom sklearn.metrics import accuracy_score\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Data normalization\n    scaler = StandardScaler()\n    X_train_scaled = scaler.fit_transform(X_train)\n    X_val_scaled = scaler.transform(X_val)\n\n    # Model training\n    model = RandomForestClassifier(n_estimators=100, random_state=42)\n    model.fit(X_train_scaled, y_train)\n\n    # Predictions\n    predictions = model.predict(X_val_scaled)\n\n    return predictions"
+    },
+    {
+      "iteration": 66,
+      "val_accuracy": null,
+      "val_loss": null,
+      "family": "RandomForest",
+      "error": "Timeout Error: Code execution exceeded 300 seconds. Process terminated.",
+      "time_seconds": 314.5,
+      "code": "import numpy as np\nfrom sklearn.model_selection import train_test_split, GridSearchCV\nfrom sklearn.ensemble import RandomForestClassifier\nfrom sklearn.metrics import accuracy_score\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Split the training data into training and validation sets for parameter tuning\n    X_train_tuned, _, y_train_tuned, _ = train_test_split(X_train, y_train, test_size=0.2)\n\n    # Initialize the RandomForestClassifier with a grid of hyperparameters to search\n    param_grid = {\n        'n_estimators': [50, 100, 200],\n        'max_depth': [None, 10, 20, 30],\n        'min_samples_split': [2, 5, 10],\n        'min_samples_leaf': [1, 2, 4]\n    }\n\n    # Create a GridSearchCV object to perform parameter tuning\n    rf_grid = GridSearchCV(estimator=RandomForestClassifier(), param_grid=param_grid, cv=3, n_jobs=-1)\n\n    # Fit the model with the tuned parameters\n    rf_grid.fit(X_train_tuned, y_train_tuned)\n\n    # Use the best estimator found to make predictions on the validation set\n    predictions = rf_grid.predict(X_val)\n\n    return predictions"
+    },
+    {
+      "iteration": 67,
+      "val_accuracy": 0.943,
+      "val_loss": 0.3444,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 27.7,
+      "code": "import numpy as np\nfrom sklearn.ensemble import RandomForestClassifier\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Check if the number of training predictions matches the expected number\n    if len(y_train) != len(X_train):\n        raise ValueError(\"Number of training labels does not match the number of training samples.\")\n    \n    # Check if the number of validation predictions matches the expected number\n    if len(y_val) != len(X_val):\n        raise ValueError(\"Number of validation labels does not match the number of validation samples.\")\n    \n    # Initialize and train a RandomForestClassifier\n    model = RandomForestClassifier(n_estimators=100, random_state=42)\n    model.fit(X_train, y_train)\n    \n    # Make predictions on the validation set\n    predictions = model.predict(X_val)\n    \n    return predictions"
+    },
+    {
+      "iteration": 68,
+      "val_accuracy": 0.9565,
+      "val_loss": 0.275,
+      "family": "SVM",
+      "is_best": false,
+      "time_seconds": 86.5,
+      "code": "import numpy as np\nfrom sklearn.pipeline import Pipeline\nfrom sklearn.preprocessing import StandardScaler, MinMaxScaler\nfrom sklearn.svm import SVC\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.metrics import accuracy_score\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Split the training data into training and validation sets for cross-validation\n    X_train_cv, _, y_train_cv, _ = train_test_split(X_train, y_train, test_size=0.2, random_state=42)\n    \n    # Define the pipeline with standardization and SVC classifier\n    model = Pipeline([\n        ('scaler', MinMaxScaler()),  # Use MinMaxScaler for better performance on SVM\n        ('svc', SVC(probability=True, random_state=42))\n    ])\n    \n    # Train the model using cross-validation to improve robustness\n    scores = cross_val_score(model, X_train_cv, y_train_cv, cv=5, scoring='accuracy')\n    print(f\"Cross-Validation Accuracy: {np.mean(scores):.3f}\")\n    \n    # Fit the model on the entire training set\n    model.fit(X_train, y_train)\n    \n    # Get predictions on validation set\n    predictions = model.predict(X_val)\n    \n    return predictions"
+    },
+    {
+      "iteration": 69,
+      "val_accuracy": 0.943,
+      "val_loss": 0.3444,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 22.2,
+      "code": "from sklearn.ensemble import RandomForestClassifier\nimport numpy as np\nfrom sklearn.model_selection import train_test_split\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Splitting the validation set into 2 halves for cross-validation\n    X_val_half1, X_val_half2, y_val_half1, y_val_half2 = train_test_split(X_val, y_val, test_size=0.5, random_state=42)\n    \n    # Initializing and training a RandomForestClassifier with cross-validation\n    rf = RandomForestClassifier(n_estimators=100, random_state=42)\n    rf.fit(X_train, y_train)\n    \n    # Evaluating the model on both halves of the validation set\n    val_acc_half1 = rf.score(X_val_half1, y_val_half1)\n    val_acc_half2 = rf.score(X_val_half2, y_val_half2)\n    \n    print(f\"Validation Accuracy (Half 1): {val_acc_half1:.4f}\")\n    print(f\"Validation Accuracy (Half 2): {val_acc_half2:.4f}\")\n    \n    # Combining predictions from both halves\n    val_predictions = rf.predict(X_val)\n    \n    return val_predictions"
+    },
+    {
+      "iteration": 70,
+      "val_accuracy": null,
+      "val_loss": null,
+      "family": "RandomForest",
+      "error": "Timeout Error: Code execution exceeded 300 seconds. Process terminated.",
+      "time_seconds": 314.2,
+      "code": "import numpy as np\nfrom sklearn.model_selection import train_test_split, GridSearchCV\nfrom sklearn.ensemble import RandomForestClassifier\nfrom sklearn.metrics import accuracy_score\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Split the training data into training and validation sets\n    X_train, X_val, y_train, y_val = train_test_split(X_train, y_train, test_size=0.2, random_state=42)\n    \n    # Initialize the RandomForestClassifier\n    rf = RandomForestClassifier(random_state=42)\n    \n    # Define a parameter grid for hyperparameter tuning\n    param_grid = {\n        'n_estimators': [100, 200, 300],\n        'max_depth': [None, 10, 20, 30],\n        'min_samples_split': [2, 5, 10],\n        'min_samples_leaf': [1, 2, 4]\n    }\n    \n    # Perform grid search with cross-validation\n    grid_search = GridSearchCV(rf, param_grid, cv=5, scoring='accuracy')\n    grid_search.fit(X_train, y_train)\n    \n    # Get the best estimator and make predictions\n    best_rf = grid_search.best_estimator_\n    predictions = best_rf.predict(X_val)\n    \n    return predictions"
+    },
+    {
+      "iteration": 71,
+      "val_accuracy": 0.94,
+      "val_loss": 0.3598,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 25.3,
+      "code": "import numpy as np\nfrom sklearn.ensemble import RandomForestClassifier\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.metrics import accuracy_score, classification_report\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Split data into training and validation sets\n    X_train, _, y_train, _ = train_test_split(X_train, y_train, test_size=0.2, random_state=42)\n    \n    # Initialize the model\n    model = RandomForestClassifier(n_estimators=100, max_depth=50, random_state=42)\n    \n    # Train the model\n    model.fit(X_train, y_train)\n    \n    # Predict on validation set\n    predictions = model.predict(X_val)\n    \n    return predictions"
+    },
+    {
+      "iteration": 72,
+      "val_accuracy": null,
+      "val_loss": null,
+      "family": "RandomForest",
+      "error": "Shape Error: Expected 2000 predictions, got 1600.",
+      "time_seconds": 19.3,
+      "code": "import numpy as np\nfrom sklearn.ensemble import RandomForestClassifier\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.metrics import accuracy_score\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Split the data into training and validation sets\n    X_train, X_val, y_train, y_val = train_test_split(X_train, y_train, test_size=0.2, random_state=42)\n\n    # Initialize a RandomForestClassifier with default parameters\n    clf = RandomForestClassifier(n_estimators=100, random_state=42)\n\n    # Train the classifier on the training data\n    clf.fit(X_train, y_train)\n\n    # Make predictions on the validation set\n    predictions = clf.predict(X_val)\n\n    return predictions"
+    },
+    {
+      "iteration": 73,
+      "val_accuracy": 0.945,
+      "val_loss": 0.3341,
+      "family": "SVM",
+      "is_best": false,
+      "time_seconds": 17.9,
+      "code": "import numpy as np\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.preprocessing import StandardScaler, MinMaxScaler\nfrom sklearn.decomposition import PCA\nfrom sklearn.svm import SVC\nfrom sklearn.metrics import accuracy_score\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Reshape the training and validation data to (n_samples, n_features)\n    X_train = X_train.reshape(-1, 784)\n    X_val = X_val.reshape(-1, 784)\n\n    # Standardize the features\n    scaler = StandardScaler()\n    X_train_scaled = scaler.fit_transform(X_train)\n    X_val_scaled = scaler.transform(X_val)\n\n    # Apply PCA to reduce dimensionality (optional)\n    pca = PCA(n_components=50)\n    X_train_pca = pca.fit_transform(X_train_scaled)\n    X_val_pca = pca.transform(X_val_scaled)\n\n    # Build and train the model\n    clf = SVC(kernel='rbf', C=1.0, random_state=42)\n    clf.fit(X_train_pca, y_train)\n\n    # Make predictions on the validation set\n    predictions = clf.predict(X_val_pca)\n\n    return predictions"
+    },
+    {
+      "iteration": 74,
+      "val_accuracy": null,
+      "val_loss": null,
+      "family": "RandomForest",
+      "error": "Timeout Error: Code execution exceeded 300 seconds. Process terminated.",
+      "time_seconds": 313.9,
+      "code": "import numpy as np\nfrom sklearn.model_selection import train_test_split, GridSearchCV\nfrom sklearn.ensemble import RandomForestClassifier\nfrom sklearn.pipeline import Pipeline\nfrom sklearn.preprocessing import StandardScaler\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Define the pipeline with standardization and random forest classifier\n    pipe = Pipeline([\n        ('scaler', StandardScaler()),\n        ('rf', RandomForestClassifier(random_state=42))\n    ])\n    \n    # Set up parameter grid for grid search\n    param_grid = {\n        'rf__n_estimators': [50, 100, 200],\n        'rf__max_depth': [None, 10, 20, 30]\n    }\n    \n    # Perform grid search with cross-validation\n    grid_search = GridSearchCV(pipe, param_grid, cv=5, scoring='accuracy', n_jobs=-1)\n    grid_search.fit(X_train, y_train)\n    \n    # Get the best model from grid search\n    best_model = grid_search.best_estimator_\n    \n    # Evaluate the best model on validation set\n    predictions = best_model.predict(X_val)\n    \n    return predictions"
+    },
+    {
+      "iteration": 75,
+      "val_accuracy": null,
+      "val_loss": null,
+      "family": "RandomForest",
+      "error": "Runtime Error: Found array with dim 3, while dim <= 2 is required by RandomForestClassifier.\nTraceback (most recent call last):\n  File \"F:\\AI-IN-THE-LOOP\\aitl-paper\\experiments\\aeos\\aeos_behave\\trainer.py\", line 95, in _run_in_process\n    predictions = solve_fn(\n  File \"<string>\", line 20, in solve\n  File \"C:\\Users\\ZENITH\\AppData\\Roaming\\Python\\Python310\\site-packages\\sklearn\\base.py\", line 1365, in wrapper\n    return fit_method(estimator, *args, **kwargs)\n  File \"C:\\Users\\ZENITH\\AppData\\Roaming",
+      "time_seconds": 23.3,
+      "code": "import numpy as np\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.preprocessing import StandardScaler, MinMaxScaler\nfrom sklearn.ensemble import RandomForestClassifier\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Reshape the data to (28, 28) for better visualization and compatibility with some models\n    X_train = X_train.reshape(-1, 28, 28)\n    X_val = X_val.reshape(-1, 28, 28)\n\n    # Standardize features using MinMaxScaler\n    scaler = MinMaxScaler()\n    X_train_scaled = scaler.fit_transform(X_train.reshape(-1, 784)).reshape(-1, 28, 28)\n    X_val_scaled = scaler.transform(X_val.reshape(-1, 784)).reshape(-1, 28, 28)\n\n    # Initialize the RandomForestClassifier\n    model = RandomForestClassifier(n_estimators=100, random_state=42)\n\n    # Train the model\n    model.fit(X_train_scaled, y_train)\n\n    # Make predictions on the validation set\n    predictions = model.predict(X_val_scaled)\n\n    return predictions"
+    },
+    {
+      "iteration": 76,
+      "val_accuracy": null,
+      "val_loss": null,
+      "family": "RandomForest",
+      "error": "Shape Error: Expected 2000 predictions, got 1600.",
+      "time_seconds": 21.2,
+      "code": "import numpy as np\nfrom sklearn.ensemble import RandomForestClassifier\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.metrics import accuracy_score, classification_report\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Split the data into training and validation sets\n    X_train, X_val, y_train, y_val = train_test_split(X_train, y_train, test_size=0.2, random_state=42)\n    \n    # Standardize features\n    X_train = X_train.astype('float32') / 255\n    X_val = X_val.astype('float32') / 255\n    \n    # Initialize and train the RandomForestClassifier\n    rf = RandomForestClassifier(n_estimators=100, random_state=42)\n    rf.fit(X_train, y_train)\n    \n    # Make predictions on the validation set\n    predictions = rf.predict(X_val)\n    \n    return predictions\n\n# Example usage:\n# X_train, y_train, X_val, y_val = load_dataset()  # Load your dataset here\n# predictions = solve(X_train, y_train, X_val, y_val)"
+    },
+    {
+      "iteration": 77,
+      "val_accuracy": 0.908,
+      "val_loss": 0.5243,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 24.8,
+      "code": "import numpy as np\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.decomposition import PCA\nfrom sklearn.ensemble import RandomForestClassifier\nfrom sklearn.metrics import accuracy_score\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Split the data into training and validation sets\n    X_train, _, y_train, _ = train_test_split(X_train, y_train, test_size=0.2, random_state=42)\n    \n    # Standardize features\n    scaler = StandardScaler()\n    X_train = scaler.fit_transform(X_train)\n    X_val = scaler.transform(X_val)\n    \n    # Apply PCA for dimensionality reduction\n    pca = PCA(n_components=150)  # Adjust n_components as needed\n    X_train_pca = pca.fit_transform(X_train)\n    X_val_pca = pca.transform(X_val)\n    \n    # Train a Random Forest Classifier\n    model = RandomForestClassifier(n_estimators=100, random_state=42)\n    model.fit(X_train_pca, y_train)\n    \n    # Make predictions on the validation set\n    predictions = model.predict(X_val_pca)\n    \n    return predictions"
+    },
+    {
+      "iteration": 78,
+      "val_accuracy": null,
+      "val_loss": null,
+      "family": "RandomForest",
+      "error": "Runtime Error: \nAll the 5 fits failed.\nIt is very likely that your model is misconfigured.\nYou can try to debug the error by setting error_score='raise'.\n\nBelow are more details about the failures:\n--------------------------------------------------------------------------------\n5 fits failed with the following error:\nTraceback (most recent call last):\n  File \"C:\\Users\\ZENITH\\AppData\\Roaming\\Python\\Python310\\site-packages\\sklearn\\model_selection\\_validation.py\", line 859, in _fit_and_score\n    es",
+      "time_seconds": 48.8,
+      "code": "import numpy as np\nfrom sklearn.pipeline import Pipeline, FeatureUnion\nfrom sklearn.preprocessing import StandardScaler, MinMaxScaler, PolynomialFeatures\nfrom sklearn.decomposition import PCA\nfrom sklearn.svm import SVC\nfrom sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier\nfrom sklearn.model_selection import train_test_split, cross_val_score\nfrom sklearn.metrics import accuracy_score\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Define the pipeline with feature union and scaling\n    model = Pipeline([\n        ('features', FeatureUnion([\n            ('pca', PCA(n_components=50)),  # Reduce dimensionality using PCA\n            ('poly', PolynomialFeatures(degree=2))  # Add polynomial features\n        ])),\n        ('scaler', MinMaxScaler()),  # Use MinMaxScaler for better performance on SVM\n        ('ensemble', RandomForestClassifier(random_state=42))  # Try Random Forest as ensemble\n    ])\n    \n    # Cross-validate the model to get a more robust estimate of accuracy\n    scores = cross_val_score(model, X_train, y_train, cv=5, scoring='accuracy')\n    print(f\"Cross-validation scores: {scores}\")\n    \n    # Train the model on the entire training set\n    model.fit(X_train, y_train)\n    \n    # Get predictions on validation set\n    predictions = model.predict(X_val)\n    \n    return predictions"
+    },
+    {
+      "iteration": 79,
+      "val_accuracy": 0.913,
+      "val_loss": 0.4986,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 24.2,
+      "code": "import numpy as np\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.preprocessing import StandardScaler, MinMaxScaler\nfrom sklearn.decomposition import PCA\nfrom sklearn.ensemble import RandomForestClassifier\nfrom sklearn.metrics import accuracy_score\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Combine training and validation sets for PCA and scaling\n    combined = np.vstack((X_train, X_val))\n    \n    # Apply MinMaxScaler to ensure all features are between 0 and 1\n    scaler = MinMaxScaler()\n    combined_scaled = scaler.fit_transform(combined)\n    \n    # Split back into separate train and val sets\n    X_train_scaled = combined_scaled[:len(X_train)]\n    X_val_scaled = combined_scaled[len(X_train):]\n    \n    # Apply PCA to reduce dimensionality\n    pca = PCA(n_components=100)  # Experiment with different numbers of components\n    X_train_pca = pca.fit_transform(X_train_scaled)\n    X_val_pca = pca.transform(X_val_scaled)\n    \n    # Initialize and train a RandomForestClassifier\n    model = RandomForestClassifier(random_state=42, n_estimators=100, max_depth=None, min_samples_split=2, min_samples_leaf=1)\n    model.fit(X_train_pca, y_train)\n    \n    # Make predictions on the validation set\n    predictions = model.predict(X_val_pca)\n    \n    return predictions"
+    },
+    {
+      "iteration": 80,
+      "val_accuracy": null,
+      "val_loss": null,
+      "family": "RandomForest",
+      "error": "Shape Error: Expected 2000 predictions, got 1600.",
+      "time_seconds": 17.0,
+      "code": "import numpy as np\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.ensemble import RandomForestClassifier\nfrom sklearn.metrics import accuracy_score, classification_report\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Split the data into training and validation sets\n    X_train, X_val, y_train, y_val = train_test_split(X_train, y_train, test_size=0.2, random_state=42)\n    \n    # Standardize features\n    scaler = StandardScaler()\n    X_train_scaled = scaler.fit_transform(X_train)\n    X_val_scaled = scaler.transform(X_val)\n    \n    # Initialize the model\n    model = RandomForestClassifier(n_estimators=100, random_state=42)\n    \n    # Train the model\n    model.fit(X_train_scaled, y_train)\n    \n    # Make predictions\n    y_pred = model.predict(X_val_scaled)\n    \n    return y_pred"
+    },
+    {
+      "iteration": 81,
+      "val_accuracy": 0.943,
+      "val_loss": 0.3444,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 16.7,
+      "code": "import numpy as np\nfrom sklearn.ensemble import RandomForestClassifier\nfrom sklearn.metrics import accuracy_score\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Initialize and train a Random Forest Classifier\n    clf = RandomForestClassifier(n_estimators=100, random_state=42)\n    clf.fit(X_train, y_train)\n    \n    # Make predictions on the validation set\n    predictions = clf.predict(X_val)\n    \n    return predictions"
+    },
+    {
+      "iteration": 82,
+      "val_accuracy": 0.9475,
+      "val_loss": 0.3212,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 205.6,
+      "code": "import numpy as np\nfrom sklearn.model_selection import train_test_split, GridSearchCV\nfrom sklearn.ensemble import RandomForestClassifier\nfrom sklearn.metrics import accuracy_score, classification_report\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Initialize the model with default hyperparameters\n    model = RandomForestClassifier(random_state=42)\n    \n    # Use grid search to find the best hyperparameters\n    param_grid = {\n        'n_estimators': [50, 100, 200],\n        'max_depth': [None, 10, 20],\n        'min_samples_split': [2, 5, 10]\n    }\n    \n    # Perform grid search\n    grid_search = GridSearchCV(model, param_grid, cv=3, scoring='accuracy', verbose=2)\n    grid_search.fit(X_train, y_train)\n    \n    # Get the best model and its hyperparameters\n    best_model = grid_search.best_estimator_\n    \n    # Train the best model on the full training set\n    best_model.fit(X_train, y_train)\n    \n    # Make predictions on the validation set\n    predictions = best_model.predict(X_val)\n    \n    return predictions"
+    },
+    {
+      "iteration": 83,
+      "val_accuracy": 0.94,
+      "val_loss": 0.3598,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 20.4,
+      "code": "import numpy as np\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.ensemble import RandomForestClassifier\nfrom sklearn.metrics import accuracy_score\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Split the training data into training and validation sets if necessary\n    X_train, _, y_train, _ = train_test_split(X_train, y_train, test_size=0.2, random_state=42)\n    \n    # Standardize features\n    scaler = StandardScaler()\n    X_train = scaler.fit_transform(X_train)\n    X_val = scaler.transform(X_val)\n    \n    # Initialize and train the model\n    model = RandomForestClassifier(n_estimators=100, random_state=42)\n    model.fit(X_train, y_train)\n    \n    # Make predictions on the validation set\n    predictions = model.predict(X_val)\n    \n    return predictions"
+    },
+    {
+      "iteration": 84,
+      "val_accuracy": 0.943,
+      "val_loss": 0.3444,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 19.0,
+      "code": "import numpy as np\nfrom sklearn.ensemble import RandomForestClassifier\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Define and train a RandomForest classifier\n    model = RandomForestClassifier(n_estimators=100, random_state=42)\n    model.fit(X_train, y_train)\n    \n    # Make predictions on the validation set\n    predictions = model.predict(X_val)\n    \n    return predictions"
+    },
+    {
+      "iteration": 85,
+      "val_accuracy": null,
+      "val_loss": null,
+      "family": "GradientBoosting",
+      "error": "Timeout Error: Code execution exceeded 300 seconds. Process terminated.",
+      "time_seconds": 315.3,
+      "code": "import numpy as np\nfrom sklearn.model_selection import train_test_split, GridSearchCV\nfrom sklearn.preprocessing import StandardScaler, PolynomialFeatures\nfrom sklearn.pipeline import Pipeline\nfrom sklearn.ensemble import GradientBoostingClassifier\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Define the pipeline with polynomial features and Gradient Boosting Classifier\n    model = Pipeline([\n        ('scaler', MinMaxScaler()),  # Use MinMaxScaler for better performance on GBC\n        ('poly', PolynomialFeatures(degree=2)),  # Increase degree for more complexity\n        ('gbc', GradientBoostingClassifier(random_state=42))\n    ])\n    \n    # Train the model with GridSearchCV to find optimal hyperparameters\n    param_grid = {\n        'gbc__n_estimators': [100, 200, 300],\n        'gbc__learning_rate': [0.05, 0.1, 0.15],\n        'gbc__max_depth': [None, 3, 5]\n    }\n    grid_search = GridSearchCV(model, param_grid, cv=5, n_jobs=-1)\n    grid_search.fit(X_train, y_train)\n    \n    # Get the best model and predictions on validation set\n    best_model = grid_search.best_estimator_\n    predictions = best_model.predict(X_val)\n    \n    return predictions"
+    },
+    {
+      "iteration": 86,
+      "val_accuracy": null,
+      "val_loss": null,
+      "family": "RandomForest",
+      "error": "Shape Error: Expected 2000 predictions, got 1600.",
+      "time_seconds": 32.3,
+      "code": "import numpy as np\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.ensemble import RandomForestClassifier\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Split the data into training and validation sets\n    X_train, X_val, y_train, y_val = train_test_split(X_train, y_train, test_size=0.2, random_state=42)\n    \n    # Standardize the features\n    scaler = StandardScaler()\n    X_train_scaled = scaler.fit_transform(X_train)\n    X_val_scaled = scaler.transform(X_val)\n    \n    # Initialize and train the RandomForest classifier\n    model = RandomForestClassifier(n_estimators=100, random_state=42)\n    model.fit(X_train_scaled, y_train)\n    \n    # Make predictions on the validation set\n    predictions = model.predict(X_val_scaled)\n    \n    return predictions"
+    },
+    {
+      "iteration": 87,
+      "val_accuracy": 0.9265,
+      "val_loss": 0.4292,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 20.3,
+      "code": "import numpy as np\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.pipeline import Pipeline\nfrom sklearn.ensemble import RandomForestClassifier\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Split the data into training and validation sets\n    X_train, _, y_train, _ = train_test_split(X_train, y_train, test_size=0.5, random_state=42)\n    \n    # Standardize features\n    scaler = StandardScaler()\n    X_train = scaler.fit_transform(X_train)\n    X_val = scaler.transform(X_val)\n    \n    # Create a pipeline with a standardizer and a RandomForestClassifier\n    model = Pipeline([\n        ('scaler', scaler),\n        ('classifier', RandomForestClassifier(n_estimators=100, random_state=42))\n    ])\n    \n    # Train the model\n    model.fit(X_train, y_train)\n    \n    # Get predictions on the validation set\n    predictions = model.predict(X_val)\n    \n    return predictions"
+    },
+    {
+      "iteration": 88,
+      "val_accuracy": 0.943,
+      "val_loss": 0.3444,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 17.9,
+      "code": "import numpy as np\nfrom sklearn.ensemble import RandomForestClassifier\nfrom sklearn.preprocessing import StandardScaler\nimport torch\nfrom torch.nn import Sequential, Linear, ReLU\nimport torch.optim as optim\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Normalize the features\n    scaler = StandardScaler()\n    X_train = scaler.fit_transform(X_train)\n    X_val = scaler.transform(X_val)\n\n    # Build and train a RandomForest model\n    clf = RandomForestClassifier(n_estimators=100, random_state=42)\n    clf.fit(X_train, y_train)\n\n    # Predict on the validation set\n    predictions = clf.predict(X_val)\n\n    return predictions"
+    },
+    {
+      "iteration": 89,
+      "val_accuracy": 0.943,
+      "val_loss": 0.3444,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 17.4,
+      "code": "from sklearn.ensemble import RandomForestClassifier\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    model = RandomForestClassifier(n_estimators=100, random_state=42)\n    model.fit(X_train, y_train)\n    predictions = model.predict(X_val)\n    return predictions"
+    },
+    {
+      "iteration": 90,
+      "val_accuracy": 0.943,
+      "val_loss": 0.3444,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 18.6,
+      "code": "import numpy as np\nfrom sklearn.ensemble import RandomForestClassifier\nfrom sklearn.metrics import accuracy_score\n\ndef solve(X_train, y_train, X_val, y_val):\n    model = RandomForestClassifier(n_estimators=100, random_state=42)\n    model.fit(X_train, y_train)\n    predictions = model.predict(X_val)\n    return predictions"
+    },
+    {
+      "iteration": 91,
+      "val_accuracy": 0.94,
+      "val_loss": 0.3598,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 19.0,
+      "code": "import numpy as np\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.preprocessing import StandardScaler, LabelEncoder\nfrom sklearn.ensemble import RandomForestClassifier\nfrom sklearn.metrics import accuracy_score\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Encode labels\n    le = LabelEncoder()\n    y_train = le.fit_transform(y_train)\n    y_val = le.transform(y_val)\n    \n    # Split data into train and val sets (if needed)\n    X_train, _, y_train, _ = train_test_split(X_train, y_train, test_size=0.2, random_state=42)\n    \n    # Standardize features\n    scaler = StandardScaler()\n    X_train = scaler.fit_transform(X_train)\n    X_val = scaler.transform(X_val)\n    \n    # Train model\n    clf = RandomForestClassifier(n_estimators=100, random_state=42)\n    clf.fit(X_train, y_train)\n    \n    # Predict\n    predictions = clf.predict(X_val)\n    \n    return predictions"
+    }
+  ]
+}

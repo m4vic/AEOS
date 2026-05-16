@@ -1,0 +1,33 @@
+{
+  "completed": 2,
+  "failed": 1,
+  "skipped": 0,
+  "results": [
+    {
+      "exp_id": "1.10",
+      "model": "gpt-4o-mini",
+      "dataset": "tabular",
+      "best_accuracy": 0.8065,
+      "total_iterations": 1,
+      "waste_count": 0,
+      "sunk_cost_episodes": 0,
+      "total_time": 10.5,
+      "families": [
+        "RandomForest"
+      ]
+    },
+    {
+      "exp_id": "1.12",
+      "model": "gpt-4o-mini",
+      "dataset": "vision",
+      "best_accuracy": 0.943,
+      "total_iterations": 1,
+      "waste_count": 0,
+      "sunk_cost_episodes": 0,
+      "total_time": 9.3,
+      "families": [
+        "RandomForest"
+      ]
+    }
+  ]
+}

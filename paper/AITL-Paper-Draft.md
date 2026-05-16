@@ -4,7 +4,8 @@ TITLE: AI in the Loop (AITL): A Systems Taxonomy for
 
 AUTHOR: Sanskar Jajoo
         Independent Researcher, Raipur, India
-        https://github.com/m4vic
+        https://github.com/m4vic/AEOS
+        https://www.neuralchemy.in/
 
 arXiv Categories: cs.AI (primary), cs.LG (secondary)
 Keywords: AI evaluation, closed-loop systems, autonomous ML, 
@@ -38,6 +39,8 @@ behavior, and (4) identification of failure modes including an
 explicit Sunk-Cost Continuation failure mode (F6). We position AITL as a natural 
 evolution of AI evaluation, suggesting scalable directions 
 infeasible under HITL constraints.
+
+**Code Availability**: https://github.com/m4vic/AEOS
 
 ═══════════════════════════════════════════════════════════════
 1. INTRODUCTION
@@ -794,7 +797,7 @@ APPENDIX A: REPRODUCIBILITY
 A.1 Code Repository
 
 The full experimental code is available at:
-https://github.com/m4vic/AITL
+https://github.com/m4vic/AEOS
 
 Key files:
 - experiments/aeos/data_loader.py: Cover Type dataset logic

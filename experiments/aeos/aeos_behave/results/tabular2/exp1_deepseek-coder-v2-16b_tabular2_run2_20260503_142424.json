@@ -1,0 +1,782 @@
+{
+  "run_id": "20260503_142424",
+  "backend": "ollama",
+  "model": "ollama/deepseek-coder-v2:16b",
+  "dataset": "tabular2",
+  "n_features": 16,
+  "n_classes": 7,
+  "n_train": 8000,
+  "n_val": 2000,
+  "best_accuracy": 0.9385,
+  "best_loss": 0.3426,
+  "best_iteration": 40,
+  "best_code": "from sklearn.ensemble import GradientBoostingClassifier, RandomForestClassifier\nfrom sklearn.svm import SVC\nfrom sklearn.neural_network import MLPClassifier\nfrom sklearn.pipeline import make_pipeline\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.decomposition import PCA\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Define a list of models to try\n    models = [\n        GradientBoostingClassifier(),\n        RandomForestClassifier(),\n        make_pipeline(StandardScaler(), PCA(n_components=0.95), SVC()),\n        MLPClassifier()\n    ]\n    \n    # Train and evaluate each model\n    best_acc = 0\n    for model in models:\n        pipeline = make_pipeline(StandardScaler(), model)\n        pipeline.fit(X_train, y_train)\n        predictions = pipeline.predict(X_val)\n        acc = np.mean(predictions == y_val)\n        if acc > best_acc:\n            best_acc = acc\n    \n    # Return the predictions of the best model found so far\n    return predictions",
+  "total_iterations": 85,
+  "stop_reason": "System forced stop (no improvement in 30 iterations)",
+  "total_time_seconds": 6168.7,
+  "model_families_explored": [
+    "GradientBoosting",
+    "RandomForest",
+    "Ensemble"
+  ],
+  "sunk_cost_episodes": 9,
+  "waste_count": 18,
+  "iterations": [
+    {
+      "iteration": 1,
+      "val_accuracy": 0.927,
+      "val_loss": 0.397,
+      "family": "RandomForest",
+      "is_best": true,
+      "time_seconds": 34.7,
+      "code": "from sklearn.ensemble import RandomForestClassifier\nfrom sklearn.metrics import accuracy_score\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Initialize and train a Random Forest Classifier\n    clf = RandomForestClassifier()\n    clf.fit(X_train, y_train)\n    \n    # Predict on validation set\n    predictions = clf.predict(X_val)\n    \n    return np.array(predictions)"
+    },
+    {
+      "iteration": 2,
+      "val_accuracy": null,
+      "val_loss": null,
+      "family": "RandomForest",
+      "error": "Runtime Error: 'NoneType' object has no attribute 'predict'\nTraceback (most recent call last):\n  File \"F:\\AI-IN-THE-LOOP\\aitl-paper\\experiments\\aeos\\aeos_behave\\trainer.py\", line 95, in _run_in_process\n    predictions = solve_fn(\n  File \"<string>\", line 31, in solve\nAttributeError: 'NoneType' object has no attribute 'predict'\n",
+      "time_seconds": 39.9,
+      "code": "from sklearn.ensemble import RandomForestClassifier\nfrom sklearn.metrics import accuracy_score\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Define a list of potential models to try\n    models = [\n        RandomForestClassifier(n_estimators=100),\n        RandomForestClassifier(n_estimators=200),\n        RandomForestClassifier(n_estimators=300)\n    ]\n    \n    best_model = None\n    best_accuracy = 0.9270\n    \n    for model in models:\n        # Train the model\n        model.fit(X_train, y_train)\n        \n        # Predict on validation set\n        predictions = model.predict(X_val)\n        \n        # Evaluate accuracy\n        accuracy = accuracy_score(y_val, predictions)\n        \n        # Update the best model if the current one is better\n        if accuracy > best_accuracy:\n            best_accuracy = accuracy\n            best_model = model\n    \n    return best_model.predict(X_val)"
+    },
+    {
+      "iteration": 3,
+      "val_accuracy": 0.925,
+      "val_loss": 0.4065,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 21.7,
+      "code": "from sklearn.ensemble import RandomForestClassifier\nfrom sklearn.metrics import accuracy_score\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Initialize the model\n    model = RandomForestClassifier(n_estimators=100, random_state=42)\n    \n    # Train the model\n    model.fit(X_train, y_train)\n    \n    # Make predictions\n    predictions = model.predict(X_val)\n    \n    return predictions"
+    },
+    {
+      "iteration": 4,
+      "val_accuracy": 0.926,
+      "val_loss": 0.4018,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 21.4,
+      "code": "from sklearn.ensemble import RandomForestClassifier\nfrom sklearn.metrics import accuracy_score\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Initialize and train a Random Forest Classifier with default parameters\n    model = RandomForestClassifier()\n    model.fit(X_train, y_train)\n    \n    # Make predictions on the validation set\n    predictions = model.predict(X_val)\n    \n    return predictions"
+    },
+    {
+      "iteration": 5,
+      "val_accuracy": 0.924,
+      "val_loss": 0.4112,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 22.5,
+      "code": "from sklearn.ensemble import RandomForestClassifier\nfrom sklearn.metrics import accuracy_score\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Initialize a Random Forest Classifier with default parameters\n    clf = RandomForestClassifier()\n    \n    # Train the model on the training data\n    clf.fit(X_train, y_train)\n    \n    # Make predictions on the validation set\n    predictions = clf.predict(X_val)\n    \n    return predictions"
+    },
+    {
+      "iteration": 6,
+      "val_accuracy": 0.925,
+      "val_loss": 0.4065,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 23.0,
+      "code": "from sklearn.ensemble import RandomForestClassifier\nfrom sklearn.metrics import accuracy_score\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Define the model\n    clf = RandomForestClassifier(n_estimators=100, random_state=42)\n    \n    # Train the model\n    clf.fit(X_train, y_train)\n    \n    # Make predictions on validation set\n    predictions = clf.predict(X_val)\n    \n    return predictions"
+    },
+    {
+      "iteration": 7,
+      "val_accuracy": 0.9295,
+      "val_loss": 0.3852,
+      "family": "RandomForest",
+      "is_best": true,
+      "time_seconds": 51.8,
+      "code": "from sklearn.ensemble import RandomForestClassifier\nfrom sklearn.metrics import accuracy_score\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Try a different approach with Gradient Boosting for better performance\n    model = GradientBoostingClassifier()\n    \n    # Train the model\n    model.fit(X_train, y_train)\n    \n    # Make predictions on validation set\n    predictions = model.predict(X_val)\n    \n    return predictions"
+    },
+    {
+      "iteration": 8,
+      "val_accuracy": 0.93,
+      "val_loss": 0.3828,
+      "family": "RandomForest",
+      "is_best": true,
+      "time_seconds": 128.6,
+      "code": "from sklearn.ensemble import RandomForestClassifier\nfrom sklearn.metrics import accuracy_score\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Define a range of hyperparameters to try\n    param_grid = {\n        'n_estimators': [100, 200],\n        'max_depth': [None, 10, 20, 30],\n        'min_samples_split': [2, 5, 10]\n    }\n    \n    best_accuracy = 0.9295\n    best_params = {}\n    \n    # Iterate over the hyperparameter grid\n    for n_estimators in param_grid['n_estimators']:\n        for max_depth in param_grid['max_depth']:\n            for min_samples_split in param_grid['min_samples_split']:\n                clf = RandomForestClassifier(n_estimators=n_estimators, \n                                             max_depth=max_depth, \n                                             min_samples_split=min_samples_split, \n                                             random_state=42)\n                clf.fit(X_train, y_train)\n                predictions = clf.predict(X_val)\n                accuracy = accuracy_score(y_val, predictions)\n                \n                if accuracy > best_accuracy:\n                    best_accuracy = accuracy\n                    best_params = {\n                        'n_estimators': n_estimators,\n                        'max_depth': max_depth,\n                        'min_samples_split': min_samples_split\n                    }\n    \n    # Train the final model with the best parameters\n    clf = RandomForestClassifier(**best_params)\n    clf.fit(X_train, y_train)\n    \n    # Make predictions on validation set\n    predictions = clf.predict(X_val)\n    return np.array(predictions)"
+    },
+    {
+      "iteration": 9,
+      "val_accuracy": 0.926,
+      "val_loss": 0.4018,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 34.1,
+      "code": "from sklearn.ensemble import RandomForestClassifier\nfrom sklearn.metrics import accuracy_score\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Define a function to evaluate the model and return predictions\n    def evaluate_model(model):\n        model.fit(X_train, y_train)\n        predictions = model.predict(X_val)\n        return predictions\n    \n    # Try different numbers of trees in RandomForestClassifier\n    best_accuracy = 0\n    best_predictions = None\n    \n    for n_estimators in [50, 100, 200]:  # Trying fewer and more estimators than before\n        model = RandomForestClassifier(n_estimators=n_estimators, random_state=42)\n        predictions = evaluate_model(model)\n        accuracy = accuracy_score(y_val, predictions)\n        \n        if accuracy > best_accuracy:\n            best_accuracy = accuracy\n            best_predictions = predictions\n    \n    return np.array(best_predictions)"
+    },
+    {
+      "iteration": 10,
+      "val_accuracy": 0.9245,
+      "val_loss": 0.4089,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 23.3,
+      "code": "from sklearn.ensemble import RandomForestClassifier\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    model = RandomForestClassifier(n_estimators=200, max_depth=10, random_state=42)\n    model.fit(X_train, y_train)\n    predictions = model.predict(X_val)\n    return np.array(predictions)"
+    },
+    {
+      "iteration": 11,
+      "val_accuracy": 0.9255,
+      "val_loss": 0.4041,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 22.2,
+      "code": "from sklearn.ensemble import RandomForestClassifier\nfrom sklearn.metrics import accuracy_score\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Initialize a Random Forest Classifier\n    clf = RandomForestClassifier()\n    \n    # Train the model\n    clf.fit(X_train, y_train)\n    \n    # Make predictions on validation set\n    predictions = clf.predict(X_val)\n    \n    return predictions"
+    },
+    {
+      "iteration": 12,
+      "val_accuracy": 0.9245,
+      "val_loss": 0.4089,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 24.5,
+      "code": "from sklearn.ensemble import RandomForestClassifier\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Define the model\n    model = RandomForestClassifier(n_estimators=200, max_depth=15, random_state=42)\n    \n    # Train the model\n    model.fit(X_train, y_train)\n    \n    # Make predictions on validation set\n    predictions = model.predict(X_val)\n    \n    return predictions"
+    },
+    {
+      "iteration": 13,
+      "val_accuracy": 0.926,
+      "val_loss": 0.4018,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 26.2,
+      "code": "from sklearn.ensemble import RandomForestClassifier\nfrom sklearn.metrics import accuracy_score\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Define a function to train and evaluate the model\n    def train_and_evaluate(model, X_train, y_train, X_val, y_val):\n        model.fit(X_train, y_train)\n        predictions = model.predict(X_val)\n        accuracy = accuracy_score(y_val, predictions)\n        return accuracy, predictions\n    \n    # Define the RandomForestClassifier with optimized hyperparameters\n    best_model = RandomForestClassifier(n_estimators=100, max_depth=20, random_state=42)\n    \n    # Train and evaluate the model\n    _, predictions = train_and_evaluate(best_model, X_train, y_train, X_val, y_val)\n    \n    return predictions"
+    },
+    {
+      "iteration": 14,
+      "val_accuracy": null,
+      "val_loss": null,
+      "family": "GradientBoosting",
+      "error": "Timeout Error: Code execution exceeded 300 seconds. Process terminated.",
+      "time_seconds": 334.7,
+      "code": "from sklearn.ensemble import GradientBoostingClassifier\nfrom sklearn.metrics import accuracy_score\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Define a range of hyperparameters to try\n    param_grid = {\n        'n_estimators': [100, 200],\n        'learning_rate': [0.1, 0.05, 0.01],\n        'max_depth': [3, 4, 5]\n    }\n    \n    best_accuracy = 0.9295\n    best_params = {}\n    \n    # Iterate over the hyperparameter grid\n    for n_estimators in param_grid['n_estimators']:\n        for learning_rate in param_grid['learning_rate']:\n            for max_depth in param_grid['max_depth']:\n                clf = GradientBoostingClassifier(n_estimators=n_estimators, \n                                                 learning_rate=learning_rate, \n                                                 max_depth=max_depth, \n                                                 random_state=42)\n                clf.fit(X_train, y_train)\n                predictions = clf.predict(X_val)\n                accuracy = accuracy_score(y_val, predictions)\n                \n                if accuracy > best_accuracy:\n                    best_accuracy = accuracy\n                    best_params = {\n                        'n_estimators': n_estimators,\n                        'learning_rate': learning_rate,\n                        'max_depth': max_depth\n                    }\n    \n    # Train the final model with the best parameters\n    clf = GradientBoostingClassifier(**best_params)\n    clf.fit(X_train, y_train)\n    \n    # Make predictions on validation set\n    predictions = clf.predict(X_val)\n    return np.array(predictions)"
+    },
+    {
+      "iteration": 15,
+      "val_accuracy": 0.9235,
+      "val_loss": 0.4136,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 32.4,
+      "code": "from sklearn.ensemble import RandomForestClassifier\nfrom sklearn.metrics import accuracy_score\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Define the model\n    model = RandomForestClassifier(n_estimators=100, max_depth=10, random_state=42)\n    \n    # Train the model\n    model.fit(X_train, y_train)\n    \n    # Make predictions on validation set\n    predictions = model.predict(X_val)\n    \n    return predictions"
+    },
+    {
+      "iteration": 16,
+      "val_accuracy": 0.9295,
+      "val_loss": 0.3852,
+      "family": "GradientBoosting",
+      "is_best": false,
+      "time_seconds": 54.4,
+      "code": "from sklearn.ensemble import GradientBoostingClassifier\nfrom sklearn.preprocessing import StandardScaler\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    scaler = StandardScaler()\n    X_train_scaled = scaler.fit_transform(X_train)\n    X_val_scaled = scaler.transform(X_val)\n    \n    model = GradientBoostingClassifier(n_estimators=100, learning_rate=0.1, max_depth=3, random_state=42)\n    model.fit(X_train_scaled, y_train)\n    \n    predictions = model.predict(X_val_scaled)\n    return np.array(predictions)"
+    },
+    {
+      "iteration": 17,
+      "val_accuracy": 0.9295,
+      "val_loss": 0.3852,
+      "family": "GradientBoosting",
+      "is_best": false,
+      "time_seconds": 54.1,
+      "code": "from sklearn.ensemble import GradientBoostingClassifier\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Standardize features by removing the mean and scaling to unit variance\n    from sklearn.preprocessing import StandardScaler\n    scaler = StandardScaler()\n    X_train_scaled = scaler.fit_transform(X_train)\n    X_val_scaled = scaler.transform(X_val)\n    \n    # Train a Gradient Boosting Classifier with some hyperparameter tuning\n    model = GradientBoostingClassifier(n_estimators=100, learning_rate=0.1, max_depth=3, random_state=42)\n    model.fit(X_train_scaled, y_train)\n    \n    # Make predictions on the validation set\n    predictions = model.predict(X_val_scaled)\n    return np.array(predictions)"
+    },
+    {
+      "iteration": 18,
+      "val_accuracy": 0.9295,
+      "val_loss": 0.3852,
+      "family": "GradientBoosting",
+      "is_best": false,
+      "time_seconds": 51.5,
+      "code": "from sklearn.ensemble import GradientBoostingClassifier\nfrom sklearn.metrics import accuracy_score\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Try a different approach with the same model family to see if we can improve\n    clf = GradientBoostingClassifier(n_estimators=100, learning_rate=0.1, max_depth=3, random_state=42)\n    clf.fit(X_train, y_train)\n    \n    predictions = clf.predict(X_val)\n    return predictions"
+    },
+    {
+      "iteration": 19,
+      "val_accuracy": 0.926,
+      "val_loss": 0.4018,
+      "family": "GradientBoosting",
+      "is_best": false,
+      "time_seconds": 55.7,
+      "code": "from sklearn.ensemble import GradientBoostingClassifier\nfrom sklearn.metrics import accuracy_score\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Define a function to standardize the features\n    def standardize_features(X):\n        return (X - X.mean(axis=0)) / X.std(axis=0)\n    \n    # Standardize the training and validation data\n    X_train_std = standardize_features(X_train)\n    X_val_std = standardize_features(X_val)\n    \n    # Define the Gradient Boosting model with best hyperparameters found so far\n    clf = GradientBoostingClassifier(n_estimators=100, learning_rate=0.1, max_depth=3, random_state=42)\n    \n    # Train the model\n    clf.fit(X_train_std, y_train)\n    \n    # Make predictions on the validation set\n    predictions = clf.predict(X_val_std)\n    \n    return predictions"
+    },
+    {
+      "iteration": 20,
+      "val_accuracy": null,
+      "val_loss": null,
+      "family": "Ensemble",
+      "error": "Runtime Error: Invalid 'estimators' attribute, 'estimators' should be a non-empty list of (string, estimator) tuples.\nTraceback (most recent call last):\n  File \"F:\\AI-IN-THE-LOOP\\aitl-paper\\experiments\\aeos\\aeos_behave\\trainer.py\", line 95, in _run_in_process\n    predictions = solve_fn(\n  File \"<string>\", line 47, in solve\n  File \"C:\\Users\\ZENITH\\AppData\\Roaming\\Python\\Python310\\site-packages\\sklearn\\base.py\", line 1365, in wrapper\n    return fit_method(estimator, *args, **kwargs)\n  File \"C:\\Use",
+      "time_seconds": 238.0,
+      "code": "from sklearn.ensemble import VotingClassifier\nfrom sklearn.svm import SVC\nfrom sklearn.metrics import accuracy_score\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Define a range of hyperparameters to try for each model type\n    param_grid = {\n        'SVC': {\n            'C': [0.1, 1, 10],\n            'kernel': ['linear', 'rbf'],\n            'gamma': ['scale', 'auto']\n        }\n    }\n    \n    best_accuracy = 0.9295\n    best_params = {}\n    \n    # Iterate over the hyperparameter grid for each model type\n    for model_type, params in param_grid.items():\n        if model_type == 'SVC':\n            for C in params['C']:\n                for kernel in params['kernel']:\n                    for gamma in params['gamma']:\n                        clf = SVC(C=C, kernel=kernel, gamma=gamma)\n                        clf.fit(X_train, y_train)\n                        predictions = clf.predict(X_val)\n                        accuracy = accuracy_score(y_val, predictions)\n                        \n                        if accuracy > best_accuracy:\n                            best_accuracy = accuracy\n                            best_params[model_type] = {\n                                'C': C,\n                                'kernel': kernel,\n                                'gamma': gamma\n                            }\n    \n    # Train the final model with the best parameters for each model type\n    models = []\n    for model_type, params in best_params.items():\n        clf = SVC(**params)\n        clf.fit(X_train, y_train)\n        models.append((model_type, clf))\n    \n    # Create a VotingClassifier to aggregate predictions\n    voting_clf = VotingClassifier(estimators=models, voting='hard')\n    voting_clf.fit(X_train, y_train)\n    \n    # Make predictions on validation set\n    predictions = voting_clf.predict(X_val)\n    return np.array(predictions)"
+    },
+    {
+      "iteration": 21,
+      "val_accuracy": 0.9295,
+      "val_loss": 0.3852,
+      "family": "GradientBoosting",
+      "is_best": false,
+      "time_seconds": 52.7,
+      "code": "from sklearn.ensemble import GradientBoostingClassifier\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.pipeline import make_pipeline\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Define the best model found in previous iterations\n    model = GradientBoostingClassifier()\n    \n    # Create a pipeline to standardize the features before training the model\n    pipeline = make_pipeline(StandardScaler(), model)\n    \n    # Train the model on the training data\n    pipeline.fit(X_train, y_train)\n    \n    # Make predictions on the validation set\n    predictions = pipeline.predict(X_val)\n    \n    return np.array(predictions)"
+    },
+    {
+      "iteration": 22,
+      "val_accuracy": 0.9295,
+      "val_loss": 0.3852,
+      "family": "GradientBoosting",
+      "is_best": false,
+      "time_seconds": 53.7,
+      "code": "from sklearn.ensemble import GradientBoostingClassifier\nfrom sklearn.preprocessing import StandardScaler\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Standardize the features\n    scaler = StandardScaler()\n    X_train_scaled = scaler.fit_transform(X_train)\n    X_val_scaled = scaler.transform(X_val)\n    \n    # Train a Gradient Boosting model\n    model = GradientBoostingClassifier(n_estimators=100, learning_rate=0.1, max_depth=3, random_state=42)\n    model.fit(X_train_scaled, y_train)\n    \n    # Predict on validation set\n    predictions = model.predict(X_val_scaled)\n    \n    return predictions"
+    },
+    {
+      "iteration": 23,
+      "val_accuracy": 0.9295,
+      "val_loss": 0.3852,
+      "family": "GradientBoosting",
+      "is_best": false,
+      "time_seconds": 53.1,
+      "code": "from sklearn.ensemble import GradientBoostingClassifier\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.pipeline import Pipeline\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Define the pipeline with standard scaling and gradient boosting classifier\n    model = Pipeline([\n        ('scaler', StandardScaler()),\n        ('gbc', GradientBoostingClassifier(n_estimators=100, learning_rate=0.1, max_depth=3, random_state=42))\n    ])\n    \n    # Train the model\n    model.fit(X_train, y_train)\n    \n    # Make predictions on validation set\n    predictions = model.predict(X_val)\n    \n    return predictions"
+    },
+    {
+      "iteration": 24,
+      "val_accuracy": 0.9305,
+      "val_loss": 0.3805,
+      "family": "GradientBoosting",
+      "is_best": true,
+      "time_seconds": 86.2,
+      "code": "from sklearn.ensemble import GradientBoostingClassifier\nfrom sklearn.metrics import accuracy_score\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Standardize the features\n    from sklearn.preprocessing import StandardScaler\n    scaler = StandardScaler()\n    X_train_scaled = scaler.fit_transform(X_train)\n    X_val_scaled = scaler.transform(X_val)\n    \n    # Train a Gradient Boosting Classifier with increased learning rate and more trees\n    model = GradientBoostingClassifier(n_estimators=200, learning_rate=0.1, max_depth=3, random_state=42)\n    model.fit(X_train_scaled, y_train)\n    \n    # Make predictions on the validation set\n    y_pred = model.predict(X_val_scaled)\n    \n    return np.array(y_pred)"
+    },
+    {
+      "iteration": 25,
+      "val_accuracy": 0.9295,
+      "val_loss": 0.3852,
+      "family": "GradientBoosting",
+      "is_best": false,
+      "time_seconds": 50.9,
+      "code": "from sklearn.ensemble import GradientBoostingClassifier\nfrom sklearn.metrics import accuracy_score\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Initialize and train the best model found so far (Gradient Boosting)\n    clf = GradientBoostingClassifier()\n    clf.fit(X_train, y_train)\n    \n    # Make predictions on validation set\n    predictions = clf.predict(X_val)\n    \n    return predictions"
+    },
+    {
+      "iteration": 26,
+      "val_accuracy": 0.9295,
+      "val_loss": 0.3852,
+      "family": "GradientBoosting",
+      "is_best": false,
+      "time_seconds": 50.2,
+      "code": "from sklearn.ensemble import GradientBoostingClassifier\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    model = GradientBoostingClassifier()\n    model.fit(X_train, y_train)\n    predictions = model.predict(X_val)\n    return predictions"
+    },
+    {
+      "iteration": 27,
+      "val_accuracy": 0.9295,
+      "val_loss": 0.3852,
+      "family": "GradientBoosting",
+      "is_best": false,
+      "time_seconds": 49.3,
+      "code": "from sklearn.ensemble import GradientBoostingClassifier\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    model = GradientBoostingClassifier()\n    model.fit(X_train, y_train)\n    predictions = model.predict(X_val)\n    return predictions"
+    },
+    {
+      "iteration": 28,
+      "val_accuracy": 0.929,
+      "val_loss": 0.3876,
+      "family": "GradientBoosting",
+      "is_best": false,
+      "time_seconds": 49.5,
+      "code": "from sklearn.ensemble import GradientBoostingClassifier\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    model = GradientBoostingClassifier()\n    model.fit(X_train, y_train)\n    predictions = model.predict(X_val)\n    return predictions"
+    },
+    {
+      "iteration": 29,
+      "val_accuracy": 0.637,
+      "val_loss": 1.7705,
+      "family": "GradientBoosting",
+      "is_best": false,
+      "time_seconds": 37.6,
+      "code": "from sklearn.ensemble import GradientBoostingClassifier\nfrom sklearn.metrics import accuracy_score\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Define a simple neural network using PyTorch for comparison\n    import torch\n    import torch.nn as nn\n    import torch.optim as optim\n\n    class SimpleNN(nn.Module):\n        def __init__(self, input_size, hidden_size, output_size):\n            super(SimpleNN, self).__init__()\n            self.fc1 = nn.Linear(input_size, hidden_size)\n            self.relu = nn.ReLU()\n            self.fc2 = nn.Linear(hidden_size, output_size)\n        \n        def forward(self, x):\n            out = self.fc1(x)\n            out = self.relu(out)\n            out = self.fc2(out)\n            return out\n\n    # Standardize the features\n    X_train = (X_train - np.mean(X_train, axis=0)) / np.std(X_train, axis=0)\n    X_val = (X_val - np.mean(X_val, axis=0)) / np.std(X_val, axis=0)\n\n    # Convert to PyTorch tensors\n    X_train_tensor = torch.Tensor(X_train)\n    y_train_tensor = torch.LongTensor(y_train)\n    X_val_tensor = torch.Tensor(X_val)\n    y_val_tensor = torch.LongTensor(y_val)\n\n    # Define the model, loss function, and optimizer\n    input_size = X_train.shape[1]\n    hidden_size = 64\n    output_size = len(np.unique(y_train))\n    model = SimpleNN(input_size, hidden_size, output_size)\n    criterion = nn.CrossEntropyLoss()\n    optimizer = optim.Adam(model.parameters(), lr=0.001)\n\n    # Training loop\n    epochs = 50\n    for epoch in range(epochs):\n        model.train()\n        optimizer.zero_grad()\n        outputs = model(X_train_tensor)\n        loss = criterion(outputs, y_train_tensor)\n        loss.backward()\n        optimizer.step()\n\n    # Evaluation\n    model.eval()\n    with torch.no_grad():\n        val_outputs = model(X_val_tensor)\n        _, predicted = torch.max(val_outputs, 1)\n        predictions = np.array(predicted.numpy())\n    \n    return predictions"
+    },
+    {
+      "iteration": 30,
+      "val_accuracy": 0.923,
+      "val_loss": 0.416,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 27.6,
+      "code": "from sklearn.ensemble import RandomForestClassifier\nfrom sklearn.metrics import accuracy_score\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Standardize the features\n    from sklearn.preprocessing import StandardScaler\n    scaler = StandardScaler()\n    X_train_scaled = scaler.fit_transform(X_train)\n    X_val_scaled = scaler.transform(X_val)\n    \n    # Train a Random Forest Classifier with increased depth and more trees\n    model = RandomForestClassifier(n_estimators=200, max_depth=14, random_state=42)\n    model.fit(X_train_scaled, y_train)\n    \n    # Make predictions on the validation set\n    y_pred = model.predict(X_val_scaled)\n    \n    return np.array(y_pred)"
+    },
+    {
+      "iteration": 31,
+      "val_accuracy": 0.9295,
+      "val_loss": 0.3852,
+      "family": "GradientBoosting",
+      "is_best": false,
+      "time_seconds": 52.6,
+      "code": "from sklearn.ensemble import GradientBoostingClassifier\nfrom sklearn.metrics import accuracy_score\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Define a function to evaluate the model and train it\n    def evaluate_and_train(model):\n        model.fit(X_train, y_train)\n        predictions = model.predict(X_val)\n        return predictions\n    \n    # Initialize models\n    gbc = GradientBoostingClassifier()\n\n    # Train and get predictions for each model\n    preds_gbc = evaluate_and_train(gbc)\n\n    return preds_gbc"
+    },
+    {
+      "iteration": 32,
+      "val_accuracy": 0.929,
+      "val_loss": 0.3876,
+      "family": "GradientBoosting",
+      "is_best": false,
+      "time_seconds": 50.8,
+      "code": "from sklearn.ensemble import GradientBoostingClassifier\nfrom sklearn.metrics import accuracy_score\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Define and train the best model found so far (Gradient Boosting)\n    model = GradientBoostingClassifier()\n    model.fit(X_train, y_train)\n    \n    # Make predictions on validation set\n    predictions = model.predict(X_val)\n    \n    return predictions"
+    },
+    {
+      "iteration": 33,
+      "val_accuracy": 0.929,
+      "val_loss": 0.3876,
+      "family": "GradientBoosting",
+      "is_best": false,
+      "time_seconds": 51.8,
+      "code": "from sklearn.ensemble import GradientBoostingClassifier\nfrom sklearn.metrics import accuracy_score\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Define a new model to try\n    model = GradientBoostingClassifier()\n    \n    # Train the model on the training data\n    model.fit(X_train, y_train)\n    \n    # Make predictions on the validation set\n    predictions = model.predict(X_val)\n    \n    return predictions"
+    },
+    {
+      "iteration": 34,
+      "val_accuracy": null,
+      "val_loss": null,
+      "family": "GradientBoosting",
+      "error": "Timeout Error: Code execution exceeded 300 seconds. Process terminated.",
+      "time_seconds": 321.1,
+      "code": "from sklearn.ensemble import GradientBoostingClassifier\nfrom sklearn.model_selection import GridSearchCV\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Define the model with default parameters for exploration\n    gbc = GradientBoostingClassifier()\n    \n    # Define a parameter grid to search over\n    param_grid = {\n        'learning_rate': [0.1, 0.2],\n        'n_estimators': [50, 100],\n        'max_depth': [3, 4]\n    }\n    \n    # Perform grid search with cross-validation to find the best parameters\n    grid_search = GridSearchCV(gbc, param_grid, cv=5, scoring='accuracy')\n    grid_search.fit(X_train, y_train)\n    \n    # Train the model with the best found parameters\n    best_model = grid_search.best_estimator_\n    best_model.fit(X_train, y_train)\n    \n    # Predict on validation set\n    predictions = best_model.predict(X_val)\n    \n    return predictions"
+    },
+    {
+      "iteration": 35,
+      "val_accuracy": 0.9295,
+      "val_loss": 0.3852,
+      "family": "GradientBoosting",
+      "is_best": false,
+      "time_seconds": 62.0,
+      "code": "from sklearn.ensemble import GradientBoostingClassifier\nfrom sklearn.metrics import accuracy_score\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Define the model\n    model = GradientBoostingClassifier()\n    \n    # Train the model\n    model.fit(X_train, y_train)\n    \n    # Make predictions\n    predictions = model.predict(X_val)\n    \n    return predictions"
+    },
+    {
+      "iteration": 36,
+      "val_accuracy": 0.928,
+      "val_loss": 0.3923,
+      "family": "Ensemble",
+      "is_best": false,
+      "time_seconds": 200.1,
+      "code": "from sklearn.ensemble import StackingClassifier\nfrom sklearn.linear_model import LogisticRegression\nfrom sklearn.metrics import accuracy_score\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Standardize the features\n    from sklearn.preprocessing import StandardScaler\n    scaler = StandardScaler()\n    X_train_scaled = scaler.fit_transform(X_train)\n    X_val_scaled = scaler.transform(X_val)\n    \n    # Define base models\n    base_models = [\n        ('rf', RandomForestClassifier(n_estimators=100, random_state=42)),\n        ('gb', GradientBoostingClassifier(n_estimators=100, learning_rate=0.1, max_depth=3, random_state=42))\n    ]\n    \n    # Define the stacking classifier with logistic regression as meta-model\n    model = StackingClassifier(estimators=base_models, final_estimator=LogisticRegression())\n    model.fit(X_train_scaled, y_train)\n    \n    # Make predictions on the validation set\n    y_pred = model.predict(X_val_scaled)\n    \n    return np.array(y_pred)"
+    },
+    {
+      "iteration": 37,
+      "val_accuracy": 0.929,
+      "val_loss": 0.3876,
+      "family": "Ensemble",
+      "is_best": false,
+      "time_seconds": 54.0,
+      "code": "from sklearn.ensemble import GradientBoostingClassifier, VotingClassifier\nfrom sklearn.neural_network import MLPClassifier\nfrom sklearn.svm import SVC\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.pipeline import Pipeline\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Define a baseline GradientBoostingClassifier model\n    base_model = GradientBoostingClassifier()\n    \n    # Create a pipeline with standardization\n    pipeline = Pipeline([('scaler', StandardScaler()), ('gbc', base_model)])\n    \n    # Train the pipeline on the training data\n    pipeline.fit(X_train, y_train)\n    \n    # Make predictions on the validation set\n    predictions = pipeline.predict(X_val)\n    \n    return predictions"
+    },
+    {
+      "iteration": 38,
+      "val_accuracy": 0.9295,
+      "val_loss": 0.3852,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 64.7,
+      "code": "from sklearn.ensemble import GradientBoostingClassifier, RandomForestClassifier\nfrom sklearn.svm import SVC\nfrom sklearn.pipeline import make_pipeline\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.metrics import accuracy_score\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Define models\n    gbc = GradientBoostingClassifier()\n    rf = RandomForestClassifier()\n    svm = make_pipeline(StandardScaler(), SVC())\n    \n    # Train and evaluate each model\n    models = [gbc, rf, svm]\n    results = []\n    \n    for model in models:\n        model.fit(X_train, y_train)\n        predictions = model.predict(X_val)\n        accuracy = accuracy_score(y_val, predictions)\n        results.append((model.__class__.__name__, accuracy))\n    \n    # Select the best performing model\n    best_model = max(results, key=lambda x: x[1])[0]\n    \n    if best_model == 'GradientBoostingClassifier':\n        clf = GradientBoostingClassifier()\n    elif best_model == 'RandomForestClassifier':\n        clf = RandomForestClassifier()\n    else:\n        clf = make_pipeline(StandardScaler(), SVC())\n    \n    # Train the best model on the full dataset\n    clf.fit(X_train, y_train)\n    \n    # Make predictions on validation set\n    predictions = clf.predict(X_val)\n    return np.array(predictions)"
+    },
+    {
+      "iteration": 39,
+      "val_accuracy": 0.929,
+      "val_loss": 0.3876,
+      "family": "Ensemble",
+      "is_best": false,
+      "time_seconds": 58.9,
+      "code": "from sklearn.ensemble import GradientBoostingClassifier\nfrom sklearn.ensemble import RandomForestClassifier\nfrom sklearn.ensemble import VotingClassifier\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.pipeline import make_pipeline\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Define the base models\n    gbc = GradientBoostingClassifier()\n    rfc = RandomForestClassifier()\n    \n    # Define the ensemble model\n    ensemble = VotingClassifier(estimators=[('gbc', gbc), ('rfc', rfc)], voting='soft')\n    \n    # Create a pipeline with standardization for the ensemble model\n    pipeline = make_pipeline(StandardScaler(), ensemble)\n    \n    # Train the ensemble model\n    pipeline.fit(X_train, y_train)\n    \n    # Make predictions on validation set\n    predictions = pipeline.predict(X_val)\n    \n    return predictions"
+    },
+    {
+      "iteration": 40,
+      "val_accuracy": 0.9385,
+      "val_loss": 0.3426,
+      "family": "RandomForest",
+      "is_best": true,
+      "time_seconds": 80.3,
+      "code": "from sklearn.ensemble import GradientBoostingClassifier, RandomForestClassifier\nfrom sklearn.svm import SVC\nfrom sklearn.neural_network import MLPClassifier\nfrom sklearn.pipeline import make_pipeline\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.decomposition import PCA\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Define a list of models to try\n    models = [\n        GradientBoostingClassifier(),\n        RandomForestClassifier(),\n        make_pipeline(StandardScaler(), PCA(n_components=0.95), SVC()),\n        MLPClassifier()\n    ]\n    \n    # Train and evaluate each model\n    best_acc = 0\n    for model in models:\n        pipeline = make_pipeline(StandardScaler(), model)\n        pipeline.fit(X_train, y_train)\n        predictions = pipeline.predict(X_val)\n        acc = np.mean(predictions == y_val)\n        if acc > best_acc:\n            best_acc = acc\n    \n    # Return the predictions of the best model found so far\n    return predictions"
+    },
+    {
+      "iteration": 41,
+      "val_accuracy": null,
+      "val_loss": null,
+      "family": "RandomForest",
+      "error": "Timeout Error: Code execution exceeded 300 seconds. Process terminated.",
+      "time_seconds": 326.2,
+      "code": "from sklearn.ensemble import RandomForestClassifier\nfrom sklearn.svm import SVC\nfrom sklearn.neural_network import MLPClassifier\nfrom sklearn.model_selection import GridSearchCV\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Define the models and parameters for grid search\n    models = {\n        'RandomForest': (RandomForestClassifier(), {'n_estimators': [100, 200], 'max_depth': [None, 10, 20]}),\n        'SVM': (SVC(), {'C': [0.1, 1, 10], 'kernel': ['linear', 'rbf']}),\n        'MLP': (MLPClassifier(max_iter=500), {'hidden_layer_sizes': [(100,), (200,)], 'activation': ['relu'], 'alpha': [0.0001]})\n    }\n    \n    best_model = None\n    best_score = 0\n    \n    for name, (model, params) in models.items():\n        grid_search = GridSearchCV(model, params, cv=5, scoring='accuracy')\n        grid_search.fit(X_train, y_train)\n        \n        if grid_search.best_score_ > best_score:\n            best_score = grid_search.best_score_\n            best_model = grid_search.best_estimator_\n    \n    # Make predictions on the validation set\n    predictions = best_model.predict(X_val)\n    return np.array(predictions, dtype=int)"
+    },
+    {
+      "iteration": 42,
+      "val_accuracy": 0.925,
+      "val_loss": 0.4065,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 35.6,
+      "code": "from sklearn.ensemble import RandomForestClassifier\nfrom sklearn.metrics import accuracy_score\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Initialize the best model with the previous best model (RandomForest from Iter 40)\n    best_model = RandomForestClassifier(n_estimators=100, random_state=42)\n    \n    # Train the initial model on the training data\n    best_model.fit(X_train, y_train)\n    \n    # Make predictions on the validation set\n    predictions = best_model.predict(X_val)\n    \n    return predictions"
+    },
+    {
+      "iteration": 43,
+      "val_accuracy": null,
+      "val_loss": null,
+      "family": "RandomForest",
+      "error": "Runtime Error: name 'iteration' is not defined\nTraceback (most recent call last):\n  File \"F:\\AI-IN-THE-LOOP\\aitl-paper\\experiments\\aeos\\aeos_behave\\trainer.py\", line 95, in _run_in_process\n    predictions = solve_fn(\n  File \"<string>\", line 12, in solve\nNameError: name 'iteration' is not defined\n",
+      "time_seconds": 22.9,
+      "code": "from sklearn.ensemble import RandomForestClassifier\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Define a function to evaluate models\n    def evaluate_model(model):\n        model.fit(X_train, y_train)\n        predictions = model.predict(X_val)\n        return predictions\n    \n    # Initialize and train the best performing model from previous iterations\n    if iteration == 40:\n        base_model = RandomForestClassifier(n_estimators=100, random_state=42)\n    else:\n        base_model = RandomForestClassifier(n_estimators=50, random_state=42)\n    \n    predictions = evaluate_model(base_model)\n    return np.array(predictions)"
+    },
+    {
+      "iteration": 44,
+      "val_accuracy": 0.925,
+      "val_loss": 0.4065,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 22.7,
+      "code": "from sklearn.ensemble import RandomForestClassifier\nfrom sklearn.metrics import accuracy_score\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Define the model\n    model = RandomForestClassifier(n_estimators=100, random_state=42)\n    \n    # Train the model\n    model.fit(X_train, y_train)\n    \n    # Make predictions on validation set\n    predictions = model.predict(X_val)\n    \n    return predictions"
+    },
+    {
+      "iteration": 45,
+      "val_accuracy": null,
+      "val_loss": null,
+      "family": "RandomForest",
+      "error": "Runtime Error: 'RandomForestClassifier' object is not callable\nTraceback (most recent call last):\n  File \"F:\\AI-IN-THE-LOOP\\aitl-paper\\experiments\\aeos\\aeos_behave\\trainer.py\", line 95, in _run_in_process\n    predictions = solve_fn(\n  File \"<string>\", line 30, in solve\n  File \"<string>\", line 8, in create_and_evaluate_model\nTypeError: 'RandomForestClassifier' object is not callable\n",
+      "time_seconds": 32.4,
+      "code": "from sklearn.ensemble import RandomForestClassifier\nfrom sklearn.metrics import accuracy_score\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Define a function to create and evaluate a model\n    def create_and_evaluate_model(model_class, **kwargs):\n        model = model_class(**kwargs)\n        model.fit(X_train, y_train)\n        predictions = model.predict(X_val)\n        accuracy = accuracy_score(y_val, predictions)\n        return predictions, accuracy\n\n    # Try to improve the baseline RandomForestClassifier\n    best_accuracy = 0.9385\n    if best_accuracy is None:\n        best_accuracy = 0\n    \n    # Define a range of hyperparameters to try\n    param_grid = {\n        'n_estimators': [100, 200],\n        'max_depth': [None, 5, 10],\n        'min_samples_split': [2, 5, 10]\n    }\n    \n    for n_estimators in param_grid['n_estimators']:\n        for max_depth in param_grid['max_depth']:\n            for min_samples_split in param_grid['min_samples_split']:\n                model = RandomForestClassifier(n_estimators=n_estimators, max_depth=max_depth, min_samples_split=min_samples_split)\n                predictions, accuracy = create_and_evaluate_model(model)\n                if accuracy > best_accuracy:\n                    best_accuracy = accuracy\n                    best_predictions = predictions\n    \n    return np.array(best_predictions)"
+    },
+    {
+      "iteration": 46,
+      "val_accuracy": 0.929,
+      "val_loss": 0.3876,
+      "family": "GradientBoosting",
+      "is_best": false,
+      "time_seconds": 57.0,
+      "code": "from sklearn.ensemble import GradientBoostingClassifier\nfrom sklearn.metrics import accuracy_score\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Define the models to try\n    models = {\n        'GradientBoosting': GradientBoostingClassifier()\n    }\n    \n    best_model = None\n    best_accuracy = 0.0\n    \n    for name, model in models.items():\n        # Train the model\n        model.fit(X_train, y_train)\n        \n        # Make predictions on validation set\n        predictions = model.predict(X_val)\n        \n        # Evaluate accuracy\n        accuracy = accuracy_score(y_val, predictions)\n        \n        if accuracy > best_accuracy:\n            best_accuracy = accuracy\n            best_model = model\n    \n    return best_model.predict(X_val)"
+    },
+    {
+      "iteration": 47,
+      "val_accuracy": 0.9295,
+      "val_loss": 0.3852,
+      "family": "GradientBoosting",
+      "is_best": false,
+      "time_seconds": 53.4,
+      "code": "from sklearn.ensemble import GradientBoostingClassifier\nfrom sklearn.metrics import accuracy_score\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Try to beat the best accuracy with a more advanced ensemble method or other models\n    clf = GradientBoostingClassifier(n_estimators=100, learning_rate=0.1, max_depth=3, random_state=42)\n    clf.fit(X_train, y_train)\n    predictions = clf.predict(X_val)\n    return predictions"
+    },
+    {
+      "iteration": 48,
+      "val_accuracy": 0.929,
+      "val_loss": 0.3876,
+      "family": "GradientBoosting",
+      "is_best": false,
+      "time_seconds": 55.2,
+      "code": "from sklearn.ensemble import GradientBoostingClassifier\nfrom sklearn.metrics import accuracy_score\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Define the model\n    model = GradientBoostingClassifier()\n    \n    # Train the model\n    model.fit(X_train, y_train)\n    \n    # Make predictions\n    predictions = model.predict(X_val)\n    \n    return predictions"
+    },
+    {
+      "iteration": 49,
+      "val_accuracy": 0.936,
+      "val_loss": 0.3544,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 84.2,
+      "code": "from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier\nfrom sklearn.svm import SVC\nfrom sklearn.neural_network import MLPClassifier\nfrom sklearn.pipeline import make_pipeline\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.decomposition import PCA\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Define a list of models to try\n    models = [\n        GradientBoostingClassifier(),\n        RandomForestClassifier(),\n        make_pipeline(StandardScaler(), PCA(n_components=0.95), SVC()),\n        MLPClassifier()\n    ]\n    \n    # Train and evaluate each model\n    best_acc = 0\n    for model in models:\n        pipeline = make_pipeline(StandardScaler(), model)\n        pipeline.fit(X_train, y_train)\n        predictions = pipeline.predict(X_val)\n        acc = np.mean(predictions == y_val)\n        if acc > best_acc:\n            best_acc = acc\n    \n    # Return the predictions of the best model found so far\n    return predictions"
+    },
+    {
+      "iteration": 50,
+      "val_accuracy": null,
+      "val_loss": null,
+      "family": "Ensemble",
+      "error": "Runtime Error: 'NoneType' object has no attribute 'predict'\nTraceback (most recent call last):\n  File \"F:\\AI-IN-THE-LOOP\\aitl-paper\\experiments\\aeos\\aeos_behave\\trainer.py\", line 95, in _run_in_process\n    predictions = solve_fn(\n  File \"<string>\", line 32, in solve\nAttributeError: 'NoneType' object has no attribute 'predict'\n",
+      "time_seconds": 100.9,
+      "code": "from sklearn.ensemble import GradientBoostingClassifier\nfrom sklearn.metrics import accuracy_score\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Define models to try\n    models = {\n        'GradientBoosting': GradientBoostingClassifier(),\n        'RandomForest': RandomForestClassifier(),\n        'Ensemble': VotingClassifier(estimators=[\n            ('gb', GradientBoostingClassifier()),\n            ('rf', RandomForestClassifier())\n        ], voting='soft')\n    }\n    \n    best_accuracy = 0.9385  # Current best accuracy from iteration 40\n    best_model = None\n    \n    for name, model in models.items():\n        if name == 'Ensemble':\n            model.fit(X_train, y_train)\n        else:\n            model.fit(X_train, y_train)\n        \n        predictions = model.predict(X_val)\n        accuracy = accuracy_score(y_val, predictions)\n        \n        if accuracy > best_accuracy:\n            best_accuracy = accuracy\n            best_model = model\n    \n    return best_model.predict(X_val)"
+    },
+    {
+      "iteration": 51,
+      "val_accuracy": 0.9295,
+      "val_loss": 0.3852,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 67.3,
+      "code": "from sklearn.ensemble import GradientBoostingClassifier, RandomForestClassifier\nfrom sklearn.svm import SVC\nfrom sklearn.pipeline import make_pipeline\nfrom sklearn.preprocessing import StandardScaler\nimport numpy as np\n\n# Define the models to try\nmodels = [\n    (GradientBoostingClassifier(), \"GradientBoosting\"),\n    (RandomForestClassifier(n_estimators=100), \"RandomForest\"),\n    # Adding an SVM for diversity\n    (make_pipeline(StandardScaler(), SVC()), \"SVM\")\n]\n\ndef solve(X_train, y_train, X_val, y_val):\n    best_accuracy = 0.9385  # Current best accuracy from iteration 40\n    \n    for model, name in models:\n        try:\n            # Train the model\n            model.fit(X_train, y_train)\n            \n            # Validate the model\n            predictions = model.predict(X_val)\n            accuracy = np.mean([int(pred == true) for pred, true in zip(predictions, y_val)])\n            \n            if accuracy > best_accuracy:\n                print(f\"New best model found! Iteration {name}: Acc {accuracy:.4f}\")\n                best_accuracy = accuracy\n        except Exception as e:\n            print(f\"Failed to train and evaluate {name} model. Error: {e}\")\n    \n    # Return the predictions for the best performing model so far\n    return np.array([int(pred) for pred in predictions])"
+    },
+    {
+      "iteration": 52,
+      "val_accuracy": 0.9295,
+      "val_loss": 0.3852,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 59.2,
+      "code": "from sklearn.ensemble import GradientBoostingClassifier, RandomForestClassifier\nfrom sklearn.metrics import accuracy_score\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Define models\n    gbc = GradientBoostingClassifier()\n    rf = RandomForestClassifier()\n    \n    # Train and evaluate each model\n    gbc.fit(X_train, y_train)\n    rf.fit(X_train, y_train)\n    \n    # Predictions\n    preds_gbc = gbc.predict(X_val)\n    preds_rf = rf.predict(X_val)\n    \n    # Return the predictions with the highest accuracy on validation set\n    if accuracy_score(y_val, preds_gbc) > accuracy_score(y_val, preds_rf):\n        return preds_gbc\n    else:\n        return preds_rf"
+    },
+    {
+      "iteration": 53,
+      "val_accuracy": null,
+      "val_loss": null,
+      "family": "RandomForest",
+      "error": "Error: solve() returned None. Must return predictions array.",
+      "time_seconds": 62.6,
+      "code": "from sklearn.ensemble import GradientBoostingClassifier, RandomForestClassifier\nfrom sklearn.svm import SVC\nfrom sklearn.metrics import accuracy_score\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Define a function to evaluate models\n    def evaluate_model(model):\n        model.fit(X_train, y_train)\n        predictions = model.predict(X_val)\n        accuracy = accuracy_score(y_val, predictions)\n        return accuracy, predictions\n    \n    # Define a list of models to try\n    models = [\n        GradientBoostingClassifier(),\n        RandomForestClassifier(),\n        SVC()\n    ]\n    \n    best_accuracy = 0.9385\n    best_model = None\n    predictions = None\n    \n    for model in models:\n        accuracy, preds = evaluate_model(model)\n        if accuracy > best_accuracy:\n            best_accuracy = accuracy\n            best_model = model\n            predictions = preds\n    \n    return predictions"
+    },
+    {
+      "iteration": 54,
+      "val_accuracy": 0.9255,
+      "val_loss": 0.4041,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 22.0,
+      "code": "from sklearn.ensemble import RandomForestClassifier\nfrom sklearn.metrics import accuracy_score\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Define the model\n    model = RandomForestClassifier()\n    \n    # Train the model\n    model.fit(X_train, y_train)\n    \n    # Make predictions on validation set\n    predictions = model.predict(X_val)\n    \n    return predictions"
+    },
+    {
+      "iteration": 55,
+      "val_accuracy": 0.9295,
+      "val_loss": 0.3852,
+      "family": "GradientBoosting",
+      "is_best": false,
+      "time_seconds": 51.9,
+      "code": "from sklearn.ensemble import GradientBoostingClassifier\nfrom sklearn.metrics import accuracy_score\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Define and train a Gradient Boosting Classifier\n    model = GradientBoostingClassifier()\n    model.fit(X_train, y_train)\n    \n    # Make predictions on the validation set\n    predictions = model.predict(X_val)\n    \n    return predictions"
+    },
+    {
+      "iteration": 56,
+      "val_accuracy": 0.938,
+      "val_loss": 0.3449,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 80.4,
+      "code": "from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier\nfrom sklearn.svm import SVC\nfrom sklearn.neural_network import MLPClassifier\nfrom sklearn.pipeline import make_pipeline\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.decomposition import PCA\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Define a list of models to try\n    models = [\n        GradientBoostingClassifier(),\n        RandomForestClassifier(),\n        make_pipeline(StandardScaler(), PCA(n_components=0.95), SVC()),\n        MLPClassifier()\n    ]\n    \n    # Train and evaluate each model\n    best_acc = 0\n    for model in models:\n        pipeline = make_pipeline(StandardScaler(), model)\n        pipeline.fit(X_train, y_train)\n        predictions = pipeline.predict(X_val)\n        acc = np.mean(predictions == y_val)\n        if acc > best_acc:\n            best_acc = acc\n    \n    # Return the predictions of the best model found so far\n    return predictions"
+    },
+    {
+      "iteration": 57,
+      "val_accuracy": null,
+      "val_loss": null,
+      "family": "Ensemble",
+      "error": "Timeout Error: Code execution exceeded 300 seconds. Process terminated.",
+      "time_seconds": 322.6,
+      "code": "from sklearn.ensemble import GradientBoostingClassifier\nfrom sklearn.metrics import accuracy_score\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Try a more advanced ensemble approach by combining the best models from previous iterations\n    estimators = [\n        ('gb1', GradientBoostingClassifier(n_estimators=50, learning_rate=0.1, max_depth=3, random_state=42)),\n        ('gb2', GradientBoostingClassifier(n_estimators=75, learning_rate=0.1, max_depth=4, random_state=42))\n    ]\n    \n    from sklearn.ensemble import VotingClassifier\n    ensemble = VotingClassifier(estimators, voting='soft', n_jobs=-1)\n    \n    # Train the ensemble model\n    ensemble.fit(X_train, y_train)\n    \n    # Predict on validation set\n    predictions = ensemble.predict(X_val)\n    \n    return predictions"
+    },
+    {
+      "iteration": 58,
+      "val_accuracy": 0.929,
+      "val_loss": 0.3876,
+      "family": "GradientBoosting",
+      "is_best": false,
+      "time_seconds": 61.1,
+      "code": "from sklearn.ensemble import GradientBoostingClassifier\nfrom sklearn.metrics import accuracy_score\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Define the model\n    model = GradientBoostingClassifier()\n    \n    # Train the model\n    model.fit(X_train, y_train)\n    \n    # Make predictions\n    predictions = model.predict(X_val)\n    \n    return predictions"
+    },
+    {
+      "iteration": 59,
+      "val_accuracy": 0.9295,
+      "val_loss": 0.3852,
+      "family": "GradientBoosting",
+      "is_best": false,
+      "time_seconds": 51.1,
+      "code": "from sklearn.ensemble import GradientBoostingClassifier\nfrom sklearn.metrics import accuracy_score\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Try a different ensemble approach\n    model = GradientBoostingClassifier()\n    model.fit(X_train, y_train)\n    \n    predictions = model.predict(X_val)\n    return predictions"
+    },
+    {
+      "iteration": 60,
+      "val_accuracy": null,
+      "val_loss": null,
+      "family": "RandomForest",
+      "error": "Error: solve() returned None. Must return predictions array.",
+      "time_seconds": 61.3,
+      "code": "from sklearn.ensemble import GradientBoostingClassifier, RandomForestClassifier\nfrom sklearn.svm import SVC\nfrom sklearn.pipeline import make_pipeline\nfrom sklearn.preprocessing import StandardScaler\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Define the models to try\n    models = {\n        'GradientBoosting': GradientBoostingClassifier(),\n        'RandomForest': RandomForestClassifier(),\n        'SVM': make_pipeline(StandardScaler(), SVC())\n    }\n    \n    best_acc = 0.9385\n    predictions = None\n    \n    for model_name, model in models.items():\n        print(f\"Training {model_name}...\")\n        # Train the model\n        model.fit(X_train, y_train)\n        \n        # Predict on validation set\n        val_predictions = model.predict(X_val)\n        \n        # Evaluate accuracy (for simplicity, using a placeholder evaluation function)\n        acc = np.mean(val_predictions == y_val)\n        print(f\"{model_name} Accuracy: {acc:.4f}\")\n        \n        if acc > best_acc:\n            best_acc = acc\n            predictions = val_predictions\n    \n    return predictions"
+    },
+    {
+      "iteration": 61,
+      "val_accuracy": 0.9295,
+      "val_loss": 0.3852,
+      "family": "GradientBoosting",
+      "is_best": false,
+      "time_seconds": 51.7,
+      "code": "from sklearn.ensemble import GradientBoostingClassifier\nfrom sklearn.metrics import accuracy_score\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Try a different approach with Gradient Boosting Classifier\n    model = GradientBoostingClassifier()\n    model.fit(X_train, y_train)\n    \n    predictions = model.predict(X_val)\n    return predictions"
+    },
+    {
+      "iteration": 62,
+      "val_accuracy": 0.9295,
+      "val_loss": 0.3852,
+      "family": "GradientBoosting",
+      "is_best": false,
+      "time_seconds": 54.0,
+      "code": "from sklearn.ensemble import GradientBoostingClassifier\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Standardize features by removing the mean and scaling to unit variance\n    from sklearn.preprocessing import StandardScaler\n    scaler = StandardScaler()\n    X_train_scaled = scaler.fit_transform(X_train)\n    X_val_scaled = scaler.transform(X_val)\n    \n    # Train a Gradient Boosting Classifier with default parameters as a baseline model\n    clf = GradientBoostingClassifier()\n    clf.fit(X_train_scaled, y_train)\n    \n    # Make predictions on the validation set\n    predictions = clf.predict(X_val_scaled)\n    \n    return predictions"
+    },
+    {
+      "iteration": 63,
+      "val_accuracy": null,
+      "val_loss": null,
+      "family": "Ensemble",
+      "error": "Runtime Error: argument of type 'MLPClassifier' is not iterable\nTraceback (most recent call last):\n  File \"F:\\AI-IN-THE-LOOP\\aitl-paper\\experiments\\aeos\\aeos_behave\\trainer.py\", line 95, in _run_in_process\n    predictions = solve_fn(\n  File \"<string>\", line 26, in solve\n  File \"C:\\Users\\ZENITH\\AppData\\Roaming\\Python\\Python310\\site-packages\\sklearn\\ensemble\\_stacking.py\", line 706, in fit\n    return super().fit(X, y_encoded, **fit_params)\n  File \"C:\\Users\\ZENITH\\AppData\\Roaming\\Python\\Python310\\s",
+      "time_seconds": 26.6,
+      "code": "from sklearn.ensemble import StackingClassifier\nfrom sklearn.linear_model import LogisticRegression\nfrom sklearn.svm import SVC\nfrom sklearn.neural_network import MLPClassifier\nfrom sklearn.pipeline import make_pipeline\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.decomposition import PCA\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Define a list of base models\n    base_models = [\n        make_pipeline(StandardScaler(), PCA(n_components=0.95), SVC()),\n        MLPClassifier(),\n        RandomForestClassifier(),\n        GradientBoostingClassifier()\n    ]\n    \n    # Define the meta-model (Logistic Regression)\n    meta_model = LogisticRegression()\n    \n    # Create a stacking classifier with base models and meta-model\n    stack_clf = StackingClassifier(estimators=list(zip(base_models, [str(type(m)) for m in base_models])), final_estimator=meta_model)\n    \n    # Train the stacking classifier\n    stack_clf.fit(X_train, y_train)\n    \n    # Make predictions on validation set\n    predictions = stack_clf.predict(X_val)\n    \n    return predictions"
+    },
+    {
+      "iteration": 64,
+      "val_accuracy": null,
+      "val_loss": null,
+      "family": "GradientBoosting",
+      "error": "Timeout Error: Code execution exceeded 300 seconds. Process terminated.",
+      "time_seconds": 322.1,
+      "code": "from sklearn.ensemble import GradientBoostingClassifier\nfrom sklearn.model_selection import GridSearchCV\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Define the model\n    gbc = GradientBoostingClassifier()\n    \n    # Define hyperparameters for tuning\n    param_grid = {\n        'n_estimators': [100, 200],\n        'learning_rate': [0.1, 0.2],\n        'max_depth': [3, 4]\n    }\n    \n    # Perform grid search with cross-validation to find the best hyperparameters\n    grid_search = GridSearchCV(gbc, param_grid, cv=5)\n    grid_search.fit(X_train, y_train)\n    \n    # Train the model with the best parameters found\n    best_model = GradientBoostingClassifier(**grid_search.best_params_)\n    best_model.fit(X_train, y_train)\n    \n    # Make predictions on validation set\n    predictions = best_model.predict(X_val)\n    \n    return predictions"
+    },
+    {
+      "iteration": 65,
+      "val_accuracy": 0.929,
+      "val_loss": 0.3876,
+      "family": "GradientBoosting",
+      "is_best": false,
+      "time_seconds": 134.1,
+      "code": "from sklearn.ensemble import GradientBoostingClassifier\nfrom sklearn.metrics import accuracy_score\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Initialize the best model and its score\n    best_model = None\n    best_accuracy = 0\n    \n    # Try GradientBoostingClassifier with different parameters\n    for learning_rate in [0.1, 0.2]:\n        for n_estimators in [50, 100]:\n            model = GradientBoostingClassifier(learning_rate=learning_rate, n_estimators=n_estimators)\n            model.fit(X_train, y_train)\n            predictions = model.predict(X_val)\n            accuracy = accuracy_score(y_val, predictions)\n            \n            if accuracy > best_accuracy:\n                best_accuracy = accuracy\n                best_model = model\n    \n    # Use the best model to make predictions on validation set\n    final_predictions = best_model.predict(X_val)\n    return final_predictions"
+    },
+    {
+      "iteration": 66,
+      "val_accuracy": null,
+      "val_loss": null,
+      "family": "RandomForest",
+      "error": "Runtime Error: AdaBoostClassifier.__init__() got an unexpected keyword argument 'base_estimator'\nTraceback (most recent call last):\n  File \"F:\\AI-IN-THE-LOOP\\aitl-paper\\experiments\\aeos\\aeos_behave\\trainer.py\", line 95, in _run_in_process\n    predictions = solve_fn(\n  File \"<string>\", line 10, in solve\nTypeError: AdaBoostClassifier.__init__() got an unexpected keyword argument 'base_estimator'\n",
+      "time_seconds": 27.2,
+      "code": "from sklearn.ensemble import GradientBoostingClassifier\nfrom sklearn.metrics import accuracy_score\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Define a list of potential models to try\n    models = [\n        GradientBoostingClassifier(n_estimators=100, learning_rate=0.1, max_depth=3),\n        RandomForestClassifier(n_estimators=100, max_depth=None, random_state=42),\n        AdaBoostClassifier(base_estimator=DecisionTreeClassifier(max_depth=1), n_estimators=50),\n        # Add more models if needed\n    ]\n    \n    best_model = None\n    best_accuracy = 0.9385  # Current best accuracy from iteration 40\n    \n    for model in models:\n        model.fit(X_train, y_train)\n        predictions = model.predict(X_val)\n        accuracy = accuracy_score(y_val, predictions)\n        \n        if accuracy > best_accuracy:\n            best_accuracy = accuracy\n            best_model = model\n    \n    # Train the best found model on the entire training data and predict on validation set\n    best_model.fit(X_train, y_train)\n    predictions = best_model.predict(X_val)\n    \n    return predictions"
+    },
+    {
+      "iteration": 67,
+      "val_accuracy": 0.7715,
+      "val_loss": 1.1335,
+      "family": "Ensemble",
+      "is_best": false,
+      "time_seconds": 59.3,
+      "code": "from sklearn.ensemble import GradientBoostingClassifier, VotingClassifier\nfrom sklearn.svm import SVC\nfrom sklearn.neural_network import MLPClassifier\nfrom sklearn.metrics import accuracy_score\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Define models\n    gbc = GradientBoostingClassifier()\n    svm = SVC()\n    mlp = MLPClassifier()\n    \n    # Ensemble model\n    ensemble = VotingClassifier(estimators=[('gbc', gbc), ('svm', svm), ('mlp', mlp)], voting='hard')\n    \n    # Train the ensemble model\n    ensemble.fit(X_train, y_train)\n    \n    # Predict on validation set\n    predictions = ensemble.predict(X_val)\n    \n    return predictions"
+    },
+    {
+      "iteration": 68,
+      "val_accuracy": 0.9325,
+      "val_loss": 0.371,
+      "family": "Ensemble",
+      "is_best": false,
+      "time_seconds": 65.3,
+      "code": "from sklearn.ensemble import GradientBoostingClassifier, VotingClassifier\nfrom sklearn.neural_network import MLPClassifier\nfrom sklearn.svm import SVC\nfrom sklearn.preprocessing import StandardScaler\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Preprocess the data\n    scaler = StandardScaler()\n    X_train_scaled = scaler.fit_transform(X_train)\n    X_val_scaled = scaler.transform(X_val)\n    \n    # Define models\n    model1 = GradientBoostingClassifier(n_estimators=100, learning_rate=0.1, max_depth=3, random_state=42)\n    model2 = MLPClassifier(hidden_layer_sizes=(50, 50), max_iter=100, alpha=0.0001, solver='adam', random_state=42)\n    model3 = SVC(kernel='rbf', C=1, gamma='scale', random_state=42)\n    \n    # Ensemble models\n    ensemble = VotingClassifier(estimators=[('gb', model1), ('mlp', model2), ('svc', model3)], voting='hard')\n    \n    # Train the ensemble\n    ensemble.fit(X_train_scaled, y_train)\n    \n    # Predict on validation set\n    predictions = ensemble.predict(X_val_scaled)\n    \n    return predictions"
+    },
+    {
+      "iteration": 69,
+      "val_accuracy": 0.9345,
+      "val_loss": 0.3615,
+      "family": "Ensemble",
+      "is_best": false,
+      "time_seconds": 52.5,
+      "code": "from sklearn.ensemble import GradientBoostingClassifier, VotingClassifier\nfrom sklearn.neural_network import MLPClassifier\nfrom sklearn.svm import SVC\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.decomposition import PCA\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Preprocessing: Standardize the features\n    scaler = StandardScaler()\n    X_train_scaled = scaler.fit_transform(X_train)\n    X_val_scaled = scaler.transform(X_val)\n    \n    # Dimensionality reduction using PCA\n    pca = PCA(n_components=8)  # Reducing to 8 principal components\n    X_train_pca = pca.fit_transform(X_train_scaled)\n    X_val_pca = pca.transform(X_val_scaled)\n    \n    # Define models\n    model1 = GradientBoostingClassifier(n_estimators=100, learning_rate=0.1, max_depth=3, random_state=42)\n    model2 = MLPClassifier(hidden_layer_sizes=(50, 50), max_iter=100, alpha=0.0001, solver='adam', random_state=42)\n    model3 = SVC(kernel='rbf', C=1, gamma='scale')\n    \n    # Ensemble of models\n    ensemble = VotingClassifier(estimators=[('gb', model1), ('mlp', model2), ('svc', model3)], voting='hard')\n    \n    # Train the ensemble\n    ensemble.fit(X_train_pca, y_train)\n    \n    # Predictions\n    predictions = ensemble.predict(X_val_pca)\n    return predictions"
+    },
+    {
+      "iteration": 70,
+      "val_accuracy": null,
+      "val_loss": null,
+      "family": "RandomForest",
+      "error": "Error: solve() returned None. Must return predictions array.",
+      "time_seconds": 38.7,
+      "code": "from sklearn.ensemble import GradientBoostingClassifier\nfrom sklearn.ensemble import RandomForestClassifier\nfrom sklearn.ensemble import AdaBoostClassifier\nfrom sklearn.svm import SVC\nfrom sklearn.pipeline import make_pipeline\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.decomposition import PCA\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Define the models to be evaluated\n    models = [\n        GradientBoostingClassifier(),\n        RandomForestClassifier(),\n        AdaBoostClassifier()\n    ]\n    \n    best_accuracy = 0.9385\n    predictions = None\n    \n    for model in models:\n        try:\n            if isinstance(model, AdaBoostClassifier):\n                # Try fixing the issue with AdaBoostClassifier\n                base_estimator = GradientBoostingClassifier()\n                model = AdaBoostClassifier(base_estimator=base_estimator)\n            \n            pipeline = make_pipeline(StandardScaler(), PCA(n_components=0.95), model)\n            pipeline.fit(X_train, y_train)\n            val_predictions = pipeline.predict(X_val)\n            \n            # Evaluate the model\n            accuracy = np.mean(val_predictions == y_val)\n            if accuracy > best_accuracy:\n                best_accuracy = accuracy\n                predictions = val_predictions\n                \n        except Exception as e:\n            print(f\"Model {model.__class__.__name__} failed with error: {e}\")\n    \n    return predictions"
+    },
+    {
+      "iteration": 71,
+      "val_accuracy": 0.9295,
+      "val_loss": 0.3852,
+      "family": "GradientBoosting",
+      "is_best": false,
+      "time_seconds": 51.4,
+      "code": "from sklearn.ensemble import GradientBoostingClassifier\nfrom sklearn.metrics import accuracy_score\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    model = GradientBoostingClassifier()\n    model.fit(X_train, y_train)\n    predictions = model.predict(X_val)\n    return predictions"
+    },
+    {
+      "iteration": 72,
+      "val_accuracy": 0.935,
+      "val_loss": 0.3591,
+      "family": "Ensemble",
+      "is_best": false,
+      "time_seconds": 81.3,
+      "code": "from sklearn.ensemble import GradientBoostingClassifier, RandomForestClassifier, VotingClassifier\nfrom sklearn.svm import SVC\nfrom sklearn.neural_network import MLPClassifier\nfrom sklearn.pipeline import make_pipeline\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.decomposition import PCA\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Define a list of models to try\n    models = [\n        GradientBoostingClassifier(),\n        RandomForestClassifier(),\n        make_pipeline(StandardScaler(), PCA(n_components=0.95), SVC()),\n        MLPClassifier()\n    ]\n    \n    # Train and evaluate each model\n    best_acc = 0\n    for model in models:\n        pipeline = make_pipeline(StandardScaler(), model)\n        pipeline.fit(X_train, y_train)\n        predictions = pipeline.predict(X_val)\n        acc = np.mean(predictions == y_val)\n        if acc > best_acc:\n            best_acc = acc\n    \n    # Return the predictions of the best model found so far\n    return predictions"
+    },
+    {
+      "iteration": 73,
+      "val_accuracy": 0.9295,
+      "val_loss": 0.3852,
+      "family": "GradientBoosting",
+      "is_best": false,
+      "time_seconds": 55.5,
+      "code": "from sklearn.ensemble import GradientBoostingClassifier\nfrom sklearn.metrics import accuracy_score\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Standardize the features\n    from sklearn.preprocessing import StandardScaler\n    scaler = StandardScaler()\n    X_train_scaled = scaler.fit_transform(X_train)\n    X_val_scaled = scaler.transform(X_val)\n    \n    # Train a Gradient Boosting Classifier with default parameters for comparison\n    clf = GradientBoostingClassifier(random_state=42)\n    clf.fit(X_train_scaled, y_train)\n    \n    # Make predictions on the validation set\n    y_pred = clf.predict(X_val_scaled)\n    \n    return y_pred"
+    },
+    {
+      "iteration": 74,
+      "val_accuracy": null,
+      "val_loss": null,
+      "family": "GradientBoosting",
+      "error": "Runtime Error: 'return' outside function (<string>, line 29)\nTraceback (most recent call last):\n  File \"F:\\AI-IN-THE-LOOP\\aitl-paper\\experiments\\aeos\\aeos_behave\\trainer.py\", line 89, in _run_in_process\n    exec(code_str, exec_namespace)\n  File \"<string>\", line 29\nSyntaxError: 'return' outside function\n",
+      "time_seconds": 24.4,
+      "code": "from sklearn.ensemble import GradientBoostingClassifier\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.pipeline import Pipeline\nfrom sklearn.model_selection import GridSearchCV\nimport numpy as np\n\n# Define a base model\nbase_model = GradientBoostingClassifier(random_state=42)\n\n# Define the pipeline with standardization\npipeline = Pipeline([('scaler', StandardScaler()), ('gbc', base_model)])\n\n# Define hyperparameters to tune\nparam_grid = {\n    'gbc__n_estimators': [100, 200],\n    'gbc__learning_rate': [0.1, 0.2],\n    'gbc__max_depth': [3, 4]\n}\n\n# Use GridSearchCV for hyperparameter tuning\ngrid_search = GridSearchCV(pipeline, param_grid, cv=5, scoring='accuracy', n_jobs=-1)\n\n# Fit the model on the training data\ngrid_search.fit(X_train, y_train)\n\n# Make predictions on the validation set\npredictions = grid_search.predict(X_val)\n\nreturn predictions"
+    },
+    {
+      "iteration": 75,
+      "val_accuracy": 0.9295,
+      "val_loss": 0.3852,
+      "family": "Ensemble",
+      "is_best": false,
+      "time_seconds": 96.8,
+      "code": "from sklearn.ensemble import GradientBoostingClassifier\nfrom sklearn.metrics import accuracy_score\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Define the models to be evaluated\n    models = [\n        ('GradientBoosting', GradientBoostingClassifier()),\n        ('RandomForest', RandomForestClassifier()),\n        ('Ensemble', VotingClassifier(estimators=[('gb', GradientBoostingClassifier()), ('rf', RandomForestClassifier())], voting='soft'))\n    ]\n    \n    best_model = None\n    best_accuracy = 0.0\n    \n    for name, model in models:\n        # Train the model\n        model.fit(X_train, y_train)\n        \n        # Make predictions on the validation set\n        y_pred = model.predict(X_val)\n        \n        # Evaluate the accuracy of the model\n        accuracy = accuracy_score(y_val, y_pred)\n        \n        # Update the best model if the current one has a higher accuracy\n        if accuracy > best_accuracy:\n            best_accuracy = accuracy\n            best_model = model\n    \n    # Make final predictions using the best model\n    return best_model.predict(X_val)"
+    },
+    {
+      "iteration": 76,
+      "val_accuracy": null,
+      "val_loss": null,
+      "family": "Ensemble",
+      "error": "Runtime Error: name 'rf_cll' is not defined\nTraceback (most recent call last):\n  File \"F:\\AI-IN-THE-LOOP\\aitl-paper\\experiments\\aeos\\aeos_behave\\trainer.py\", line 95, in _run_in_process\n    predictions = solve_fn(\n  File \"<string>\", line 16, in solve\nNameError: name 'rf_cll' is not defined. Did you mean: 'rf_clf'?\n",
+      "time_seconds": 24.8,
+      "code": "from sklearn.ensemble import GradientBoostingClassifier, RandomForestClassifier\nfrom sklearn.ensemble import VotingClassifier\nfrom sklearn.svm import SVC\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.pipeline import make_pipeline\nfrom sklearn.metrics import accuracy_score\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Define a base model (Gradient Boosting)\n    gb = GradientBoostingClassifier()\n    \n    # Define an ensemble with SVM and Random Forest\n    svm_clf = SVC()\n    rf_clf = RandomForestClassifier()\n    ensemble_model = VotingClassifier(estimators=[('gb', gb), ('svm', svm_clf), ('rf', rf_cll)], voting='hard')\n    \n    # Pipeline for preprocessing and training\n    pipeline = make_pipeline(StandardScaler(), ensemble_model)\n    \n    # Train the model\n    pipeline.fit(X_train, y_train)\n    \n    # Make predictions on validation set\n    predictions = pipeline.predict(X_val)\n    \n    return predictions"
+    },
+    {
+      "iteration": 77,
+      "val_accuracy": null,
+      "val_loss": null,
+      "family": "RandomForest",
+      "error": "Error: solve() returned None. Must return predictions array.",
+      "time_seconds": 55.7,
+      "code": "from sklearn.ensemble import RandomForestClassifier\nfrom sklearn.svm import SVC\nfrom sklearn.neural_network import MLPClassifier\nfrom sklearn.pipeline import make_pipeline\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.metrics import accuracy_score\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Define models\n    rf_classifier = RandomForestClassifier()\n    svm_classifier = SVC()\n    mlp_classifier = MLPClassifier()\n    \n    # Create a pipeline for standardization and modeling\n    pipelines = {\n        'rf': make_pipeline(StandardScaler(), RandomForestClassifier()),\n        'svm': make_pipeline(StandardScaler(), SVC()),\n        'mlp': make_pipeline(StandardScaler(), MLPClassifier())\n    }\n    \n    # Train and evaluate each pipeline\n    best_accuracy = 0.9385  # Current best accuracy from iteration 40\n    best_model = None\n    \n    for name, pipeline in pipelines.items():\n        pipeline.fit(X_train, y_train)\n        predictions = pipeline.predict(X_val)\n        accuracy = accuracy_score(y_val, predictions)\n        \n        if accuracy > best_accuracy:\n            best_accuracy = accuracy\n            best_model = name\n    \n    # Return the best model's predictions\n    if best_model == 'rf':\n        pipeline = make_pipeline(StandardScaler(), RandomForestClassifier())\n        pipeline.fit(X_train, y_train)\n        return pipeline.predict(X_val)\n    elif best_model == 'svm':\n        pipeline = make_pipeline(StandardScaler(), SVC())\n        pipeline.fit(X_train, y_train)\n        return pipeline.predict(X_val)\n    elif best_model == 'mlp':\n        pipeline = make_pipeline(StandardScaler(), MLPClassifier())\n        pipeline.fit(X_train, y_train)\n        return pipeline.predict(X_val)\n    \n    # If no model improves upon the baseline, we can consider stopping\n    if best_accuracy == 0.9385:\n        print(\"STOP\")\n        return None"
+    },
+    {
+      "iteration": 78,
+      "val_accuracy": 0.928,
+      "val_loss": 0.3923,
+      "family": "Ensemble",
+      "is_best": false,
+      "time_seconds": 102.4,
+      "code": "from sklearn.ensemble import GradientBoostingClassifier\nfrom sklearn.metrics import accuracy_score\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Define the models to try\n    models = {\n        'GradientBoosting': GradientBoostingClassifier(),\n        'RandomForest': RandomForestClassifier(),\n        'Ensemble': VotingClassifier(estimators=[('gb', GradientBoostingClassifier()), ('rf', RandomForestClassifier())], voting='soft')\n    }\n    \n    best_accuracy = 0.9385  # Current best accuracy from iteration 40\n    \n    for model_name, model in models.items():\n        try:\n            if model_name == 'GradientBoosting':\n                model.set_params(n_estimators=100)  # Adjust parameters as needed\n            elif model_name == 'RandomForest':\n                model.set_params(n_estimators=200)  # Adjust parameters as needed\n            elif model_name == 'Ensemble':\n                pass  # Ensemble models do not require additional parameter tuning in this context\n            \n            model.fit(X_train, y_train)\n            predictions = model.predict(X_val)\n            accuracy = accuracy_score(y_val, predictions)\n            \n            if accuracy > best_accuracy:\n                best_accuracy = accuracy\n        except Exception as e:\n            print(f\"Error with {model_name}: {e}\")\n    \n    return np.array(predictions)"
+    },
+    {
+      "iteration": 79,
+      "val_accuracy": 0.9295,
+      "val_loss": 0.3852,
+      "family": "GradientBoosting",
+      "is_best": false,
+      "time_seconds": 120.2,
+      "code": "from sklearn.ensemble import GradientBoostingClassifier\nfrom sklearn.metrics import accuracy_score\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Define a function to evaluate models\n    def evaluate_model(model):\n        model.fit(X_train, y_train)\n        predictions = model.predict(X_val)\n        return accuracy_score(y_val, predictions), predictions\n    \n    # Initialize and train Gradient Boosting Model\n    gb_model = GradientBoostingClassifier()\n    best_accuracy = 0\n    best_predictions = None\n    \n    for learning_rate in [0.1, 0.2, 0.3]:\n        gb_model.set_params(learning_rate=learning_rate)\n        accuracy, preds = evaluate_model(gb_model)\n        if accuracy > best_accuracy:\n            best_accuracy = accuracy\n            best_predictions = preds\n    \n    return np.array(best_predictions)"
+    },
+    {
+      "iteration": 80,
+      "val_accuracy": 0.738,
+      "val_loss": 1.2922,
+      "family": "Ensemble",
+      "is_best": false,
+      "time_seconds": 60.4,
+      "code": "from sklearn.ensemble import StackingClassifier\nfrom sklearn.linear_model import LogisticRegression\nfrom sklearn.svm import SVC\nfrom sklearn.neural_network import MLPClassifier\nfrom sklearn.pipeline import make_pipeline\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.decomposition import PCA\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Define a list of base models\n    base_models = [\n        ('lr', LogisticRegression()),\n        ('svc', SVC()),\n        ('mlp', MLPClassifier())\n    ]\n    \n    # Create a stacking classifier with the base models and a meta-model (Logistic Regression)\n    stack_clf = StackingClassifier(estimators=base_models, final_estimator=LogisticRegression(), cv=5)\n    \n    # Train and evaluate the stacking classifier\n    stack_clf.fit(X_train, y_train)\n    predictions = stack_clf.predict(X_val)\n    acc = np.mean(predictions == y_val)\n    \n    return predictions"
+    },
+    {
+      "iteration": 81,
+      "val_accuracy": 0.9295,
+      "val_loss": 0.3852,
+      "family": "GradientBoosting",
+      "is_best": false,
+      "time_seconds": 53.2,
+      "code": "from sklearn.ensemble import GradientBoostingClassifier\nfrom sklearn.metrics import accuracy_score\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Define a base model (Gradient Boosting) for ensemble if needed\n    base_model = GradientBoostingClassifier()\n    \n    # Train the base model\n    base_model.fit(X_train, y_train)\n    \n    # Make predictions on validation set\n    predictions = base_model.predict(X_val)\n    \n    return predictions"
+    },
+    {
+      "iteration": 82,
+      "val_accuracy": 0.9295,
+      "val_loss": 0.3852,
+      "family": "GradientBoosting",
+      "is_best": false,
+      "time_seconds": 53.6,
+      "code": "from sklearn.ensemble import GradientBoostingClassifier\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.pipeline import make_pipeline\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Define the best model found so far is a Gradient Boosting Classifier with standard scaling\n    model = make_pipeline(StandardScaler(), GradientBoostingClassifier())\n    \n    # Train the model\n    model.fit(X_train, y_train)\n    \n    # Predict on validation set\n    predictions = model.predict(X_val)\n    \n    return predictions"
+    },
+    {
+      "iteration": 83,
+      "val_accuracy": 0.122,
+      "val_loss": 4.2097,
+      "family": "Ensemble",
+      "is_best": false,
+      "time_seconds": 59.2,
+      "code": "from sklearn.ensemble import GradientBoostingClassifier\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.pipeline import make_pipeline\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Define the models to try\n    models = {\n        'GradientBoosting': GradientBoostingClassifier(),\n        'RandomForest': RandomForestClassifier(),\n        'Ensemble': VotingClassifier(estimators=[('gb', GradientBoostingClassifier()), ('rf', RandomForestClassifier())], voting='soft')\n    }\n    \n    # Try to beat the best accuracy with a different approach\n    for name, model in models.items():\n        if name == 'GradientBoosting':  # Continue with Gradient Boosting as it has shown some potential\n            pipeline = make_pipeline(StandardScaler(), model)\n            pipeline.fit(X_train, y_train)\n            predictions = pipeline.predict(X_val)\n            accuracy = (predictions == y_val).mean()\n            print(f\"Model: {name}, Accuracy: {accuracy}\")\n    \n    # Select the best model based on validation accuracy\n    if 'GradientBoosting' in models and hasattr(models['GradientBoosting'], 'predict'):\n        return models['GradientBoosting'].predict(X_val)\n    else:\n        raise ValueError(\"No suitable model found for prediction.\")"
+    },
+    {
+      "iteration": 84,
+      "val_accuracy": 0.9285,
+      "val_loss": 0.3899,
+      "family": "GradientBoosting",
+      "is_best": false,
+      "time_seconds": 53.1,
+      "code": "from sklearn.ensemble import GradientBoostingClassifier\nfrom sklearn.metrics import accuracy_score\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Define a base model (Gradient Boosting)\n    base_model = GradientBoostingClassifier()\n    \n    # Train the base model on the training data\n    base_model.fit(X_train, y_train)\n    \n    # Make predictions on the validation set\n    predictions = base_model.predict(X_val)\n    \n    return predictions"
+    }
+  ]
+}

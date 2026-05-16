@@ -1,0 +1,354 @@
+{
+  "run_id": "20260424_135720",
+  "backend": "openai",
+  "model": "openai/gpt-4o",
+  "dataset": "text",
+  "n_features": 0,
+  "n_classes": 6,
+  "n_train": 3427,
+  "n_val": 2282,
+  "best_accuracy": 0.823,
+  "best_loss": 0.8575,
+  "best_iteration": 18,
+  "best_code": "def solve(X_train, y_train, X_val, y_val):\n    from sklearn.feature_extraction.text import TfidfVectorizer\n    from sklearn.naive_bayes import MultinomialNB\n    from sklearn.pipeline import make_pipeline\n    from sklearn.metrics import accuracy_score\n    \n    # Create a pipeline with TF-IDF vectorizer and Multinomial Naive Bayes model\n    model = make_pipeline(TfidfVectorizer(), MultinomialNB())\n    \n    # Fit the model\n    model.fit(X_train, y_train)\n    \n    # Predict on validation data\n    predictions = model.predict(X_val)\n    \n    # Calculate accuracy for internal comparison\n    accuracy = accuracy_score(y_val, predictions)\n    print(f\"Validation Accuracy: {accuracy}\")\n    \n    return predictions",
+  "total_iterations": 37,
+  "stop_reason": "System forced stop (no improvement in 15 iterations)",
+  "total_time_seconds": 1109.8,
+  "model_families_explored": [
+    "GradientBoosting",
+    "RandomForest",
+    "ExtraTrees",
+    "sklearn_MLP",
+    "LogisticRegression",
+    "SVM",
+    "Unknown"
+  ],
+  "sunk_cost_episodes": 1,
+  "waste_count": 3,
+  "iterations": [
+    {
+      "iteration": 1,
+      "val_accuracy": 0.8032,
+      "val_loss": 0.9473,
+      "family": "LogisticRegression",
+      "is_best": true,
+      "time_seconds": 6.5,
+      "code": "def solve(X_train, y_train, X_val, y_val):\n    from sklearn.feature_extraction.text import TfidfVectorizer\n    from sklearn.linear_model import LogisticRegression\n    from sklearn.pipeline import make_pipeline\n\n    # Create a pipeline with TfidfVectorizer and LogisticRegression\n    model = make_pipeline(TfidfVectorizer(), LogisticRegression(max_iter=200))\n\n    # Fit the model on training data\n    model.fit(X_train, y_train)\n\n    # Predict on validation data\n    predictions = model.predict(X_val)\n\n    return predictions"
+    },
+    {
+      "iteration": 2,
+      "val_accuracy": 0.734,
+      "val_loss": 1.2626,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 9.5,
+      "code": "from sklearn.feature_extraction.text import TfidfVectorizer\nfrom sklearn.ensemble import RandomForestClassifier\nfrom sklearn.pipeline import make_pipeline\nfrom sklearn.metrics import accuracy_score\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Create a pipeline with TfidfVectorizer and RandomForestClassifier\n    model = make_pipeline(\n        TfidfVectorizer(),\n        RandomForestClassifier(n_estimators=100, random_state=42)\n    )\n    \n    # Fit the model\n    model.fit(X_train, y_train)\n    \n    # Predict the validation set\n    predictions = model.predict(X_val)\n    \n    # Return predictions as numpy array\n    return predictions"
+    },
+    {
+      "iteration": 3,
+      "val_accuracy": 0.6972,
+      "val_loss": 1.4302,
+      "family": "SVM",
+      "is_best": false,
+      "time_seconds": 16.7,
+      "code": "from sklearn.feature_extraction.text import TfidfVectorizer\nfrom sklearn.svm import SVC\nfrom sklearn.pipeline import make_pipeline\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.metrics import accuracy_score\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Create a TfidfVectorizer to convert text data into numerical data\n    vectorizer = TfidfVectorizer()\n\n    # Create a pipeline with TfidfVectorizer, StandardScaler, and SVC\n    model = make_pipeline(\n        vectorizer,\n        StandardScaler(with_mean=False), # Keep with_mean=False for sparse matrix compatibility\n        SVC(kernel='linear', C=1.0, random_state=42)\n    )\n    \n    # Train the model\n    model.fit(X_train, y_train)\n    \n    # Generate predictions\n    predictions = model.predict(X_val)\n    \n    # Calculate accuracy\n    accuracy = accuracy_score(y_val, predictions)\n    print(f\"Accuracy: {accuracy:.4f}\")\n    \n    return np.array(predictions)"
+    },
+    {
+      "iteration": 4,
+      "val_accuracy": 0.7734,
+      "val_loss": 1.083,
+      "family": "sklearn_MLP",
+      "is_best": false,
+      "time_seconds": 26.8,
+      "code": "from sklearn.feature_extraction.text import TfidfVectorizer\nfrom sklearn.neural_network import MLPClassifier\nfrom sklearn.pipeline import make_pipeline\nfrom sklearn.preprocessing import StandardScaler\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Use TfidfVectorizer to convert text to numerical features\n    vectorizer = TfidfVectorizer(max_features=10000, ngram_range=(1, 2))\n    \n    # Define a Multi-layer Perceptron classifier with a simple architecture\n    mlp = MLPClassifier(hidden_layer_sizes=(100,), activation='relu', solver='adam', max_iter=200, random_state=42)\n    \n    # Create a pipeline to vectorize the text, standardize features, and train the MLPClassifier\n    pipeline = make_pipeline(vectorizer, StandardScaler(with_mean=False), mlp)\n    \n    # Train the model\n    pipeline.fit(X_train, y_train)\n    \n    # Predict the validation set\n    predictions = pipeline.predict(X_val)\n    \n    return predictions"
+    },
+    {
+      "iteration": 5,
+      "val_accuracy": 0.6933,
+      "val_loss": 1.4482,
+      "family": "LogisticRegression",
+      "is_best": false,
+      "time_seconds": 4.1,
+      "code": "from sklearn.feature_extraction.text import TfidfVectorizer\nfrom sklearn.linear_model import LogisticRegression\nfrom sklearn.pipeline import make_pipeline\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.decomposition import TruncatedSVD\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Use TfidfVectorizer to transform text data into TF-IDF features\n    vectorizer = TfidfVectorizer(max_features=1000)\n\n    # Logistic Regression is the best model so far, let's enhance it with dimensionality reduction\n    svd = TruncatedSVD(n_components=100, random_state=42)\n    scaler = StandardScaler(with_mean=False)\n    model = LogisticRegression(max_iter=1000, random_state=42)\n\n    # Create a pipeline\n    pipeline = make_pipeline(vectorizer, svd, scaler, model)\n\n    # Fit the model\n    pipeline.fit(X_train, y_train)\n\n    # Predict on validation data\n    predictions = pipeline.predict(X_val)\n\n    return predictions"
+    },
+    {
+      "iteration": 6,
+      "val_accuracy": 0.7914,
+      "val_loss": 1.0012,
+      "family": "LogisticRegression",
+      "is_best": false,
+      "time_seconds": 7.9,
+      "code": "from sklearn.feature_extraction.text import TfidfVectorizer\nfrom sklearn.linear_model import LogisticRegression\nfrom sklearn.pipeline import make_pipeline\nfrom sklearn.preprocessing import StandardScaler\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Using a pipeline to encapsulate TfidfVectorizer and LogisticRegression\n    model = make_pipeline(\n        TfidfVectorizer(max_features=10000, ngram_range=(1, 2)),  # Bi-grams to capture more context\n        StandardScaler(with_mean=False),  # Standardize the features\n        LogisticRegression(max_iter=500, solver='saga', C=1.0, random_state=42)  # Re-tuning hyperparameters\n    )\n    \n    # Fit the model\n    model.fit(X_train, y_train)\n    \n    # Predict on the validation set\n    predictions = model.predict(X_val)\n    \n    return np.array(predictions)"
+    },
+    {
+      "iteration": 7,
+      "val_accuracy": 0.7362,
+      "val_loss": 1.2526,
+      "family": "GradientBoosting",
+      "is_best": false,
+      "time_seconds": 123.8,
+      "code": "def solve(X_train, y_train, X_val, y_val):\n    from sklearn.feature_extraction.text import TfidfVectorizer\n    from sklearn.ensemble import GradientBoostingClassifier\n    from sklearn.pipeline import make_pipeline\n    from sklearn.decomposition import TruncatedSVD\n\n    # Create a pipeline with TfidfVectorizer, TruncatedSVD, and GradientBoostingClassifier\n    model = make_pipeline(\n        TfidfVectorizer(),\n        TruncatedSVD(n_components=100),\n        GradientBoostingClassifier(n_estimators=200)\n    )\n\n    # Fit the model on training data\n    model.fit(X_train, y_train)\n\n    # Predict on validation data\n    predictions = model.predict(X_val)\n\n    return predictions"
+    },
+    {
+      "iteration": 8,
+      "val_accuracy": 0.7883,
+      "val_loss": 1.0152,
+      "family": "LogisticRegression",
+      "is_best": false,
+      "time_seconds": 4.0,
+      "code": "from sklearn.feature_extraction.text import TfidfVectorizer\nfrom sklearn.linear_model import LogisticRegression\nfrom sklearn.pipeline import make_pipeline\nfrom sklearn.preprocessing import StandardScaler\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Using TfidfVectorizer and Logistic Regression as it had the best performance\n    pipeline = make_pipeline(\n        TfidfVectorizer(),\n        StandardScaler(with_mean=False),  # StandardScaler to normalize features\n        LogisticRegression(max_iter=1000, random_state=42)  # Increased max_iter for convergence\n    )\n    \n    # Fit the model\n    pipeline.fit(X_train, y_train)\n    \n    # Predict on validation set\n    predictions = pipeline.predict(X_val)\n    \n    return np.array(predictions)"
+    },
+    {
+      "iteration": 9,
+      "val_accuracy": 0.7848,
+      "val_loss": 1.0311,
+      "family": "LogisticRegression",
+      "is_best": false,
+      "time_seconds": 5.1,
+      "code": "from sklearn.feature_extraction.text import TfidfVectorizer\nfrom sklearn.linear_model import LogisticRegression\nfrom sklearn.pipeline import make_pipeline\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Using TfidfVectorizer with LogisticRegression, which was the best in previous attempts\n    model = make_pipeline(\n        TfidfVectorizer(max_features=10000, ngram_range=(1, 2)),\n        LogisticRegression(max_iter=1000, solver='lbfgs', multi_class='multinomial', C=1.0)\n    )\n    \n    # Fit the model\n    model.fit(X_train, y_train)\n    \n    # Predict on validation set\n    predictions = model.predict(X_val)\n    \n    return np.array(predictions)"
+    },
+    {
+      "iteration": 10,
+      "val_accuracy": 0.8221,
+      "val_loss": 0.8615,
+      "family": "LogisticRegression",
+      "is_best": true,
+      "time_seconds": 51.7,
+      "code": "from sklearn.feature_extraction.text import TfidfVectorizer\nfrom sklearn.linear_model import LogisticRegression\nfrom sklearn.pipeline import Pipeline\nfrom sklearn.model_selection import GridSearchCV\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Create a pipeline with TfidfVectorizer and LogisticRegression\n    pipeline = Pipeline([\n        ('tfidf', TfidfVectorizer()),\n        ('logreg', LogisticRegression(max_iter=1000, solver='liblinear', multi_class='auto'))\n    ])\n    \n    # Parameter grid for grid search\n    param_grid = {\n        'tfidf__max_features': [None, 5000, 10000],\n        'tfidf__ngram_range': [(1, 1), (1, 2)],\n        'logreg__C': [0.1, 1, 10]\n    }\n    \n    # Initialize GridSearchCV\n    grid_search = GridSearchCV(pipeline, param_grid, cv=5, n_jobs=-1, verbose=1)\n    \n    # Fit the model\n    grid_search.fit(X_train, y_train)\n    \n    # Get the best model\n    best_model = grid_search.best_estimator_\n    \n    # Predict on the validation set\n    predictions = best_model.predict(X_val)\n    \n    return np.array(predictions)"
+    },
+    {
+      "iteration": 11,
+      "val_accuracy": 0.7331,
+      "val_loss": 1.2666,
+      "family": "LogisticRegression",
+      "is_best": false,
+      "time_seconds": 5.3,
+      "code": "from sklearn.feature_extraction.text import TfidfVectorizer\nfrom sklearn.pipeline import make_pipeline\nfrom sklearn.linear_model import LogisticRegression\nfrom sklearn.naive_bayes import MultinomialNB\nfrom sklearn.ensemble import VotingClassifier\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Use TfidfVectorizer for text feature extraction\n    tfidf = TfidfVectorizer(max_features=1000)\n\n    # Logistic Regression model\n    lr = LogisticRegression(max_iter=1000)\n\n    # Naive Bayes model\n    nb = MultinomialNB()\n\n    # Ensemble model using Voting Classifier\n    ensemble = VotingClassifier(estimators=[\n        ('lr', lr),\n        ('nb', nb)\n    ], voting='soft')\n\n    # Create a pipeline with TF-IDF and the ensemble model\n    model_pipeline = make_pipeline(tfidf, ensemble)\n\n    # Fit the model on training data\n    model_pipeline.fit(X_train, y_train)\n\n    # Predict on validation data\n    predictions = model_pipeline.predict(X_val)\n\n    return predictions"
+    },
+    {
+      "iteration": 12,
+      "val_accuracy": 0.7888,
+      "val_loss": 1.0132,
+      "family": "LogisticRegression",
+      "is_best": false,
+      "time_seconds": 4.8,
+      "code": "from sklearn.feature_extraction.text import TfidfVectorizer\nfrom sklearn.linear_model import LogisticRegression\nimport numpy as np\nfrom sklearn.pipeline import make_pipeline\nfrom sklearn.preprocessing import StandardScaler\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Create a pipeline with TfidfVectorizer and LogisticRegression\n    pipeline = make_pipeline(\n        TfidfVectorizer(max_features=10000, ngram_range=(1, 2)),\n        StandardScaler(with_mean=False),\n        LogisticRegression(max_iter=1000, solver='liblinear')\n    )\n    \n    # Train the model\n    pipeline.fit(X_train, y_train)\n    \n    # Predict the validation set\n    predictions = pipeline.predict(X_val)\n    \n    return predictions"
+    },
+    {
+      "iteration": 13,
+      "val_accuracy": 0.7888,
+      "val_loss": 1.0132,
+      "family": "LogisticRegression",
+      "is_best": false,
+      "time_seconds": 5.2,
+      "code": "from sklearn.feature_extraction.text import TfidfVectorizer\nfrom sklearn.linear_model import LogisticRegression\nfrom sklearn.pipeline import make_pipeline\nfrom sklearn.preprocessing import StandardScaler\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Create a pipeline with TfidfVectorizer and Logistic Regression\n    pipeline = make_pipeline(\n        TfidfVectorizer(max_features=10000, ngram_range=(1, 2)),\n        StandardScaler(with_mean=False),  # with_mean=False because sparse matrix\n        LogisticRegression(max_iter=200, solver='liblinear')\n    )\n    \n    # Fit the model\n    pipeline.fit(X_train, y_train)\n    \n    # Predict on the validation set\n    predictions = pipeline.predict(X_val)\n    \n    return predictions"
+    },
+    {
+      "iteration": 14,
+      "val_accuracy": 0.7682,
+      "val_loss": 1.1069,
+      "family": "LogisticRegression",
+      "is_best": false,
+      "time_seconds": 5.7,
+      "code": "from sklearn.feature_extraction.text import TfidfVectorizer\nfrom sklearn.linear_model import LogisticRegression\nfrom sklearn.pipeline import make_pipeline\nfrom sklearn.preprocessing import StandardScaler\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Using TfidfVectorizer for text feature extraction\n    vectorizer = TfidfVectorizer(ngram_range=(1, 2), max_features=5000)\n    \n    # Logistic Regression with strong regularization\n    model = LogisticRegression(C=0.5, max_iter=200, solver='liblinear', class_weight='balanced')\n    \n    # Pipeline for text transformation and classification\n    pipeline = make_pipeline(vectorizer, StandardScaler(with_mean=False), model)\n    \n    # Fit the model\n    pipeline.fit(X_train, y_train)\n    \n    # Predict on validation set\n    predictions = pipeline.predict(X_val)\n    \n    return predictions"
+    },
+    {
+      "iteration": 15,
+      "val_accuracy": 0.7901,
+      "val_loss": 1.0072,
+      "family": "LogisticRegression",
+      "is_best": false,
+      "time_seconds": 4.5,
+      "code": "from sklearn.feature_extraction.text import TfidfVectorizer\nfrom sklearn.linear_model import LogisticRegression\nfrom sklearn.pipeline import make_pipeline\nfrom sklearn.metrics import accuracy_score\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Use TfidfVectorizer to convert text data into numerical data\n    vectorizer = TfidfVectorizer(max_features=10000)  # Limiting the features for efficiency\n\n    # Initialize Logistic Regression model with different hyperparameters to test\n    model = LogisticRegression(max_iter=1000, C=0.5, solver='liblinear', multi_class='ovr')\n\n    # Create a pipeline to streamline vectorization and classification\n    pipeline = make_pipeline(vectorizer, model)\n\n    # Train the pipeline model\n    pipeline.fit(X_train, y_train)\n\n    # Predict using the validation set\n    predictions = pipeline.predict(X_val)\n\n    # Calculate accuracy for verification (not needed for return)\n    accuracy = accuracy_score(y_val, predictions)\n    print(f\"Validation Accuracy: {accuracy}\")\n\n    return predictions\n\n# Note: The print statement for accuracy is for debugging purposes and can be removed."
+    },
+    {
+      "iteration": 16,
+      "val_accuracy": 0.7458,
+      "val_loss": 1.2087,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 145.9,
+      "code": "from sklearn.feature_extraction.text import CountVectorizer\nfrom sklearn.ensemble import RandomForestClassifier\nfrom sklearn.pipeline import Pipeline\nfrom sklearn.model_selection import GridSearchCV\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Create a pipeline with CountVectorizer and RandomForestClassifier\n    pipeline = Pipeline([\n        ('countvec', CountVectorizer()),\n        ('rf', RandomForestClassifier(n_jobs=-1))\n    ])\n    \n    # Parameter grid for grid search\n    param_grid = {\n        'countvec__max_features': [None, 5000, 10000],\n        'countvec__ngram_range': [(1, 1), (1, 2)],\n        'rf__n_estimators': [100, 200],\n        'rf__max_depth': [None, 10, 20]\n    }\n    \n    # Initialize GridSearchCV\n    grid_search = GridSearchCV(pipeline, param_grid, cv=5, n_jobs=-1, verbose=1)\n    \n    # Fit the model\n    grid_search.fit(X_train, y_train)\n    \n    # Get the best model\n    best_model = grid_search.best_estimator_\n    \n    # Predict on the validation set\n    predictions = best_model.predict(X_val)\n    \n    return np.array(predictions)"
+    },
+    {
+      "iteration": 17,
+      "val_accuracy": 0.7226,
+      "val_loss": 1.3145,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 25.1,
+      "code": "from sklearn.feature_extraction.text import TfidfVectorizer\nfrom sklearn.ensemble import VotingClassifier\nfrom sklearn.linear_model import LogisticRegression\nfrom sklearn.ensemble import RandomForestClassifier\nfrom sklearn.svm import SVC\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Use TfidfVectorizer to convert text to numeric features\n    vectorizer = TfidfVectorizer(max_features=1000)\n    X_train_tfidf = vectorizer.fit_transform(X_train)\n    X_val_tfidf = vectorizer.transform(X_val)\n    \n    # Define the models to use in a voting ensemble\n    model1 = LogisticRegression(max_iter=1000, random_state=42)\n    model2 = RandomForestClassifier(n_estimators=100, random_state=42)\n    model3 = SVC(kernel='linear', probability=True, random_state=42)\n    \n    # Create a VotingClassifier ensemble\n    ensemble_model = VotingClassifier(estimators=[\n        ('lr', model1), \n        ('rf', model2), \n        ('svc', model3)\n    ], voting='soft')\n    \n    # Train the ensemble model\n    ensemble_model.fit(X_train_tfidf, y_train)\n    \n    # Make predictions on the validation set\n    predictions = ensemble_model.predict(X_val_tfidf)\n    \n    return predictions"
+    },
+    {
+      "iteration": 18,
+      "val_accuracy": 0.823,
+      "val_loss": 0.8575,
+      "family": "Unknown",
+      "is_best": true,
+      "time_seconds": 4.9,
+      "code": "def solve(X_train, y_train, X_val, y_val):\n    from sklearn.feature_extraction.text import TfidfVectorizer\n    from sklearn.naive_bayes import MultinomialNB\n    from sklearn.pipeline import make_pipeline\n    from sklearn.metrics import accuracy_score\n    \n    # Create a pipeline with TF-IDF vectorizer and Multinomial Naive Bayes model\n    model = make_pipeline(TfidfVectorizer(), MultinomialNB())\n    \n    # Fit the model\n    model.fit(X_train, y_train)\n    \n    # Predict on validation data\n    predictions = model.predict(X_val)\n    \n    # Calculate accuracy for internal comparison\n    accuracy = accuracy_score(y_val, predictions)\n    print(f\"Validation Accuracy: {accuracy}\")\n    \n    return predictions"
+    },
+    {
+      "iteration": 19,
+      "val_accuracy": 0.6959,
+      "val_loss": 1.4362,
+      "family": "SVM",
+      "is_best": false,
+      "time_seconds": 19.8,
+      "code": "from sklearn.feature_extraction.text import TfidfVectorizer\nfrom sklearn.svm import SVC\nfrom sklearn.pipeline import make_pipeline\nfrom sklearn.preprocessing import StandardScaler\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Create TF-IDF vectorizer\n    vectorizer = TfidfVectorizer(max_features=10000, ngram_range=(1, 2))\n\n    # Transform the text data to TF-IDF features\n    X_train_tfidf = vectorizer.fit_transform(X_train)\n    X_val_tfidf = vectorizer.transform(X_val)\n\n    # Create and train the SVM model with a linear kernel\n    model = make_pipeline(StandardScaler(with_mean=False), SVC(kernel='linear', C=1))\n    model.fit(X_train_tfidf, y_train)\n\n    # Make predictions on the validation set\n    predictions = model.predict(X_val_tfidf)\n\n    return predictions"
+    },
+    {
+      "iteration": 20,
+      "val_accuracy": 0.7888,
+      "val_loss": 1.0132,
+      "family": "LogisticRegression",
+      "is_best": false,
+      "time_seconds": 5.3,
+      "code": "from sklearn.feature_extraction.text import TfidfVectorizer\nfrom sklearn.linear_model import LogisticRegression\nfrom sklearn.pipeline import make_pipeline\nfrom sklearn.preprocessing import StandardScaler\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Using TfidfVectorizer to convert text data into numerical features\n    vectorizer = TfidfVectorizer(max_features=10000, ngram_range=(1, 2))\n    \n    # Create a pipeline with TfidfVectorizer and LogisticRegression\n    model = make_pipeline(\n        vectorizer,\n        StandardScaler(with_mean=False),  # StandardScaler to normalize features\n        LogisticRegression(max_iter=1000, C=1.0, solver='liblinear', multi_class='ovr', random_state=42)\n    )\n    \n    # Train the model\n    model.fit(X_train, y_train)\n    \n    # Predict on validation set\n    predictions = model.predict(X_val)\n    \n    return np.array(predictions)"
+    },
+    {
+      "iteration": 21,
+      "val_accuracy": 0.7822,
+      "val_loss": 1.0431,
+      "family": "LogisticRegression",
+      "is_best": false,
+      "time_seconds": 5.8,
+      "code": "from sklearn.feature_extraction.text import TfidfVectorizer\nfrom sklearn.linear_model import LogisticRegression\nfrom sklearn.pipeline import make_pipeline\nfrom sklearn.metrics import accuracy_score\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Create a pipeline with TfidfVectorizer and Logistic Regression\n    pipeline = make_pipeline(\n        TfidfVectorizer(max_features=10000, ngram_range=(1, 2)),  # Use bigrams and limit features\n        LogisticRegression(max_iter=500, solver='saga', C=1.0, n_jobs=-1)  # SAGA solver for efficiency\n    )\n\n    # Fit the model\n    pipeline.fit(X_train, y_train)\n\n    # Predict on validation data\n    predictions = pipeline.predict(X_val)\n\n    # Calculate accuracy\n    accuracy = accuracy_score(y_val, predictions)\n    print(f\"Validation Accuracy: {accuracy}\")\n\n    return np.array(predictions)"
+    },
+    {
+      "iteration": 22,
+      "val_accuracy": 0.6994,
+      "val_loss": 1.4203,
+      "family": "sklearn_MLP",
+      "is_best": false,
+      "time_seconds": 6.0,
+      "code": "from sklearn.feature_extraction.text import TfidfVectorizer\nfrom sklearn.neural_network import MLPClassifier\nfrom sklearn.pipeline import make_pipeline\nfrom sklearn.preprocessing import StandardScaler\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Using TfidfVectorizer to convert text data into numerical form\n    tfidf = TfidfVectorizer(max_features=1000, stop_words='english')\n\n    # Using MLPClassifier as a potential model to outperform the current best\n    mlp_clf = MLPClassifier(hidden_layer_sizes=(100,), max_iter=300, random_state=42)\n\n    # Create a pipeline to streamline preprocessing and model training\n    pipeline = make_pipeline(tfidf, StandardScaler(with_mean=False), mlp_clf)\n\n    # Fit the pipeline on the training data\n    pipeline.fit(X_train, y_train)\n\n    # Predict on the validation data\n    predictions = pipeline.predict(X_val)\n\n    return np.array(predictions)"
+    },
+    {
+      "iteration": 23,
+      "val_accuracy": 0.7366,
+      "val_loss": 1.2506,
+      "family": "GradientBoosting",
+      "is_best": false,
+      "time_seconds": 47.0,
+      "code": "from sklearn.feature_extraction.text import TfidfVectorizer\nfrom sklearn.ensemble import GradientBoostingClassifier\nfrom sklearn.pipeline import make_pipeline\nfrom sklearn.metrics import accuracy_score\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Use TfidfVectorizer to convert text to numeric features\n    vectorizer = TfidfVectorizer(max_features=5000)\n    \n    # Define a Gradient Boosting Classifier\n    model = GradientBoostingClassifier(n_estimators=100, learning_rate=0.1, max_depth=3, random_state=42)\n    \n    # Create a pipeline\n    clf = make_pipeline(vectorizer, model)\n    \n    # Fit the model\n    clf.fit(X_train, y_train)\n    \n    # Predict on validation data\n    predictions = clf.predict(X_val)\n    \n    # Calculate accuracy (for verification)\n    acc = accuracy_score(y_val, predictions)\n    print(f\"Validation Accuracy: {acc}\")\n    \n    return predictions"
+    },
+    {
+      "iteration": 24,
+      "val_accuracy": 0.734,
+      "val_loss": 1.2626,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 9.7,
+      "code": "def solve(X_train, y_train, X_val, y_val):\n    from sklearn.feature_extraction.text import TfidfVectorizer\n    from sklearn.ensemble import RandomForestClassifier\n    from sklearn.pipeline import make_pipeline\n    from sklearn.metrics import accuracy_score\n    \n    # Create a pipeline with TF-IDF vectorizer and Random Forest model\n    model = make_pipeline(TfidfVectorizer(), RandomForestClassifier(n_estimators=100, random_state=42))\n    \n    # Fit the model\n    model.fit(X_train, y_train)\n    \n    # Predict on validation data\n    predictions = model.predict(X_val)\n    \n    # Calculate accuracy for internal comparison\n    accuracy = accuracy_score(y_val, predictions)\n    print(f\"Validation Accuracy: {accuracy}\")\n    \n    return predictions"
+    },
+    {
+      "iteration": 25,
+      "val_accuracy": 0.8221,
+      "val_loss": 0.8615,
+      "family": "LogisticRegression",
+      "is_best": false,
+      "time_seconds": 37.5,
+      "code": "from sklearn.feature_extraction.text import TfidfVectorizer\nfrom sklearn.linear_model import LogisticRegression\nfrom sklearn.pipeline import make_pipeline\nfrom sklearn.model_selection import GridSearchCV\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Define a pipeline with Tfidf and Logistic Regression\n    pipeline = make_pipeline(\n        TfidfVectorizer(),\n        LogisticRegression(max_iter=1000)\n    )\n    \n    # Define parameter grid for GridSearchCV\n    param_grid = {\n        'logisticregression__C': [0.1, 1, 10],\n        'logisticregression__solver': ['newton-cg', 'lbfgs', 'liblinear'],\n        'tfidfvectorizer__max_features': [1000, 5000, None]\n    }\n    \n    # Initialize GridSearchCV with 5-fold cross-validation\n    grid_search = GridSearchCV(pipeline, param_grid, cv=5, n_jobs=-1, scoring='accuracy')\n    \n    # Fit GridSearchCV\n    grid_search.fit(X_train, y_train)\n    \n    # Get best model from GridSearchCV\n    best_model = grid_search.best_estimator_\n    \n    # Predict on validation set\n    predictions = best_model.predict(X_val)\n    \n    return np.array(predictions)"
+    },
+    {
+      "iteration": 26,
+      "val_accuracy": null,
+      "val_loss": null,
+      "family": "SVM",
+      "error": "Runtime Error: Negative values in data passed to MultinomialNB (input X).\nTraceback (most recent call last):\n  File \"F:\\AI-IN-THE-LOOP\\aitl-paper\\experiments\\aeos\\trainer.py\", line 116, in run_solve\n    result_holder[0] = solve_fn(\n  File \"<string>\", line 32, in solve\n  File \"C:\\Users\\ZENITH\\AppData\\Roaming\\Python\\Python310\\site-packages\\sklearn\\base.py\", line 1365, in wrapper\n    return fit_method(estimator, *args, **kwargs)\n  File \"C:\\Users\\ZENITH\\AppData\\Roaming\\Python\\Python310\\site-packages",
+      "time_seconds": 6.8,
+      "code": "from sklearn.feature_extraction.text import TfidfVectorizer\nfrom sklearn.linear_model import LogisticRegression\nfrom sklearn.pipeline import make_pipeline\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.decomposition import TruncatedSVD\nfrom sklearn.ensemble import VotingClassifier\nfrom sklearn.naive_bayes import MultinomialNB\nfrom sklearn.svm import SVC\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Define a pipeline with TfidfVectorizer and TruncatedSVD for dimensionality reduction\n    vectorizer = TfidfVectorizer(max_features=5000, ngram_range=(1, 2))\n    svd = TruncatedSVD(n_components=100)\n    \n    # Define classifiers\n    clf1 = LogisticRegression(max_iter=1000)\n    clf2 = MultinomialNB()\n    clf3 = SVC(probability=True, kernel='linear')\n\n    # Create a voting classifier ensemble\n    ensemble = VotingClassifier(estimators=[\n        ('lr', clf1), \n        ('nb', clf2), \n        ('svc', clf3)], \n        voting='soft')\n    \n    # Create a pipeline for preprocessing and model fitting\n    model = make_pipeline(vectorizer, svd, ensemble)\n    \n    # Fit the model\n    model.fit(X_train, y_train)\n    \n    # Predict on validation set\n    predictions = model.predict(X_val)\n    \n    return predictions"
+    },
+    {
+      "iteration": 27,
+      "val_accuracy": 0.6503,
+      "val_loss": 1.6438,
+      "family": "LogisticRegression",
+      "is_best": false,
+      "time_seconds": 7.3,
+      "code": "def solve(X_train, y_train, X_val, y_val):\n    from sklearn.feature_extraction.text import TfidfVectorizer\n    from sklearn.pipeline import make_pipeline\n    from sklearn.linear_model import LogisticRegression\n    from sklearn.preprocessing import StandardScaler\n    from sklearn.decomposition import TruncatedSVD\n    from sklearn.ensemble import VotingClassifier\n    from sklearn.tree import DecisionTreeClassifier\n    from sklearn.neighbors import KNeighborsClassifier\n\n    # Preprocessing with TfidfVectorizer\n    tfidf = TfidfVectorizer(max_features=5000)\n\n    # TruncatedSVD for dimensionality reduction\n    svd = TruncatedSVD(n_components=100)\n\n    # Standardize features\n    scaler = StandardScaler()\n\n    # Models to try in a voting classifier\n    clf1 = LogisticRegression(max_iter=1000, random_state=42)\n    clf2 = DecisionTreeClassifier(random_state=42)\n    clf3 = KNeighborsClassifier(n_neighbors=5)\n\n    # Ensemble model with voting\n    voting_clf = VotingClassifier(estimators=[\n        ('lr', clf1), ('dt', clf2), ('knn', clf3)\n    ], voting='hard')\n\n    # Create a pipeline\n    pipeline = make_pipeline(\n        tfidf,\n        svd,\n        scaler,\n        voting_clf\n    )\n\n    # Fit the model\n    pipeline.fit(X_train, y_train)\n\n    # Predict validation set\n    predictions = pipeline.predict(X_val)\n\n    return predictions"
+    },
+    {
+      "iteration": 28,
+      "val_accuracy": 0.6933,
+      "val_loss": 1.4482,
+      "family": "GradientBoosting",
+      "is_best": false,
+      "time_seconds": 134.4,
+      "code": "def solve(X_train, y_train, X_val, y_val):\n    from sklearn.feature_extraction.text import TfidfVectorizer\n    from sklearn.ensemble import VotingClassifier\n    from sklearn.linear_model import LogisticRegression\n    from sklearn.ensemble import GradientBoostingClassifier\n    from sklearn.svm import SVC\n    from sklearn.pipeline import make_pipeline\n    from sklearn.preprocessing import StandardScaler\n    from sklearn.decomposition import TruncatedSVD\n    \n    # Vectorize the text data\n    tfidf = TfidfVectorizer(max_features=1000)  # Limit features for performance\n    X_train_tfidf = tfidf.fit_transform(X_train)\n    X_val_tfidf = tfidf.transform(X_val)\n\n    # Dimensionality reduction\n    svd = TruncatedSVD(n_components=200, random_state=42)\n    X_train_reduced = svd.fit_transform(X_train_tfidf)\n    X_val_reduced = svd.transform(X_val_tfidf)\n\n    # Create different models\n    lr = LogisticRegression(max_iter=1000, random_state=42)\n    gbc = GradientBoostingClassifier(n_estimators=100, random_state=42)\n    svc = make_pipeline(StandardScaler(), SVC(kernel='linear', probability=True, random_state=42))\n\n    # Create a voting classifier\n    voting_clf = VotingClassifier(estimators=[\n        ('lr', lr), \n        ('gbc', gbc), \n        ('svc', svc)], voting='soft')\n\n    # Train the model\n    voting_clf.fit(X_train_reduced, y_train)\n\n    # Predict validation data\n    predictions = voting_clf.predict(X_val_reduced)\n\n    return predictions"
+    },
+    {
+      "iteration": 29,
+      "val_accuracy": 0.7344,
+      "val_loss": 1.2606,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 53.6,
+      "code": "from sklearn.feature_extraction.text import TfidfVectorizer\nfrom sklearn.ensemble import VotingClassifier, GradientBoostingClassifier, RandomForestClassifier\nfrom sklearn.linear_model import LogisticRegression\nfrom sklearn.pipeline import make_pipeline\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.svm import SVC\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Vectorize the text data\n    vectorizer = TfidfVectorizer(max_features=1000)\n    X_train_tfidf = vectorizer.fit_transform(X_train)\n    X_val_tfidf = vectorizer.transform(X_val)\n    \n    # Define models\n    lr_model = LogisticRegression(max_iter=1000, random_state=42)\n    rf_model = RandomForestClassifier(n_estimators=100, random_state=42)\n    gb_model = GradientBoostingClassifier(n_estimators=100, random_state=42)\n    svm_model = make_pipeline(StandardScaler(with_mean=False), SVC(C=1.0, kernel='linear', probability=True, random_state=42))\n    \n    # Create a Voting Classifier\n    voting_clf = VotingClassifier(estimators=[\n        ('lr', lr_model),\n        ('rf', rf_model),\n        ('gb', gb_model),\n        ('svm', svm_model)],\n        voting='soft')\n    \n    # Train the Voting Classifier\n    voting_clf.fit(X_train_tfidf, y_train)\n    \n    # Predict on validation set\n    predictions = voting_clf.predict(X_val_tfidf)\n    \n    return predictions"
+    },
+    {
+      "iteration": 30,
+      "val_accuracy": 0.8142,
+      "val_loss": 0.8974,
+      "family": "SVM",
+      "is_best": false,
+      "time_seconds": 173.1,
+      "code": "def solve(X_train, y_train, X_val, y_val):\n    from sklearn.feature_extraction.text import TfidfVectorizer\n    from sklearn.ensemble import StackingClassifier\n    from sklearn.linear_model import LogisticRegression\n    from sklearn.naive_bayes import MultinomialNB\n    from sklearn.svm import SVC\n    from sklearn.pipeline import make_pipeline\n    from sklearn.metrics import accuracy_score\n    \n    # Set up the base models\n    estimators = [\n        ('nb', MultinomialNB()),\n        ('svc', SVC(kernel='linear', probability=True))\n    ]\n    \n    # Meta-classifier\n    clf = StackingClassifier(\n        estimators=estimators, final_estimator=LogisticRegression()\n    )\n    \n    # Create a pipeline\n    model = make_pipeline(TfidfVectorizer(), clf)\n    \n    # Fit the model\n    model.fit(X_train, y_train)\n    \n    # Predict on validation data\n    predictions = model.predict(X_val)\n    \n    # Calculate accuracy for internal comparison\n    accuracy = accuracy_score(y_val, predictions)\n    print(f\"Validation Accuracy: {accuracy}\")\n    \n    return predictions"
+    },
+    {
+      "iteration": 31,
+      "val_accuracy": 0.2235,
+      "val_loss": 3.5874,
+      "family": "SVM",
+      "is_best": false,
+      "time_seconds": 49.0,
+      "code": "from sklearn.feature_extraction.text import TfidfVectorizer\nfrom sklearn.ensemble import VotingClassifier\nfrom sklearn.linear_model import LogisticRegression\nfrom sklearn.svm import SVC\nfrom sklearn.naive_bayes import MultinomialNB\nfrom sklearn.pipeline import make_pipeline\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.preprocessing import FunctionTransformer\nimport numpy as np\nfrom sklearn.base import BaseEstimator, ClassifierMixin\nfrom sklearn.exceptions import NotFittedError\n\nclass CustomVotingClassifier(BaseEstimator, ClassifierMixin):\n    def __init__(self, estimators, voting='hard'):\n        self.estimators = estimators\n        self.voting = voting\n        self.named_estimators = {name: est for name, est in self.estimators}\n\n    def fit(self, X, y):\n        for name, estimator in self.estimators:\n            estimator.fit(X, y)\n        return self\n\n    def predict(self, X):\n        if self.voting == 'hard':\n            predictions = np.asarray([est.predict(X) for name, est in self.estimators]).T\n            maj_vote = np.apply_along_axis(lambda x: np.bincount(x, minlength=len(np.unique(x))).argmax(), axis=1, arr=predictions)\n            return maj_vote\n        else:\n            raise NotImplementedError(\"Soft voting not implemented.\")\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Define a TF-IDF Vectorizer\n    vectorizer = TfidfVectorizer(max_features=5000, ngram_range=(1, 2))\n\n    # Define individual models\n    clf1 = make_pipeline(\n        FunctionTransformer(vectorizer.fit_transform, validate=False),\n        LogisticRegression(max_iter=1000, solver='liblinear')\n    )\n    clf2 = make_pipeline(\n        FunctionTransformer(vectorizer.fit_transform, validate=False),\n        SVC(kernel='linear', probability=True)\n    )\n    clf3 = make_pipeline(\n        FunctionTransformer(vectorizer.fit_transform, validate=False),\n        MultinomialNB()\n    )\n\n    # Assemble a voting classifier\n    voting_clf = CustomVotingClassifier(estimators=[\n        ('lr', clf1),\n        ('svc', clf2),\n        ('mnb', clf3)\n    ], voting='hard')\n\n    # Fit the model\n    voting_clf.fit(X_train, y_train)\n\n    # Get predictions\n    predictions = voting_clf.predict(X_val)\n    \n    return predictions"
+    },
+    {
+      "iteration": 32,
+      "val_accuracy": null,
+      "val_loss": null,
+      "family": "RandomForest",
+      "error": "Runtime Error: Negative values in data passed to MultinomialNB (input X).\nTraceback (most recent call last):\n  File \"F:\\AI-IN-THE-LOOP\\aitl-paper\\experiments\\aeos\\trainer.py\", line 116, in run_solve\n    result_holder[0] = solve_fn(\n  File \"<string>\", line 36, in solve\n  File \"C:\\Users\\ZENITH\\AppData\\Roaming\\Python\\Python310\\site-packages\\sklearn\\base.py\", line 1365, in wrapper\n    return fit_method(estimator, *args, **kwargs)\n  File \"C:\\Users\\ZENITH\\AppData\\Roaming\\Python\\Python310\\site-packages",
+      "time_seconds": 22.8,
+      "code": "def solve(X_train, y_train, X_val, y_val):\n    from sklearn.feature_extraction.text import TfidfVectorizer\n    from sklearn.ensemble import VotingClassifier\n    from sklearn.linear_model import LogisticRegression\n    from sklearn.svm import SVC\n    from sklearn.ensemble import RandomForestClassifier\n    from sklearn.pipeline import make_pipeline\n    from sklearn.preprocessing import StandardScaler\n    from sklearn.decomposition import TruncatedSVD\n    from sklearn.naive_bayes import MultinomialNB\n    import numpy as np\n\n    # Transform text data to numeric features using TF-IDF\n    vectorizer = TfidfVectorizer(max_features=2000)\n    X_train_tfidf = vectorizer.fit_transform(X_train)\n    X_val_tfidf = vectorizer.transform(X_val)\n\n    # Dimensionality reduction\n    svd = TruncatedSVD(n_components=100, random_state=42)\n    X_train_svd = svd.fit_transform(X_train_tfidf)\n    X_val_svd = svd.transform(X_val_tfidf)\n\n    # Ensemble of models\n    clf1 = make_pipeline(StandardScaler(), LogisticRegression(max_iter=1000, random_state=42))\n    clf2 = make_pipeline(StandardScaler(), SVC(kernel='linear', probability=True, random_state=42))\n    clf3 = RandomForestClassifier(n_estimators=100, random_state=42)\n    clf4 = MultinomialNB()\n\n    # Voting classifier\n    ensemble_clf = VotingClassifier(\n        estimators=[('lr', clf1), ('svc', clf2), ('rf', clf3), ('mnb', clf4)],\n        voting='soft'\n    )\n\n    # Train ensemble\n    ensemble_clf.fit(X_train_svd, y_train)\n\n    # Predict\n    predictions = ensemble_clf.predict(X_val_svd)\n\n    return np.array(predictions)"
+    },
+    {
+      "iteration": 33,
+      "val_accuracy": 0.7756,
+      "val_loss": 1.073,
+      "family": "ExtraTrees",
+      "is_best": false,
+      "time_seconds": 6.7,
+      "code": "from sklearn.feature_extraction.text import TfidfVectorizer\nfrom sklearn.ensemble import ExtraTreesClassifier\nfrom sklearn.pipeline import make_pipeline\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.metrics import accuracy_score\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Define a TfidfVectorizer to convert text data into numeric features\n    vectorizer = TfidfVectorizer(max_features=5000)\n\n    # Define an ExtraTreesClassifier\n    model = ExtraTreesClassifier(n_estimators=200, random_state=42, n_jobs=-1)\n\n    # Create a pipeline to handle the transformation and classification\n    pipeline = make_pipeline(vectorizer, model)\n\n    # Fit the model on the training data\n    pipeline.fit(X_train, y_train)\n\n    # Predict on the validation data\n    predictions = pipeline.predict(X_val)\n\n    # Ensure predictions are numpy array of integers\n    predictions = np.array(predictions, dtype=int)\n\n    return predictions"
+    },
+    {
+      "iteration": 34,
+      "val_accuracy": null,
+      "val_loss": null,
+      "family": "SVM",
+      "error": "Runtime Error: could not convert string to float: \"Does anyone have any Russian Contacts (Space or other) or contacts in the old\\nUSSR/SU or Eastern Europe?\\n\\nPost them here so we all can talk to them and ask questions..\\nI think the cost of email is high, so we would have to  keep the content to\\nspecific topics and such..\\n\\nBasically if we want to save Russia and such, then we need to make contacts,\\ncontacts are a form of info, so lets get informing.\\n\\n==\\nMichael Adams, nsmca@acad3.alaska",
+      "time_seconds": 6.9,
+      "code": "def solve(X_train, y_train, X_val, y_val):\n    from sklearn.feature_extraction.text import TfidfVectorizer\n    from sklearn.pipeline import make_pipeline\n    from sklearn.linear_model import LogisticRegression\n    from sklearn.naive_bayes import MultinomialNB\n    from sklearn.ensemble import StackingClassifier\n    from sklearn.model_selection import StratifiedKFold\n    from sklearn.svm import SVC\n    \n    # Vectorize the text data\n    vectorizer = TfidfVectorizer(max_features=1000, ngram_range=(1, 2))\n    \n    # Define base models\n    base_models = [\n        ('lr', LogisticRegression(max_iter=1000)),\n        ('nb', make_pipeline(TfidfVectorizer(max_features=1000, ngram_range=(1, 2)), MultinomialNB())),\n        ('svc', SVC(kernel='linear', probability=True))\n    ]\n    \n    # Define the meta-model\n    meta_model = LogisticRegression(max_iter=1000)\n    \n    # Create the stacking model\n    stacking_model = StackingClassifier(\n        estimators=base_models,\n        final_estimator=meta_model,\n        cv=StratifiedKFold(n_splits=5)\n    )\n    \n    # Train the stacking model\n    stacking_model.fit(X_train, y_train)\n    \n    # Predict on validation data\n    predictions = stacking_model.predict(X_val)\n    \n    return predictions"
+    },
+    {
+      "iteration": 35,
+      "val_accuracy": 0.8006,
+      "val_loss": 0.9593,
+      "family": "LogisticRegression",
+      "is_best": false,
+      "time_seconds": 5.3,
+      "code": "from sklearn.feature_extraction.text import TfidfVectorizer\nfrom sklearn.linear_model import LogisticRegression\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Convert text to numeric features using TfidfVectorizer\n    vectorizer = TfidfVectorizer(max_features=10000)  # Limit features for performance\n    X_train_tfidf = vectorizer.fit_transform(X_train)\n    X_val_tfidf = vectorizer.transform(X_val)\n\n    # Use Logistic Regression as it showed good performance in previous iterations\n    model = LogisticRegression(max_iter=1000, solver='lbfgs', multi_class='multinomial')\n    model.fit(X_train_tfidf, y_train)\n\n    # Make predictions on the validation set\n    predictions = model.predict(X_val_tfidf)\n\n    return predictions"
+    },
+    {
+      "iteration": 36,
+      "val_accuracy": 0.7748,
+      "val_loss": 1.077,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 51.6,
+      "code": "def solve(X_train, y_train, X_val, y_val):\n    from sklearn.feature_extraction.text import TfidfVectorizer\n    from sklearn.pipeline import make_pipeline\n    from sklearn.linear_model import LogisticRegression\n    from sklearn.ensemble import RandomForestClassifier\n    from sklearn.svm import SVC\n    from sklearn.ensemble import VotingClassifier\n    from sklearn.naive_bayes import MultinomialNB\n    from sklearn.preprocessing import FunctionTransformer\n    import numpy as np\n\n    # Use TfidfVectorizer for text preprocessing\n    vectorizer = TfidfVectorizer(max_features=10000, ngram_range=(1, 2))\n\n    # Create models\n    lr = LogisticRegression(max_iter=1000, solver='liblinear')\n    rf = RandomForestClassifier(n_estimators=100, random_state=42)\n    svm = SVC(kernel='linear', probability=True)\n\n    # Create a voting classifier ensemble\n    ensemble = VotingClassifier(\n        estimators=[\n            ('lr', lr),\n            ('rf', rf),\n            ('svm', svm)\n        ],\n        voting='soft'\n    )\n\n    # Create a pipeline with TfidfVectorizer and the ensemble\n    pipeline = make_pipeline(vectorizer, ensemble)\n\n    # Fit the model\n    pipeline.fit(X_train, y_train)\n\n    # Predict on validation data\n    predictions = pipeline.predict(X_val)\n\n    return np.array(predictions)"
+    }
+  ]
+}

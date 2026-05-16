@@ -1,0 +1,63 @@
+{
+  "run_id": "20260501_140417",
+  "backend": "ollama",
+  "model": "ollama/qwen2.5-coder:7b",
+  "dataset": "tabular2",
+  "n_features": 16,
+  "n_classes": 7,
+  "n_train": 8000,
+  "n_val": 2000,
+  "best_accuracy": 0.9295,
+  "best_loss": 0.3852,
+  "best_iteration": 2,
+  "best_code": "def solve(X_train, y_train, X_val, y_val):\n    from sklearn.ensemble import GradientBoostingClassifier\n    from sklearn.metrics import accuracy_score\n    \n    # Initialize and train the model\n    model = GradientBoostingClassifier(n_estimators=100, learning_rate=0.1, max_depth=3)\n    model.fit(X_train, y_train)\n    \n    # Make predictions on validation set\n    y_pred = model.predict(X_val)\n    \n    return y_pred",
+  "total_iterations": 5,
+  "stop_reason": "Agent autonomously stopped at iteration 5",
+  "total_time_seconds": 157.8,
+  "model_families_explored": [
+    "ExtraTrees",
+    "RandomForest",
+    "GradientBoosting",
+    "SVM"
+  ],
+  "sunk_cost_episodes": 0,
+  "waste_count": 0,
+  "iterations": [
+    {
+      "iteration": 1,
+      "val_accuracy": 0.925,
+      "val_loss": 0.4065,
+      "family": "RandomForest",
+      "is_best": true,
+      "time_seconds": 34.8,
+      "code": "from sklearn.ensemble import RandomForestClassifier\n\ndef solve(X_train, y_train, X_val, y_val):\n    model = RandomForestClassifier(n_estimators=100, random_state=42)\n    model.fit(X_train, y_train)\n    predictions = model.predict(X_val)\n    return predictions"
+    },
+    {
+      "iteration": 2,
+      "val_accuracy": 0.9295,
+      "val_loss": 0.3852,
+      "family": "GradientBoosting",
+      "is_best": true,
+      "time_seconds": 52.4,
+      "code": "def solve(X_train, y_train, X_val, y_val):\n    from sklearn.ensemble import GradientBoostingClassifier\n    from sklearn.metrics import accuracy_score\n    \n    # Initialize and train the model\n    model = GradientBoostingClassifier(n_estimators=100, learning_rate=0.1, max_depth=3)\n    model.fit(X_train, y_train)\n    \n    # Make predictions on validation set\n    y_pred = model.predict(X_val)\n    \n    return y_pred"
+    },
+    {
+      "iteration": 3,
+      "val_accuracy": 0.913,
+      "val_loss": 0.4633,
+      "family": "SVM",
+      "is_best": false,
+      "time_seconds": 45.6,
+      "code": "from sklearn.svm import SVC\nfrom sklearn.metrics import accuracy_score\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Using Support Vector Classifier (SVC) for this iteration\n    model = SVC(kernel='linear', C=1.0)\n    model.fit(X_train, y_train)\n    predictions = model.predict(X_val)\n    return predictions"
+    },
+    {
+      "iteration": 4,
+      "val_accuracy": 0.921,
+      "val_loss": 0.4255,
+      "family": "ExtraTrees",
+      "is_best": false,
+      "time_seconds": 18.5,
+      "code": "def solve(X_train, y_train, X_val, y_val):\n    from sklearn.ensemble import ExtraTreesClassifier\n    \n    # Initialize the model\n    model = ExtraTreesClassifier(n_estimators=100, random_state=42)\n    \n    # Train the model\n    model.fit(X_train, y_train)\n    \n    # Make predictions on validation set\n    predictions = model.predict(X_val)\n    \n    return predictions"
+    }
+  ]
+}

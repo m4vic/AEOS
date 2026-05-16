@@ -1,0 +1,91 @@
+{
+  "exp": "EXP2_agent_critic",
+  "run_id": "20260505_152526",
+  "reviewer_backend": "ollama",
+  "reviewer_model": "qwen2.5-coder:3b",
+  "coder_backend": "ollama",
+  "coder_model": "llama3.1:8b",
+  "dataset": "tabular2",
+  "n_features": 16,
+  "n_classes": 7,
+  "n_train": 8000,
+  "n_val": 2000,
+  "best_accuracy": 0.9295,
+  "best_loss": 0.3852,
+  "best_iteration": 2,
+  "best_code": "import numpy as np\nfrom sklearn import preprocessing\nfrom sklearn import svm\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Apply StandardScaler to preprocess data\n    scaler = preprocessing.StandardScaler()\n    X_train_scaled = scaler.fit_transform(X_train)\n    X_val_scaled = scaler.transform(X_val)\n\n    # Initialize and train Support Vector Machine classifier with RBF kernel \n    clf = svm.SVC(kernel='rbf', probability=True, C=1.0, gamma='scale')\n    clf.fit(X_train_scaled, y_train)\n\n    # Get predictions on validation set\n    predictions = clf.predict(X_val_scaled)\n\n    return np.array(predictions, dtype=int)",
+  "total_iterations": 5,
+  "stop_reason": "Reviewer autonomously stopped at iteration 5",
+  "total_time_seconds": 80.9,
+  "model_families_explored": [
+    "SVM",
+    "sklearn_MLP",
+    "GradientBoosting",
+    "RandomForest"
+  ],
+  "sunk_cost_episodes": 0,
+  "waste_count": 1,
+  "reviewer_efficiency_pct": null,
+  "iterations": [
+    {
+      "iteration": 1,
+      "val_accuracy": 0.9265,
+      "val_loss": 0.3994,
+      "family": "RandomForest",
+      "is_best": true,
+      "directive": "DIRECTIVE: Try a Random Forest classifier with default hyperparameters after StandardScaler preprocessing.",
+      "reviewer_fired_stop": false,
+      "error": null,
+      "time_seconds": 18.7,
+      "code": "import numpy as np\nfrom sklearn import preprocessing\nfrom sklearn.ensemble import RandomForestClassifier\nfrom sklearn.metrics import accuracy_score\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Apply StandardScaler to preprocess data\n    scaler = preprocessing.StandardScaler()\n    X_train_scaled = scaler.fit_transform(X_train)\n    X_val_scaled = scaler.transform(X_val)\n\n    # Initialize and train Random Forest classifier with default hyperparameters\n    clf = RandomForestClassifier(n_estimators=100, n_jobs=-1)\n    clf.fit(X_train_scaled, y_train)\n\n    # Get predictions on validation set\n    predictions = clf.predict(X_val_scaled)\n\n    return np.array(predictions, dtype=int)"
+    },
+    {
+      "iteration": 2,
+      "val_accuracy": 0.9295,
+      "val_loss": 0.3852,
+      "family": "SVM",
+      "is_best": true,
+      "directive": "Try a Support Vector Machine (SVC with RBF kernel) after StandardScaler preprocessing.",
+      "reviewer_fired_stop": false,
+      "error": null,
+      "time_seconds": 17.4,
+      "code": "import numpy as np\nfrom sklearn import preprocessing\nfrom sklearn import svm\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Apply StandardScaler to preprocess data\n    scaler = preprocessing.StandardScaler()\n    X_train_scaled = scaler.fit_transform(X_train)\n    X_val_scaled = scaler.transform(X_val)\n\n    # Initialize and train Support Vector Machine classifier with RBF kernel \n    clf = svm.SVC(kernel='rbf', probability=True, C=1.0, gamma='scale')\n    clf.fit(X_train_scaled, y_train)\n\n    # Get predictions on validation set\n    predictions = clf.predict(X_val_scaled)\n\n    return np.array(predictions, dtype=int)"
+    },
+    {
+      "iteration": 3,
+      "val_accuracy": 0.9265,
+      "val_loss": 0.3994,
+      "family": "sklearn_MLP",
+      "is_best": false,
+      "directive": "Try a simple feedforward neural network (using libraries like TensorFlow/Keras) after applying StandardScaler preprocessing to the dataset.",
+      "reviewer_fired_stop": false,
+      "error": null,
+      "time_seconds": 21.7,
+      "code": "import numpy as np\nfrom sklearn import preprocessing\nfrom sklearn.neural_network import MLPClassifier\nfrom sklearn.model_selection import GridSearchCV  # Not to be used in solve() function!\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Apply StandardScaler to preprocess data\n    scaler = preprocessing.StandardScaler()\n    X_train_scaled = scaler.fit_transform(X_train)\n    X_val_scaled = scaler.transform(X_val)\n\n    # Define hyperparameters for the MLPClassifier\n    mlp_params = {\n        'hidden_layer_sizes': (100, 50),\n        'activation': 'relu',\n        'solver': 'adam',\n        'alpha': 0.001,\n        'learning_rate_init': 0.01,\n        'max_iter': 2000\n    }\n\n    # Initialize and train Multi-Layer Perceptron classifier\n    mlp = MLPClassifier(**mlp_params)\n    mlp.fit(X_train_scaled, y_train)\n\n    # Get predictions on validation set\n    predictions = mlp.predict(X_val_scaled)\n\n    return np.array(predictions, dtype=int)"
+    },
+    {
+      "iteration": 4,
+      "val_accuracy": null,
+      "val_loss": null,
+      "family": "GradientBoosting",
+      "is_best": false,
+      "directive": "Try a GradientBoostingClassifier after StandardScaler preprocessing.",
+      "reviewer_fired_stop": false,
+      "error": "Runtime Error: axis 1 is out of bounds for array of dimension 1\nTraceback (most recent call last):\n  File \"F:\\AI-IN-THE-LOOP\\aitl-paper\\experiments\\aeos\\aeos_behave\\trainer.py\", line 95, in _run_in_process\n    predictions = solve_fn(\n  File \"<string>\", line 13, in solve\n  File \"C:\\Users\\ZENITH\\AppData\\Roaming\\Python\\Python310\\site-packages\\numpy\\core\\fromnumeric.py\", line 1229, in argmax\n    return _wrapfunc(a, 'argmax', axis=axis, out=out, **kwds)\n  File \"C:\\Users\\ZENITH\\AppData\\Roaming\\Python\\",
+      "time_seconds": 17.5,
+      "code": "import numpy as np\nfrom sklearn import preprocessing\nfrom sklearn.ensemble import GradientBoostingClassifier\nfrom sklearn.metrics import accuracy_score\nfrom sklearn.model_selection import train_test_split\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Apply StandardScaler to preprocess data\n    scaler = preprocessing.StandardScaler()\n    X_train_scaled = scaler.fit_transform(X_train)\n    \n    # Split the training set into features (X) and labels (y)\n    X_train_class_labels = np.argmax(y_train, axis=1)\n\n    # Initialize and train GradientBoostingClassifier with fixed hyperparameters \n    clf = GradientBoostingClassifier(n_estimators=100, learning_rate=0.1, max_depth=3,\n                                     min_samples_split=2, min_samples_leaf=1, subsample=1,\n                                     subsample_inverse=None, init=None, verbose=0)\n    clf.fit(X_train_scaled, X_train_class_labels)\n\n    # Get predictions on validation set\n    predictions = clf.predict(X_val)\n\n    return np.array(predictions, dtype=int)"
+    },
+    {
+      "iteration": 5,
+      "val_accuracy": null,
+      "val_loss": null,
+      "family": "REVIEWER_STOP",
+      "is_best": false,
+      "directive": "STOP",
+      "reviewer_fired_stop": true,
+      "error": null,
+      "time_seconds": 5.5,
+      "code": null
+    }
+  ]
+}

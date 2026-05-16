@@ -1,0 +1,10 @@
+litellm
+python-dotenv
+pandas
+scikit-learn
+numpy
+matplotlib
+seaborn
+tqdm
+torch
+torchvision

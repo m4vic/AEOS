@@ -1,0 +1,112 @@
+{
+  "completed": 6,
+  "failed": 0,
+  "skipped": 0,
+  "results": [
+    {
+      "exp_id": "1.10",
+      "model": "gpt-4o-mini",
+      "dataset": "tabular",
+      "best_accuracy": 0.8115,
+      "total_iterations": 22,
+      "waste_count": 2,
+      "sunk_cost_episodes": 3,
+      "total_time": 914.9,
+      "families": [
+        "ExtraTrees",
+        "GradientBoosting",
+        "sklearn_MLP",
+        "RandomForest"
+      ]
+    },
+    {
+      "exp_id": "1.11",
+      "model": "gpt-4o-mini",
+      "dataset": "text",
+      "best_accuracy": 0.8436,
+      "total_iterations": 23,
+      "waste_count": 2,
+      "sunk_cost_episodes": 2,
+      "total_time": 2096.4,
+      "families": [
+        "Unknown",
+        "GradientBoosting",
+        "LogisticRegression",
+        "sklearn_MLP",
+        "ExtraTrees",
+        "RandomForest"
+      ]
+    },
+    {
+      "exp_id": "1.12",
+      "model": "gpt-4o-mini",
+      "dataset": "vision",
+      "best_accuracy": 0.9555,
+      "total_iterations": 36,
+      "waste_count": 12,
+      "sunk_cost_episodes": 3,
+      "total_time": 4941.2,
+      "families": [
+        "ExtraTrees",
+        "sklearn_MLP",
+        "RandomForest",
+        "GradientBoosting",
+        "LogisticRegression"
+      ]
+    },
+    {
+      "exp_id": "1.25",
+      "model": "gpt-4o",
+      "dataset": "tabular",
+      "best_accuracy": 0.813,
+      "total_iterations": 27,
+      "waste_count": 0,
+      "sunk_cost_episodes": 1,
+      "total_time": 720.0,
+      "families": [
+        "RandomForest",
+        "SVM",
+        "GradientBoosting",
+        "sklearn_MLP",
+        "ExtraTrees"
+      ]
+    },
+    {
+      "exp_id": "1.26",
+      "model": "gpt-4o",
+      "dataset": "text",
+      "best_accuracy": 0.823,
+      "total_iterations": 37,
+      "waste_count": 3,
+      "sunk_cost_episodes": 1,
+      "total_time": 1109.8,
+      "families": [
+        "GradientBoosting",
+        "RandomForest",
+        "ExtraTrees",
+        "sklearn_MLP",
+        "LogisticRegression",
+        "SVM",
+        "Unknown"
+      ]
+    },
+    {
+      "exp_id": "1.27",
+      "model": "gpt-4o",
+      "dataset": "vision",
+      "best_accuracy": 0.951,
+      "total_iterations": 14,
+      "waste_count": 0,
+      "sunk_cost_episodes": 0,
+      "total_time": 695.1,
+      "families": [
+        "sklearn_MLP",
+        "RandomForest",
+        "GradientBoosting",
+        "SVM",
+        "KNN",
+        "ExtraTrees"
+      ]
+    }
+  ]
+}

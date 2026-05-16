@@ -1,0 +1,60 @@
+{
+  "run_id": "20260504_142054",
+  "backend": "ollama",
+  "model": "ollama/qwen2.5-coder:14b",
+  "dataset": "tabular2",
+  "n_features": 16,
+  "n_classes": 7,
+  "n_train": 8000,
+  "n_val": 2000,
+  "best_accuracy": 0.9275,
+  "best_loss": 0.3947,
+  "best_iteration": 2,
+  "best_code": "import numpy as np\nfrom sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.pipeline import make_pipeline\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Preprocessing: Standardize the features\n    scaler = StandardScaler()\n    X_train_scaled = scaler.fit_transform(X_train)\n    X_val_scaled = scaler.transform(X_val)\n    \n    # Model selection: GradientBoostingClassifier\n    model = GradientBoostingClassifier(\n        n_estimators=100,\n        learning_rate=0.1,\n        max_depth=5,\n        random_state=42\n    )\n    \n    # Train the model\n    model.fit(X_train_scaled, y_train)\n    \n    # Predict on validation set\n    predictions = model.predict(X_val_scaled)\n    \n    return predictions",
+  "total_iterations": 5,
+  "stop_reason": "Agent autonomously stopped at iteration 5",
+  "total_time_seconds": 142.5,
+  "model_families_explored": [
+    "RandomForest"
+  ],
+  "sunk_cost_episodes": 0,
+  "waste_count": 0,
+  "iterations": [
+    {
+      "iteration": 1,
+      "val_accuracy": 0.925,
+      "val_loss": 0.4065,
+      "family": "RandomForest",
+      "is_best": true,
+      "time_seconds": 23.0,
+      "code": "import numpy as np\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.ensemble import RandomForestClassifier\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Standardize the features\n    scaler = StandardScaler()\n    X_train_scaled = scaler.fit_transform(X_train)\n    X_val_scaled = scaler.transform(X_val)\n    \n    # Initialize and train a Random Forest Classifier\n    model = RandomForestClassifier(n_estimators=100, max_features='sqrt', random_state=42)\n    model.fit(X_train_scaled, y_train)\n    \n    # Predict on the validation set\n    predictions = model.predict(X_val_scaled)\n    \n    return predictions"
+    },
+    {
+      "iteration": 2,
+      "val_accuracy": 0.9275,
+      "val_loss": 0.3947,
+      "family": "RandomForest",
+      "is_best": true,
+      "time_seconds": 66.2,
+      "code": "import numpy as np\nfrom sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.pipeline import make_pipeline\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Preprocessing: Standardize the features\n    scaler = StandardScaler()\n    X_train_scaled = scaler.fit_transform(X_train)\n    X_val_scaled = scaler.transform(X_val)\n    \n    # Model selection: GradientBoostingClassifier\n    model = GradientBoostingClassifier(\n        n_estimators=100,\n        learning_rate=0.1,\n        max_depth=5,\n        random_state=42\n    )\n    \n    # Train the model\n    model.fit(X_train_scaled, y_train)\n    \n    # Predict on validation set\n    predictions = model.predict(X_val_scaled)\n    \n    return predictions"
+    },
+    {
+      "iteration": 3,
+      "val_accuracy": 0.9245,
+      "val_loss": 0.4089,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 21.1,
+      "code": "import numpy as np\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.ensemble import RandomForestClassifier\nfrom sklearn.pipeline import make_pipeline\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Preprocessing: Standardize features\n    model = make_pipeline(StandardScaler(), RandomForestClassifier(n_estimators=150, max_depth=20, min_samples_split=2, min_samples_leaf=1, random_state=42))\n    \n    # Train the model\n    model.fit(X_train, y_train)\n    \n    # Predict on validation set\n    predictions = model.predict(X_val)\n    \n    return predictions"
+    },
+    {
+      "iteration": 4,
+      "val_accuracy": 0.925,
+      "val_loss": 0.4065,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 27.4,
+      "code": "import numpy as np\nfrom sklearn.preprocessing import StandardScaler, MinMaxScaler\nfrom sklearn.decomposition import PCA\nfrom sklearn.ensemble import RandomForestClassifier\nfrom sklearn.pipeline import Pipeline\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Step 1: Preprocessing\n    # Standardize the features\n    scaler = StandardScaler()\n    \n    # Apply PCA to reduce dimensionality\n    pca = PCA(n_components=10)\n    \n    # Create a pipeline with standardization and PCA\n    preprocessing_pipeline = Pipeline([\n        ('scaler', scaler),\n        ('pca', pca)\n    ])\n    \n    # Fit the preprocessing pipeline on the training data\n    X_train_preprocessed = preprocessing_pipeline.fit_transform(X_train)\n    X_val_preprocessed = preprocessing_pipeline.transform(X_val)\n    \n    # Step 2: Model Training\n    # Initialize the RandomForestClassifier with hyperparameters\n    model = RandomForestClassifier(n_estimators=150, max_depth=10, min_samples_split=5, min_samples_leaf=2, random_state=42)\n    \n    # Fit the model on the preprocessed training data\n    model.fit(X_train_preprocessed, y_train)\n    \n    # Step 3: Prediction\n    # Predict the class labels for the validation data\n    predictions = model.predict(X_val_preprocessed)\n    \n    return predictions"
+    }
+  ]
+}

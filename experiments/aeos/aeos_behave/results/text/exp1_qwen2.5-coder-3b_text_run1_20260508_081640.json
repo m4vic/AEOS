@@ -1,0 +1,611 @@
+{
+  "run_id": "20260508_081640",
+  "backend": "ollama",
+  "model": "ollama/qwen2.5-coder:3b",
+  "dataset": "text",
+  "n_features": 0,
+  "n_classes": 6,
+  "n_train": 3427,
+  "n_val": 2282,
+  "best_accuracy": 0.8571,
+  "best_loss": 0.7018,
+  "best_iteration": 57,
+  "best_code": "from sklearn.model_selection import train_test_split, RandomizedSearchCV\nfrom sklearn.pipeline import make_pipeline\nfrom sklearn.feature_extraction.text import TfidfVectorizer\nfrom sklearn.naive_bayes import MultinomialNB\nfrom sklearn.metrics import accuracy_score\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Split the training data into features and target\n    X_train = np.array([x for x in X_train if isinstance(x, str)])\n    X_val = np.array([x for x in X_val if isinstance(x, str)])\n\n    # Initialize the TfidfVectorizer with stop words removed\n    vectorizer = TfidfVectorizer(stop_words='english')\n\n    # Create a pipeline that applies TF-IDF transformation and then trains a Naive Bayes classifier\n    model = make_pipeline(vectorizer, MultinomialNB())\n\n    # Define the parameter grid for RandomizedSearchCV\n    param_grid = {\n        'multinomialnb__alpha': [0.1, 1, 5, 10],\n        'tfidfvectorizer__ngram_range': [(1, 1), (1, 2)]\n    }\n\n    # Initialize RandomizedSearchCV with the pipeline and parameter grid\n    search = RandomizedSearchCV(model, param_grid, n_iter=10, cv=5, random_state=42)\n\n    # Fit the model\n    search.fit(X_train, y_train)\n\n    # Make predictions on the validation set\n    predictions = search.predict(X_val)\n\n    return predictions",
+  "total_iterations": 66,
+  "stop_reason": "Agent autonomously stopped at iteration 66",
+  "total_time_seconds": 3700.5,
+  "model_families_explored": [
+    "Ensemble",
+    "RandomForest",
+    "Unknown"
+  ],
+  "sunk_cost_episodes": 13,
+  "waste_count": 16,
+  "iterations": [
+    {
+      "iteration": 1,
+      "val_accuracy": 0.734,
+      "val_loss": 1.2626,
+      "family": "RandomForest",
+      "is_best": true,
+      "time_seconds": 27.1,
+      "code": "from sklearn.feature_extraction.text import TfidfVectorizer\nfrom sklearn.ensemble import RandomForestClassifier\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Initialize the TF-IDF vectorizer\n    vectorizer = TfidfVectorizer()\n    \n    # Fit and transform the training data\n    X_train_tfidf = vectorizer.fit_transform(X_train)\n    \n    # Fit and predict on the validation data\n    model = RandomForestClassifier(n_estimators=100, random_state=42)\n    model.fit(X_train_tfidf, y_train)\n    predictions = model.predict(vectorizer.transform(X_val))\n    \n    return predictions"
+    },
+    {
+      "iteration": 2,
+      "val_accuracy": 0.7121,
+      "val_loss": 1.3624,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 19.1,
+      "code": "from sklearn.feature_extraction.text import TfidfVectorizer\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.ensemble import RandomForestClassifier\nfrom sklearn.metrics import accuracy_score, classification_report\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Split the dataset into training and validation sets\n    X_train, _, y_train, _ = train_test_split(X_train, y_train, test_size=0.2, random_state=42)\n    \n    # Initialize TfidfVectorizer\n    vectorizer = TfidfVectorizer(max_features=5000)  # Adjust max_features as needed\n    \n    # Fit the vectorizer to the training data and transform both train and validation sets\n    X_train_tfidf = vectorizer.fit_transform(X_train).toarray()\n    X_val_tfidf = vectorizer.transform(X_val).toarray()\n    \n    # Initialize RandomForestClassifier with hyperparameters tuned for better performance\n    clf = RandomForestClassifier(n_estimators=100, max_depth=15, random_state=42)\n    \n    # Train the classifier\n    clf.fit(X_train_tfidf, y_train)\n    \n    # Make predictions on the validation set\n    predictions = clf.predict(X_val_tfidf)\n    \n    # Evaluate the model\n    accuracy = accuracy_score(y_val, predictions)\n    print(f\"Accuracy: {accuracy:.4f}\")\n    \n    return predictions\n\n# Example usage:\n# X_train, y_train, X_val, y_val = load_dataset()  # Load your dataset here\n# predictions = solve(X_train, y_train, X_val, y_val)"
+    },
+    {
+      "iteration": 3,
+      "val_accuracy": 0.7182,
+      "val_loss": 1.3344,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 253.3,
+      "code": "from sklearn.feature_extraction.text import TfidfVectorizer\nfrom sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Convert text data to numeric features using TF-IDF vectorizer\n    vectorizer = TfidfVectorizer(max_features=5000)\n    X_train_tfidf = vectorizer.fit_transform(X_train).toarray()\n    X_val_tfidf = vectorizer.transform(X_val).toarray()\n\n    # Train a GradientBoostingClassifier with early stopping for better performance\n    classifier = GradientBoostingClassifier(n_estimators=100, learning_rate=0.05, max_depth=3, min_samples_split=2,\n                                         min_samples_leaf=1, random_state=42, n_iter_no_change=10, tol=0.001)\n    classifier.fit(X_train_tfidf, y_train)\n\n    # Make predictions on the validation set\n    predictions = classifier.predict(X_val_tfidf)\n\n    return predictions"
+    },
+    {
+      "iteration": 4,
+      "val_accuracy": null,
+      "val_loss": null,
+      "family": "RandomForest",
+      "error": "Runtime Error: could not convert string to float: \"Does anyone have any Russian Contacts (Space or other) or contacts in the old\\nUSSR/SU or Eastern Europe?\\n\\nPost them here so we all can talk to them and ask questions..\\nI think the cost of email is high, so we would have to  keep the content to\\nspecific topics and such..\\n\\nBasically if we want to save Russia and such, then we need to make contacts,\\ncontacts are a form of info, so lets get informing.\\n\\n==\\nMichael Adams, nsmca@acad3.alaska",
+      "time_seconds": 15.2,
+      "code": "import numpy as np\nfrom sklearn.ensemble import RandomForestClassifier\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.metrics import accuracy_score, classification_report\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Split the data into training and validation sets if not already done\n    # X_train, y_train, X_val, y_val = train_test_split(X, y, test_size=0.2, random_state=42)\n    \n    # Initialize the model\n    model = RandomForestClassifier(n_estimators=100, random_state=42)\n    \n    # Train the model\n    model.fit(X_train, y_train)\n    \n    # Make predictions on the validation set\n    predictions = model.predict(X_val)\n    \n    return predictions"
+    },
+    {
+      "iteration": 5,
+      "val_accuracy": 0.7274,
+      "val_loss": 1.2925,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 20.3,
+      "code": "from sklearn.feature_extraction.text import TfidfVectorizer\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.ensemble import RandomForestClassifier\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Convert text data to numerical features using TF-IDF Vectorizer\n    vectorizer = TfidfVectorizer(max_features=5000)\n    X_train_tfidf = vectorizer.fit_transform(X_train).toarray()\n    X_val_tfidf = vectorizer.transform(X_val).toarray()\n\n    # Train a RandomForestClassifier\n    model = RandomForestClassifier(n_estimators=100, random_state=42)\n    model.fit(X_train_tfidf, y_train)\n\n    # Make predictions on the validation set\n    predictions = model.predict(X_val_tfidf)\n\n    return predictions"
+    },
+    {
+      "iteration": 6,
+      "val_accuracy": 0.6924,
+      "val_loss": 1.4522,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 227.8,
+      "code": "from sklearn.feature_extraction.text import TfidfVectorizer\nfrom sklearn.model_selection import train_test_split, GridSearchCV\nfrom sklearn.ensemble import RandomForestClassifier\nfrom sklearn.metrics import accuracy_score\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Convert text to numeric features using TF-IDF Vectorizer\n    vectorizer = TfidfVectorizer(max_features=1000)\n    X_train_tfidf = vectorizer.fit_transform(X_train).toarray()\n    X_val_tfidf = vectorizer.transform(X_val).toarray()\n\n    # Initialize and train the RandomForestClassifier with grid search for hyperparameter tuning\n    param_grid = {\n        'n_estimators': [50, 100, 200],\n        'max_depth': [None, 10, 20, 30],\n        'min_samples_split': [2, 5, 10]\n    }\n    \n    classifier = RandomForestClassifier(random_state=42)\n    grid_search = GridSearchCV(classifier, param_grid, cv=5, scoring='accuracy')\n    grid_search.fit(X_train_tfidf, y_train)\n\n    # Get the best model from grid search\n    best_model = grid_search.best_estimator_\n\n    # Predict on validation set\n    predictions = best_model.predict(X_val_tfidf)\n\n    return predictions"
+    },
+    {
+      "iteration": 7,
+      "val_accuracy": 0.734,
+      "val_loss": 1.2626,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 21.0,
+      "code": "from sklearn.feature_extraction.text import TfidfVectorizer\nfrom sklearn.pipeline import make_pipeline\nfrom sklearn.ensemble import RandomForestClassifier\n\ndef solve(X_train, y_train, X_val, y_val):\n    vectorizer = TfidfVectorizer()\n    pipeline = make_pipeline(vectorizer, RandomForestClassifier(random_state=42))\n    \n    pipeline.fit(X_train, y_train)\n    predictions = pipeline.predict(X_val)\n    \n    return predictions"
+    },
+    {
+      "iteration": 8,
+      "val_accuracy": null,
+      "val_loss": null,
+      "family": "RandomForest",
+      "error": "Runtime Error: Invalid parameter 'gradientboostingclassifier' for estimator Pipeline(steps=[('tfidfvectorizer', TfidfVectorizer()),\n                ('randomforestclassifier', RandomForestClassifier())]). Valid parameters are: ['memory', 'steps', 'transform_input', 'verbose'].\njoblib.externals.loky.process_executor._RemoteTraceback: \n\"\"\"\nTraceback (most recent call last):\n  File \"C:\\Users\\ZENITH\\AppData\\Roaming\\Python\\Python310\\site-packages\\joblib\\externals\\loky\\process_executor.py\", line 490, i",
+      "time_seconds": 22.9,
+      "code": "from sklearn.model_selection import train_test_split, GridSearchCV\nfrom sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier, ExtraTreesClassifier\nfrom sklearn.pipeline import make_pipeline\nfrom sklearn.metrics import accuracy_score\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Define a list of models to try\n    models = [\n        make_pipeline(TfidfVectorizer(), RandomForestClassifier()),\n        make_pipeline(TfidfVectorizer(), GradientBoostingClassifier()),\n        make_pipeline(TfidfVectorizer(), ExtraTreesClassifier())\n    ]\n    \n    # Set up the grid search for hyperparameter tuning\n    param_grid = {\n        'tfidfvectorizer__ngram_range': [(1, 1), (1, 2)],\n        'randomforestclassifier__n_estimators': [50, 100, 200],\n        'gradientboostingclassifier__n_estimators': [50, 100, 200]\n    }\n    \n    # Initialize the GridSearchCV object\n    grid_search = GridSearchCV(models[0], param_grid, cv=3, scoring='accuracy', n_jobs=-1)\n    \n    # Fit the grid search to the training data\n    grid_search.fit(X_train, y_train)\n    \n    # Get the best model and its parameters\n    best_model = grid_search.best_estimator_\n    \n    # Evaluate the best model on the validation set\n    predictions = best_model.predict(X_val)\n    accuracy = accuracy_score(y_val, predictions)\n    \n    print(f\"Best Model: {best_model}\")\n    print(f\"Accuracy: {accuracy:.4f}\")\n    \n    return predictions"
+    },
+    {
+      "iteration": 9,
+      "val_accuracy": 0.734,
+      "val_loss": 1.2626,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 21.8,
+      "code": "from sklearn.feature_extraction.text import TfidfVectorizer\nfrom sklearn.pipeline import Pipeline\nfrom sklearn.ensemble import RandomForestClassifier\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Initialize the TfidfVectorizer and Random Forest Classifier\n    vectorizer = TfidfVectorizer()\n    model = RandomForestClassifier(n_estimators=100, random_state=42)\n\n    # Create a pipeline combining the vectorizer and the classifier\n    pipeline = Pipeline(steps=[('vectorizer', vectorizer), ('classifier', model)])\n\n    # Train the model on the training data\n    pipeline.fit(X_train, y_train)\n\n    # Make predictions on the validation data\n    predictions = pipeline.predict(X_val)\n\n    return predictions"
+    },
+    {
+      "iteration": 10,
+      "val_accuracy": 0.7349,
+      "val_loss": 1.2586,
+      "family": "RandomForest",
+      "is_best": true,
+      "time_seconds": 22.2,
+      "code": "from sklearn.feature_extraction.text import TfidfVectorizer\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.pipeline import Pipeline\nfrom sklearn.ensemble import RandomForestClassifier\nfrom sklearn.metrics import accuracy_score, classification_report\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Initialize the pipeline with TF-IDF vectorizer and Random Forest Classifier\n    model = Pipeline([\n        ('tfidfvectorizer', TfidfVectorizer()),\n        ('rf_classifier', RandomForestClassifier())\n    ])\n    \n    # Train the model on the training data\n    model.fit(X_train, y_train)\n    \n    # Make predictions on the validation set\n    predictions = model.predict(X_val)\n    \n    # Calculate accuracy of the predictions\n    acc = accuracy_score(y_val, predictions)\n    \n    print(f'Validation Accuracy: {acc:.4f}')\n    \n    return predictions\n\n# Example usage:\n# X_train, y_train, X_val, y_val = load_your_data()  # Replace with your data loading function\n# predictions = solve(X_train, y_train, X_val, y_val)"
+    },
+    {
+      "iteration": 11,
+      "val_accuracy": 0.734,
+      "val_loss": 1.2626,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 21.6,
+      "code": "from sklearn.feature_extraction.text import TfidfVectorizer\nfrom sklearn.ensemble import RandomForestClassifier\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Convert text to numeric features using TF-IDF Vectorizer\n    tfidf_vectorizer = TfidfVectorizer()\n    X_train_tfidf = tfidf_vectorizer.fit_transform(X_train)\n    X_val_tfidf = tfidf_vectorizer.transform(X_val)\n    \n    # Initialize and train the RandomForestClassifier\n    model = RandomForestClassifier(n_estimators=100, random_state=42)\n    model.fit(X_train_tfidf, y_train)\n    \n    # Make predictions on the validation set\n    predictions = model.predict(X_val_tfidf)\n    \n    return predictions"
+    },
+    {
+      "iteration": 12,
+      "val_accuracy": 0.734,
+      "val_loss": 1.2626,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 21.4,
+      "code": "from sklearn.feature_extraction.text import TfidfVectorizer\nfrom sklearn.pipeline import Pipeline\nfrom sklearn.ensemble import RandomForestClassifier\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Define the pipeline with TF-IDF vectorizer and RandomForestClassifier\n    model = Pipeline([\n        ('tfidfvectorizer', TfidfVectorizer()),\n        ('randomforestclassifier', RandomForestClassifier(n_estimators=100, random_state=42))\n    ])\n    \n    # Train the model\n    model.fit(X_train, y_train)\n    \n    # Predict on validation set\n    predictions = model.predict(X_val)\n    \n    return predictions"
+    },
+    {
+      "iteration": 13,
+      "val_accuracy": 0.734,
+      "val_loss": 1.2626,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 21.4,
+      "code": "from sklearn.pipeline import Pipeline\nfrom sklearn.feature_extraction.text import TfidfVectorizer\nfrom sklearn.ensemble import RandomForestClassifier\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Initialize the pipeline with TF-IDF vectorizer and Random Forest Classifier\n    model = Pipeline([\n        ('tfidfvectorizer', TfidfVectorizer()),\n        ('randomforestclassifier', RandomForestClassifier(random_state=42))\n    ])\n    \n    # Train the model\n    model.fit(X_train, y_train)\n    \n    # Make predictions on the validation set\n    predictions = model.predict(X_val)\n    \n    return predictions"
+    },
+    {
+      "iteration": 14,
+      "val_accuracy": 0.7156,
+      "val_loss": 1.3464,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 20.2,
+      "code": "from sklearn.feature_extraction.text import TfidfVectorizer\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.pipeline import make_pipeline\nfrom sklearn.ensemble import RandomForestClassifier\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Split the dataset into training and validation sets\n    X_train, _, y_train, _ = train_test_split(X_train, y_train, test_size=0.2, random_state=42)\n    \n    # Create a pipeline with TfidfVectorizer and RandomForestClassifier\n    model = make_pipeline(TfidfVectorizer(), RandomForestClassifier())\n    \n    # Train the model\n    model.fit(X_train, y_train)\n    \n    # Make predictions on the validation set\n    predictions = model.predict(X_val)\n    \n    return predictions"
+    },
+    {
+      "iteration": 15,
+      "val_accuracy": null,
+      "val_loss": null,
+      "family": "RandomForest",
+      "error": "Timeout Error: Code execution exceeded 300 seconds. Process terminated.",
+      "time_seconds": 314.2,
+      "code": "from sklearn.model_selection import train_test_split, GridSearchCV\nfrom sklearn.ensemble import RandomForestClassifier\nfrom sklearn.feature_extraction.text import TfidfVectorizer\nfrom sklearn.pipeline import Pipeline\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Split the data into training and validation sets for cross-validation\n    X_train_cv, _, y_train_cv, _ = train_test_split(X_train, y_train, test_size=0.3, random_state=42)\n    \n    # Initialize a pipeline with TfidfVectorizer and RandomForestClassifier\n    pipe = Pipeline([\n        ('vectorizer', TfidfVectorizer(stop_words='english', max_features=5000)),\n        ('classifier', RandomForestClassifier(random_state=42))\n    ])\n    \n    # Define the parameter grid for GridSearchCV\n    param_grid = {\n        'classifier__n_estimators': [100, 200, 300],\n        'classifier__max_depth': [None, 50, 100],\n        'classifier__min_samples_split': [2, 5, 10]\n    }\n    \n    # Perform grid search to find the best parameters\n    grid_search = GridSearchCV(pipe, param_grid, cv=3, n_jobs=-1, verbose=2)\n    grid_search.fit(X_train_cv, y_train_cv)\n    \n    # Use the best model for prediction on the validation set\n    best_model = grid_search.best_estimator_\n    predictions = best_model.predict(X_val)\n    \n    return predictions"
+    },
+    {
+      "iteration": 16,
+      "val_accuracy": null,
+      "val_loss": null,
+      "family": "RandomForest",
+      "error": "Runtime Error: The TF-IDF vectorizer is not fitted\nTraceback (most recent call last):\n  File \"F:\\AI-IN-THE-LOOP\\aitl-paper\\experiments\\aeos\\aeos_behave\\trainer.py\", line 95, in _run_in_process\n    predictions = solve_fn(\n  File \"<string>\", line 9, in solve\n  File \"C:\\Users\\ZENITH\\AppData\\Roaming\\Python\\Python310\\site-packages\\sklearn\\feature_extraction\\text.py\", line 2127, in transform\n    check_is_fitted(self, msg=\"The TF-IDF vectorizer is not fitted\")\n  File \"C:\\Users\\ZENITH\\AppData\\Roaming\\Py",
+      "time_seconds": 19.4,
+      "code": "from sklearn.model_selection import train_test_split\nfrom sklearn.feature_extraction.text import TfidfVectorizer\nfrom sklearn.ensemble import RandomForestClassifier\nfrom sklearn.metrics import accuracy_score\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Split the data into training and validation sets\n    X_train_tfidf = TfidfVectorizer().fit_transform(X_train)\n    X_val_tfidf = TfidfVectorizer().transform(X_val)\n    \n    # Train a RandomForestClassifier\n    model = RandomForestClassifier(n_estimators=100, random_state=42)\n    model.fit(X_train_tfidf, y_train)\n    \n    # Make predictions on the validation set\n    predictions = model.predict(X_val_tfidf)\n    \n    return predictions"
+    },
+    {
+      "iteration": 17,
+      "val_accuracy": null,
+      "val_loss": null,
+      "family": "RandomForest",
+      "error": "Runtime Error: 'csr_matrix' object has no attribute 'lower'\nTraceback (most recent call last):\n  File \"F:\\AI-IN-THE-LOOP\\aitl-paper\\experiments\\aeos\\aeos_behave\\trainer.py\", line 95, in _run_in_process\n    predictions = solve_fn(\n  File \"<string>\", line 15, in solve\n  File \"C:\\Users\\ZENITH\\AppData\\Roaming\\Python\\Python310\\site-packages\\sklearn\\base.py\", line 1365, in wrapper\n    return fit_method(estimator, *args, **kwargs)\n  File \"C:\\Users\\ZENITH\\AppData\\Roaming\\Python\\Python310\\site-packages\\s",
+      "time_seconds": 15.6,
+      "code": "from sklearn.feature_extraction.text import TfidfVectorizer\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.pipeline import make_pipeline\nfrom sklearn.ensemble import RandomForestClassifier\nfrom sklearn.metrics import accuracy_score\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Convert text data to TF-IDF features\n    vectorizer = TfidfVectorizer()\n    X_train_tfidf = vectorizer.fit_transform(X_train)\n    X_val_tfidf = vectorizer.transform(X_val)\n\n    # Train a RandomForestClassifier\n    model = make_pipeline(vectorizer, RandomForestClassifier())\n    model.fit(X_train_tfidf, y_train)\n\n    # Make predictions on the validation set\n    predictions = model.predict(X_val_tfidf)\n\n    return predictions"
+    },
+    {
+      "iteration": 18,
+      "val_accuracy": 0.734,
+      "val_loss": 1.2626,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 21.7,
+      "code": "import numpy as np\nfrom sklearn.feature_extraction.text import TfidfVectorizer\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.metrics import accuracy_score\nfrom sklearn.ensemble import RandomForestClassifier\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Convert raw text to TF-IDF features\n    vectorizer = TfidfVectorizer()\n    X_train_tfidf = vectorizer.fit_transform(X_train)\n    X_val_tfidf = vectorizer.transform(X_val)\n\n    # Train a RandomForestClassifier\n    model = RandomForestClassifier(n_estimators=100, random_state=42)\n    model.fit(X_train_tfidf, y_train)\n\n    # Predict on the validation set\n    predictions = model.predict(X_val_tfidf)\n\n    return predictions"
+    },
+    {
+      "iteration": 19,
+      "val_accuracy": null,
+      "val_loss": null,
+      "family": "Ensemble",
+      "error": "Runtime Error: Cannot center sparse matrices: pass `with_mean=False` instead. See docstring for motivation and alternatives.\nTraceback (most recent call last):\n  File \"F:\\AI-IN-THE-LOOP\\aitl-paper\\experiments\\aeos\\aeos_behave\\trainer.py\", line 95, in _run_in_process\n    predictions = solve_fn(\n  File \"<string>\", line 26, in solve\n  File \"C:\\Users\\ZENITH\\AppData\\Roaming\\Python\\Python310\\site-packages\\sklearn\\base.py\", line 1365, in wrapper\n    return fit_method(estimator, *args, **kwargs)\n  File ",
+      "time_seconds": 17.6,
+      "code": "from sklearn.feature_extraction.text import TfidfVectorizer\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.preprocessing import StandardScaler, LabelEncoder\nfrom sklearn.pipeline import Pipeline\nfrom sklearn.ensemble import VotingClassifier\nfrom sklearn.svm import SVC\nfrom sklearn.linear_model import LogisticRegression\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Encode the target variable\n    label_encoder = LabelEncoder()\n    y_train_encoded = label_encoder.fit_transform(y_train)\n    y_val_encoded = label_encoder.transform(y_val)\n    \n    # Initialize the pipeline with TF-IDF vectorizer and a Voting Classifier\n    model = Pipeline([\n        ('tfidfvectorizer', TfidfVectorizer()),\n        ('scaler', StandardScaler()),  # Use scaler for SVM to improve performance\n        ('voting_classifier', VotingClassifier(estimators=[\n            ('svc', SVC(probability=True)),\n            ('logistic_regression', LogisticRegression(max_iter=1000))\n        ], voting='soft'))\n    ])\n    \n    # Train the model on the training data\n    model.fit(X_train, y_train_encoded)\n    \n    # Make predictions on the validation set\n    predictions = model.predict(X_val)\n    \n    # Calculate accuracy of the predictions\n    acc = accuracy_score(y_val, label_encoder.inverse_transform(predictions))\n    \n    print(f'Validation Accuracy: {acc:.4f}')\n    \n    return predictions\n\n# Example usage:\n# X_train, y_train, X_val, y_val = load_your_data()  # Replace with your data loading function\n# predictions = solve(X_train, y_train, X_val, y_val)"
+    },
+    {
+      "iteration": 20,
+      "val_accuracy": 0.734,
+      "val_loss": 1.2626,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 21.8,
+      "code": "from sklearn.feature_extraction.text import TfidfVectorizer\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.ensemble import RandomForestClassifier\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Convert text to TF-IDF features\n    vectorizer = TfidfVectorizer()\n    X_train_tfidf = vectorizer.fit_transform(X_train)\n    X_val_tfidf = vectorizer.transform(X_val)\n\n    # Initialize and train the RandomForestClassifier\n    model = RandomForestClassifier(n_estimators=100, random_state=42)\n    model.fit(X_train_tfidf, y_train)\n\n    # Make predictions on the validation set\n    predictions = model.predict(X_val_tfidf)\n\n    return predictions"
+    },
+    {
+      "iteration": 21,
+      "val_accuracy": 0.734,
+      "val_loss": 1.2626,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 21.6,
+      "code": "from sklearn.feature_extraction.text import TfidfVectorizer\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.pipeline import Pipeline\nfrom sklearn.ensemble import RandomForestClassifier\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Initialize the TF-IDF vectorizer\n    tfidf_vectorizer = TfidfVectorizer()\n\n    # Create a pipeline with the TF-IDF vectorizer and a RandomForestClassifier\n    model = Pipeline([\n        ('tfidf', tfidf_vectorizer),\n        ('classifier', RandomForestClassifier(random_state=42))\n    ])\n\n    # Fit the model on the training data\n    model.fit(X_train, y_train)\n\n    # Make predictions on the validation set\n    predictions = model.predict(X_val)\n\n    return predictions"
+    },
+    {
+      "iteration": 22,
+      "val_accuracy": 0.734,
+      "val_loss": 1.2626,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 21.5,
+      "code": "from sklearn.feature_extraction.text import TfidfVectorizer\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.metrics import accuracy_score\nfrom sklearn.ensemble import RandomForestClassifier\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Vectorize the text data using TF-IDF\n    vectorizer = TfidfVectorizer()\n    X_train_vec = vectorizer.fit_transform(X_train)\n    X_val_vec = vectorizer.transform(X_val)\n    \n    # Train a RandomForestClassifier on the vectorized data\n    model = RandomForestClassifier(random_state=42)\n    model.fit(X_train_vec, y_train)\n    \n    # Make predictions on the validation set\n    predictions = model.predict(X_val_vec)\n    \n    return predictions"
+    },
+    {
+      "iteration": 23,
+      "val_accuracy": null,
+      "val_loss": null,
+      "family": "RandomForest",
+      "error": "Shape Error: Expected 2282 predictions, got 857.",
+      "time_seconds": 18.3,
+      "code": "from sklearn.model_selection import train_test_split\nfrom sklearn.feature_extraction.text import TfidfVectorizer\nfrom sklearn.pipeline import Pipeline\nfrom sklearn.ensemble import RandomForestClassifier\nfrom sklearn.metrics import accuracy_score, classification_report\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Split the training data into training and validation sets\n    X_train, X_val, y_train, y_val = train_test_split(X_train, y_train, test_size=0.25, random_state=42)\n    \n    # Initialize the TfidfVectorizer\n    vectorizer = TfidfVectorizer(max_features=1000)  # Adjust max_features as needed\n    \n    # Define the pipeline with TF-IDF and Random Forest Classifier\n    pipeline = Pipeline([\n        ('tfidf', vectorizer),\n        ('classifier', RandomForestClassifier(n_estimators=100, random_state=42))\n    ])\n    \n    # Train the model\n    pipeline.fit(X_train, y_train)\n    \n    # Predict on the validation set\n    predictions = pipeline.predict(X_val)\n    \n    # Calculate accuracy\n    accuracy = accuracy_score(y_val, predictions)\n    print(f\"Accuracy: {accuracy}\")\n    \n    return predictions"
+    },
+    {
+      "iteration": 24,
+      "val_accuracy": 0.7274,
+      "val_loss": 1.2925,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 19.8,
+      "code": "import numpy as np\nfrom sklearn.feature_extraction.text import TfidfVectorizer\nfrom sklearn.ensemble import RandomForestClassifier\n\ndef solve(X_train, y_train, X_val, y_val):\n    vectorizer = TfidfVectorizer(max_features=5000)\n    X_train_tfidf = vectorizer.fit_transform(X_train).toarray()\n    X_val_tfidf = vectorizer.transform(X_val).toarray()\n\n    model = RandomForestClassifier(n_estimators=100, random_state=42)\n    model.fit(X_train_tfidf, y_train)\n\n    predictions = model.predict(X_val_tfidf)\n    \n    return predictions"
+    },
+    {
+      "iteration": 25,
+      "val_accuracy": 0.7704,
+      "val_loss": 1.097,
+      "family": "RandomForest",
+      "is_best": true,
+      "time_seconds": 21.9,
+      "code": "import numpy as np\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.feature_extraction.text import TfidfVectorizer\nfrom sklearn.pipeline import Pipeline\nfrom sklearn.ensemble import RandomForestClassifier\nfrom sklearn.metrics import accuracy_score\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Split the training data into features and target\n    X_train = np.array([x for x in X_train if isinstance(x, str)])\n    X_val = np.array([x for x in X_val if isinstance(x, str)])\n\n    # Initialize the TfidfVectorizer with stop words removed\n    vectorizer = TfidfVectorizer(stop_words='english')\n\n    # Create a pipeline that applies TF-IDF transformation and then trains a RandomForestClassifier\n    model = Pipeline([\n        ('tfidf', vectorizer),\n        ('classifier', RandomForestClassifier(n_estimators=100, random_state=42))\n    ])\n\n    # Train the model\n    model.fit(X_train, y_train)\n\n    # Make predictions on the validation set\n    predictions = model.predict(X_val)\n\n    return predictions"
+    },
+    {
+      "iteration": 26,
+      "val_accuracy": 0.734,
+      "val_loss": 1.2626,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 22.1,
+      "code": "import numpy as np\nfrom sklearn.feature_extraction.text import TfidfVectorizer\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.ensemble import RandomForestClassifier\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Initialize the vectorizer\n    vectorizer = TfidfVectorizer()\n    \n    # Fit and transform the training data\n    X_train_vec = vectorizer.fit_transform(X_train)\n    \n    # Convert validation data to features using the same vectorizer\n    X_val_vec = vectorizer.transform(X_val)\n    \n    # Split the training data into training and validation sets if needed\n    # (This step is not necessary in this case since we are already splitting them)\n    \n    # Initialize the model\n    model = RandomForestClassifier(n_estimators=100, random_state=42)\n    \n    # Train the model\n    model.fit(X_train_vec, y_train)\n    \n    # Make predictions on the validation data\n    predictions = model.predict(X_val_vec)\n    \n    return predictions"
+    },
+    {
+      "iteration": 27,
+      "val_accuracy": 0.7323,
+      "val_loss": 1.2706,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 16.6,
+      "code": "from sklearn.feature_extraction.text import TfidfVectorizer\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.ensemble import RandomForestClassifier\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Vectorize text data\n    vectorizer = TfidfVectorizer()\n    X_train_vec = vectorizer.fit_transform(X_train)\n    X_val_vec = vectorizer.transform(X_val)\n\n    # Splitting the dataset into training and validation sets\n    X_train_split, X_val_split, y_train_split, y_val_split = train_test_split(X_train_vec, y_train, test_size=0.25, random_state=42)\n\n    # Training the model with improved hyperparameters\n    model = RandomForestClassifier(n_estimators=100, max_depth=30, min_samples_split=2, min_samples_leaf=1, n_jobs=-1)\n    model.fit(X_train_split, y_train_split)\n\n    # Making predictions on the validation set\n    predictions = model.predict(X_val_vec)\n    \n    return predictions"
+    },
+    {
+      "iteration": 28,
+      "val_accuracy": 0.734,
+      "val_loss": 1.2626,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 21.0,
+      "code": "from sklearn.pipeline import Pipeline\nfrom sklearn.feature_extraction.text import TfidfVectorizer\nfrom sklearn.ensemble import RandomForestClassifier\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    pipeline = Pipeline([\n        ('tfidf', TfidfVectorizer()),\n        ('rf', RandomForestClassifier(n_estimators=100, random_state=42))\n    ])\n    \n    model = pipeline.fit(X_train, y_train)\n    predictions = model.predict(X_val).astype(int)\n    \n    return predictions"
+    },
+    {
+      "iteration": 29,
+      "val_accuracy": 0.7581,
+      "val_loss": 1.1528,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 56.3,
+      "code": "from sklearn.model_selection import train_test_split, GridSearchCV\nfrom sklearn.feature_extraction.text import TfidfVectorizer\nfrom sklearn.ensemble import RandomForestClassifier\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Split into training and validation sets if needed\n    X_train, _, y_train, _ = train_test_split(X_train, y_train, test_size=0.2, random_state=42)\n    \n    # Initialize the vectorizer\n    vectorizer = TfidfVectorizer(max_features=10000, stop_words='english')\n    \n    # Fit and transform the training data\n    X_train_tfidf = vectorizer.fit_transform(X_train).toarray()\n    \n    # Fit and predict the validation data\n    clf = RandomForestClassifier(n_estimators=500, random_state=42)\n    clf.fit(X_train_tfidf, y_train)\n    predictions = clf.predict(vectorizer.transform(X_val).toarray())\n    \n    return predictions\n\n# Example usage:\n# X_train, y_train, X_val, y_val = load_your_data()\n# predictions = solve(X_train, y_train, X_val, y_val)"
+    },
+    {
+      "iteration": 30,
+      "val_accuracy": null,
+      "val_loss": null,
+      "family": "RandomForest",
+      "error": "Timeout Error: Code execution exceeded 300 seconds. Process terminated.",
+      "time_seconds": 314.6,
+      "code": "from sklearn.model_selection import train_test_split, GridSearchCV\nfrom sklearn.pipeline import Pipeline\nfrom sklearn.feature_extraction.text import TfidfVectorizer\nfrom sklearn.ensemble import RandomForestClassifier\nfrom sklearn.metrics import accuracy_score, classification_report\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Split the data into training and validation sets\n    X_train, X_val, y_train, y_val = train_test_split(X_train, y_train, test_size=0.2, random_state=42)\n    \n    # Initialize TfidfVectorizer\n    vectorizer = TfidfVectorizer(max_features=5000, ngram_range=(1, 3))\n    \n    # Define the pipeline with TfidfVectorizer and RandomForestClassifier\n    pipeline = Pipeline([\n        ('vectorizer', vectorizer),\n        ('classifier', RandomForestClassifier(n_estimators=100, random_state=42))\n    ])\n    \n    # Perform grid search to find the best hyperparameters\n    param_grid = {\n        'classifier__n_estimators': [50, 75, 100],\n        'classifier__max_depth': [None, 10, 20],\n        'classifier__min_samples_split': [2, 5, 10]\n    }\n    \n    grid_search = GridSearchCV(pipeline, param_grid, cv=3, scoring='accuracy', n_jobs=-1)\n    grid_search.fit(X_train, y_train)\n    \n    # Best model found\n    best_model = grid_search.best_estimator_\n    \n    # Predict on the validation set\n    predictions = best_model.predict(X_val)\n    \n    return predictions\n\n# Example usage:\n# X_train, y_train, X_val, y_val = load_your_dataset()  # Load your dataset here\n# predictions = solve(X_train, y_train, X_val, y_val)"
+    },
+    {
+      "iteration": 31,
+      "val_accuracy": 0.7274,
+      "val_loss": 1.2925,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 25.6,
+      "code": "from sklearn.feature_extraction.text import TfidfVectorizer\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.ensemble import RandomForestClassifier\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Vectorize the text data\n    vectorizer = TfidfVectorizer(max_features=5000)\n    X_train_vec = vectorizer.fit_transform(X_train).toarray()\n    X_val_vec = vectorizer.transform(X_val).toarray()\n\n    # Train a RandomForestClassifier\n    model = RandomForestClassifier(n_estimators=100, random_state=42)\n    model.fit(X_train_vec, y_train)\n\n    # Predict on the validation set\n    predictions = model.predict(X_val_vec)\n\n    return predictions.astype(int)"
+    },
+    {
+      "iteration": 32,
+      "val_accuracy": 0.6994,
+      "val_loss": 1.4203,
+      "family": "Ensemble",
+      "is_best": false,
+      "time_seconds": 55.1,
+      "code": "import numpy as np\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.feature_extraction.text import TfidfVectorizer\nfrom sklearn.pipeline import Pipeline\nfrom sklearn.ensemble import VotingClassifier\nfrom sklearn.linear_model import LogisticRegression\nfrom sklearn.tree import DecisionTreeClassifier\nfrom sklearn.svm import SVC\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Split the training data into features and target\n    X_train = np.array([x for x in X_train if isinstance(x, str)])\n    X_val = np.array([x for x in X_val if isinstance(x, str)])\n\n    # Initialize the TfidfVectorizer with stop words removed\n    vectorizer = TfidfVectorizer(stop_words='english')\n\n    # Create a pipeline that applies TF-IDF transformation and then trains a Logistic Regression classifier\n    lr_model = Pipeline([\n        ('tfidf', vectorizer),\n        ('classifier', LogisticRegression(max_iter=1000, random_state=42))\n    ])\n\n    # Create a pipeline that applies TF-IDF transformation and then trains a Decision Tree Classifier\n    dt_model = Pipeline([\n        ('tfidf', vectorizer),\n        ('classifier', DecisionTreeClassifier(random_state=42))\n    ])\n\n    # Create a pipeline that applies TF-IDF transformation and then trains a Support Vector Machine classifier\n    svm_model = Pipeline([\n        ('tfidf', vectorizer),\n        ('classifier', SVC(probability=True, random_state=42))\n    ])\n\n    # Use a VotingClassifier to combine the predictions of the three models\n    voting_clf = VotingClassifier(estimators=[('lr', lr_model), ('dt', dt_model), ('svm', svm_model)], voting='soft')\n\n    # Train the model\n    voting_clf.fit(X_train, y_train)\n\n    # Make predictions on the validation set\n    predictions = voting_clf.predict(X_val)\n\n    return predictions"
+    },
+    {
+      "iteration": 33,
+      "val_accuracy": 0.7314,
+      "val_loss": 1.2746,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 21.4,
+      "code": "from sklearn.feature_extraction.text import TfidfVectorizer\nfrom sklearn.pipeline import make_pipeline\nfrom sklearn.ensemble import RandomForestClassifier\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Initialize a pipeline with TF-IDF Vectorizer and RandomForest Classifier\n    model = make_pipeline(TfidfVectorizer(), RandomForestClassifier())\n    \n    # Train the model\n    model.fit(X_train, y_train)\n    \n    # Predict on the validation set\n    predictions = model.predict(X_val)\n    \n    return predictions"
+    },
+    {
+      "iteration": 34,
+      "val_accuracy": 0.734,
+      "val_loss": 1.2626,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 21.3,
+      "code": "from sklearn.feature_extraction.text import TfidfVectorizer\nfrom sklearn.pipeline import make_pipeline\nfrom sklearn.ensemble import RandomForestClassifier\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Initialize the pipeline with TF-IDF Vectorizer and Random Forest Classifier\n    pipeline = make_pipeline(TfidfVectorizer(), RandomForestClassifier(random_state=42))\n    \n    # Train the model\n    pipeline.fit(X_train, y_train)\n    \n    # Make predictions on validation set\n    predictions = pipeline.predict(X_val)\n    \n    return predictions"
+    },
+    {
+      "iteration": 35,
+      "val_accuracy": 0.734,
+      "val_loss": 1.2626,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 22.1,
+      "code": "import numpy as np\nfrom sklearn.feature_extraction.text import TfidfVectorizer\nfrom sklearn.ensemble import RandomForestClassifier\nfrom sklearn.metrics import accuracy_score\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Vectorize the text data using TF-IDF\n    vectorizer = TfidfVectorizer()\n    X_train_tfidf = vectorizer.fit_transform(X_train)\n    X_val_tfidf = vectorizer.transform(X_val)\n\n    # Train a RandomForestClassifier model\n    model = RandomForestClassifier(n_estimators=100, random_state=42)\n    model.fit(X_train_tfidf, y_train)\n\n    # Make predictions on the validation set\n    predictions = model.predict(X_val_tfidf)\n\n    return predictions\n\n# Example usage:\n# X_train = [...]  # Your training text data\n# y_train = [...]  # Your training labels\n# X_val = [...]   # Your validation text data\n# y_val = [...]   # Your validation labels\n# predictions = solve(X_train, y_train, X_val, y_val)"
+    },
+    {
+      "iteration": 36,
+      "val_accuracy": 0.7528,
+      "val_loss": 1.1768,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 19.1,
+      "code": "from sklearn.feature_extraction.text import TfidfVectorizer\nfrom sklearn.pipeline import Pipeline\nfrom sklearn.ensemble import RandomForestClassifier\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Initialize the TfidfVectorizer with a larger vocabulary size and max_df\n    vectorizer = TfidfVectorizer(max_features=5000, stop_words='english', ngram_range=(1, 2))\n    \n    # Create a pipeline that first applies the TF-IDF vectorizer and then the classifier\n    model = Pipeline([\n        ('vectorizer', vectorizer),\n        ('classifier', RandomForestClassifier(n_estimators=100, random_state=42))\n    ])\n    \n    # Train the model\n    model.fit(X_train, y_train)\n    \n    # Predict on the validation set\n    predictions = model.predict(X_val)\n    \n    return predictions"
+    },
+    {
+      "iteration": 37,
+      "val_accuracy": null,
+      "val_loss": null,
+      "family": "Unknown",
+      "error": "Timeout Error: Code execution exceeded 300 seconds. Process terminated.",
+      "time_seconds": 314.2,
+      "code": "import numpy as np\nfrom sklearn.model_selection import train_test_split, GridSearchCV\nfrom sklearn.feature_extraction.text import TfidfVectorizer\nfrom sklearn.pipeline import Pipeline\nfrom sklearn.naive_bayes import MultinomialNB\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Split the training data into features and target\n    X_train = np.array([x for x in X_train if isinstance(x, str)])\n    X_val = np.array([x for x in X_val if isinstance(x, str)])\n\n    # Initialize the TfidfVectorizer with stop words removed\n    vectorizer = TfidfVectorizer(stop_words='english')\n\n    # Create a pipeline that applies TF-IDF transformation and then trains a MultinomialNB classifier\n    model = Pipeline([\n        ('tfidf', vectorizer),\n        ('classifier', MultinomialNB(alpha=0.1))\n    ])\n\n    # Use GridSearchCV to find the best hyperparameters\n    param_grid = {\n        'classifier__alpha': [0.01, 0.1, 1.0],\n        'classifier__fit_prior': [True, False]\n    }\n    grid_search = GridSearchCV(model, param_grid, cv=5, scoring='accuracy', n_jobs=-1)\n    grid_search.fit(X_train, y_train)\n\n    # Train the model with the best parameters\n    best_model = grid_search.best_estimator_\n\n    # Make predictions on the validation set\n    predictions = best_model.predict(X_val)\n\n    return predictions"
+    },
+    {
+      "iteration": 38,
+      "val_accuracy": 0.6766,
+      "val_loss": 1.524,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 23.0,
+      "code": "from sklearn.feature_extraction.text import TfidfVectorizer\nfrom sklearn.ensemble import RandomForestClassifier\nfrom sklearn.model_selection import train_test_split\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Initialize the TfidfVectorizer\n    vectorizer = TfidfVectorizer(max_features=1000)\n    \n    # Fit and transform the training data\n    X_train_tfidf = vectorizer.fit_transform(X_train).toarray()\n    \n    # Fit the RandomForestClassifier to the transformed training data\n    model = RandomForestClassifier(n_estimators=100, random_state=42)\n    model.fit(X_train_tfidf, y_train)\n    \n    # Transform the validation data\n    X_val_tfidf = vectorizer.transform(X_val).toarray()\n    \n    # Predict on the validation data\n    predictions = model.predict(X_val_tfidf)\n    \n    return predictions"
+    },
+    {
+      "iteration": 39,
+      "val_accuracy": null,
+      "val_loss": null,
+      "family": "GradientBoosting",
+      "error": "Runtime Error: could not convert string to float: \"\\n\\n\\n\\n\\nYes, but\\n\\n\\t(a) we were talking about peak level, not career averages\\nand\\n\\t(b) Clemente was the best fielding RF of all time, as far\\n\\t    as anyone can tell\\n\\nI did a quick scan last night, looking for players with a peak comparable\\nto or better than Winfield.  In my quick-n-dirty subjective judgement, you\\ncould make good cases for Ruth, Aaron, Ott, Robinson, Clemente, Kaline, \\nMaris, Klein, Jackson, Waner, and probably a fe",
+      "time_seconds": 16.1,
+      "code": "from sklearn.ensemble import GradientBoostingClassifier\nfrom sklearn.model_selection import train_test_split\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Split the training data into training and validation sets for tuning\n    X_train_val = np.concatenate([X_train, X_val])\n    y_train_val = np.concatenate([y_train, y_val])\n    \n    # Split the combined training/validation set into training and validation sets for model fitting\n    X_train_val_split, X_val_split, y_train_val_split, y_val_split = train_test_split(X_train_val, y_train_val, test_size=0.2, random_state=42)\n    \n    # Train a GradientBoostingClassifier with default parameters\n    clf = GradientBoostingClassifier(random_state=42)\n    clf.fit(X_train_val_split, y_train_val_split)\n    \n    # Predict on the validation set\n    predictions = clf.predict(X_val_split)\n    \n    return predictions"
+    },
+    {
+      "iteration": 40,
+      "val_accuracy": 0.734,
+      "val_loss": 1.2626,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 22.2,
+      "code": "import numpy as np\nfrom sklearn.feature_extraction.text import TfidfVectorizer\nfrom sklearn.pipeline import make_pipeline\nfrom sklearn.ensemble import RandomForestClassifier\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Initialize the vectorizer and model\n    vectorizer = TfidfVectorizer()\n    clf = RandomForestClassifier(n_estimators=100, random_state=42)\n    \n    # Create a pipeline to combine vectorization and classification\n    pipeline = make_pipeline(vectorizer, clf)\n    \n    try:\n        # Train the model\n        pipeline.fit(X_train, y_train)\n        \n        # Make predictions on validation data\n        predictions = pipeline.predict(X_val)\n        \n        return predictions\n    \n    except Exception as e:\n        print(f\"An error occurred: {e}\")\n        return None"
+    },
+    {
+      "iteration": 41,
+      "val_accuracy": 0.7178,
+      "val_loss": 1.3364,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 19.1,
+      "code": "from sklearn.model_selection import train_test_split\nfrom sklearn.feature_extraction.text import TfidfVectorizer\nfrom sklearn.ensemble import RandomForestClassifier\nfrom sklearn.metrics import accuracy_score\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Split data into training and validation sets\n    X_train, _, y_train, _ = train_test_split(X_train, y_train, test_size=0.2, random_state=42)\n    \n    # Initialize TfidfVectorizer\n    vectorizer = TfidfVectorizer(max_features=5000)  # Adjust max_features as needed\n    \n    # Fit and transform the training data\n    X_train_tfidf = vectorizer.fit_transform(X_train)\n    \n    # Transform the validation data\n    X_val_tfidf = vectorizer.transform(X_val)\n    \n    # Initialize and train RandomForestClassifier\n    model = RandomForestClassifier(n_estimators=100, random_state=42)\n    model.fit(X_train_tfidf, y_train)\n    \n    # Predict on the validation set\n    predictions = model.predict(X_val_tfidf)\n    \n    return predictions"
+    },
+    {
+      "iteration": 42,
+      "val_accuracy": 0.6766,
+      "val_loss": 1.524,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 19.1,
+      "code": "from sklearn.feature_extraction.text import TfidfVectorizer\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.ensemble import RandomForestClassifier\nfrom sklearn.metrics import accuracy_score\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Convert text to numeric features using TF-IDF Vectorizer\n    vectorizer = TfidfVectorizer(max_features=1000)  # Adjust max_features based on your dataset size and memory constraints\n    X_train_tfidf = vectorizer.fit_transform(X_train)\n    X_val_tfidf = vectorizer.transform(X_val)\n\n    # Train a RandomForestClassifier\n    model = RandomForestClassifier(n_estimators=100, random_state=42)\n    model.fit(X_train_tfidf, y_train)\n\n    # Make predictions on the validation set\n    predictions = model.predict(X_val_tfidf)\n\n    return predictions"
+    },
+    {
+      "iteration": 43,
+      "val_accuracy": 0.7274,
+      "val_loss": 1.2925,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 19.2,
+      "code": "from sklearn.feature_extraction.text import TfidfVectorizer\nfrom sklearn.ensemble import RandomForestClassifier\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Initialize TfidfVectorizer\n    vectorizer = TfidfVectorizer(max_features=5000)\n    \n    # Transform text data to numeric features\n    X_train_tfidf = vectorizer.fit_transform(X_train)\n    X_val_tfidf = vectorizer.transform(X_val)\n    \n    # Initialize RandomForestClassifier\n    model = RandomForestClassifier(n_estimators=100, random_state=42)\n    \n    # Train the model\n    model.fit(X_train_tfidf, y_train)\n    \n    # Predict on validation set\n    predictions = model.predict(X_val_tfidf)\n    \n    return predictions"
+    },
+    {
+      "iteration": 44,
+      "val_accuracy": null,
+      "val_loss": null,
+      "family": "Unknown",
+      "error": "Timeout Error: Code execution exceeded 300 seconds. Process terminated.",
+      "time_seconds": 314.3,
+      "code": "import numpy as np\nfrom sklearn.model_selection import train_test_split, GridSearchCV\nfrom sklearn.pipeline import make_pipeline\nfrom sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer\nfrom sklearn.naive_bayes import MultinomialNB\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Split the training data into features and target\n    X_train = np.array([x for x in X_train if isinstance(x, str)])\n    X_val = np.array([x for x in X_val if isinstance(x, str)])\n\n    # Initialize the CountVectorizer with stopwords removed\n    vectorizer = CountVectorizer(stop_words='english')\n\n    # Create a pipeline that applies count transformation and then trains a MultinomialNB classifier\n    model = make_pipeline(vectorizer, TfidfTransformer(), MultinomialNB())\n\n    # Perform grid search to find the best hyperparameters for the MultinomialNB model\n    param_grid = {\n        'tfidftransformer__use_idf': [True, False],\n        'multinomialnb__alpha': np.logspace(-3, 2, num=10)\n    }\n    grid_search = GridSearchCV(model, param_grid, cv=5, scoring='accuracy', n_jobs=-1)\n\n    # Train the model\n    grid_search.fit(X_train, y_train)\n\n    # Make predictions on the validation set\n    predictions = grid_search.predict(X_val)\n\n    return predictions"
+    },
+    {
+      "iteration": 45,
+      "val_accuracy": 0.734,
+      "val_loss": 1.2626,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 27.3,
+      "code": "from sklearn.feature_extraction.text import TfidfVectorizer\nfrom sklearn.ensemble import RandomForestClassifier\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Initialize the vectorizer\n    vectorizer = TfidfVectorizer()\n    \n    # Transform the training and validation data into TF-IDF features\n    X_train_tfidf = vectorizer.fit_transform(X_train)\n    X_val_tfidf = vectorizer.transform(X_val)\n    \n    # Train a RandomForestClassifier on the transformed data\n    model = RandomForestClassifier(random_state=42)\n    model.fit(X_train_tfidf, y_train)\n    \n    # Make predictions on the validation set\n    predictions = model.predict(X_val_tfidf)\n    \n    return predictions"
+    },
+    {
+      "iteration": 46,
+      "val_accuracy": 0.734,
+      "val_loss": 1.2626,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 21.9,
+      "code": "import numpy as np\nfrom sklearn.feature_extraction.text import TfidfVectorizer\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.ensemble import RandomForestClassifier\nfrom sklearn.metrics import accuracy_score\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Vectorize the text data using TF-IDF\n    vectorizer = TfidfVectorizer()\n    X_train_tfidf = vectorizer.fit_transform(X_train)\n    X_val_tfidf = vectorizer.transform(X_val)\n\n    # Train a RandomForestClassifier\n    model = RandomForestClassifier(n_estimators=100, random_state=42)\n    model.fit(X_train_tfidf, y_train)\n\n    # Make predictions on the validation set\n    predictions = model.predict(X_val_tfidf)\n\n    return predictions"
+    },
+    {
+      "iteration": 47,
+      "val_accuracy": 0.7274,
+      "val_loss": 1.2925,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 19.7,
+      "code": "import numpy as np\nfrom sklearn.feature_extraction.text import TfidfVectorizer\nfrom sklearn.ensemble import RandomForestClassifier\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Initialize a TF-IDF vectorizer\n    vectorizer = TfidfVectorizer(max_features=5000)\n    \n    # Transform the training and validation data into numeric features\n    X_train_tfidf = vectorizer.fit_transform(X_train)\n    X_val_tfidf = vectorizer.transform(X_val)\n    \n    # Train a RandomForestClassifier model\n    clf = RandomForestClassifier(n_estimators=100, random_state=42)\n    clf.fit(X_train_tfidf, y_train)\n    \n    # Make predictions on the validation set\n    predictions = clf.predict(X_val_tfidf)\n    \n    return predictions"
+    },
+    {
+      "iteration": 48,
+      "val_accuracy": 0.7274,
+      "val_loss": 1.2925,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 19.2,
+      "code": "from sklearn.feature_extraction.text import TfidfVectorizer\nfrom sklearn.ensemble import RandomForestClassifier\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Initialize the vectorizer with TF-IDF\n    vectorizer = TfidfVectorizer(max_features=5000)  # Reduce dimensionality\n    \n    # Transform training and validation data into numeric features\n    X_train_tfidf = vectorizer.fit_transform(X_train)\n    X_val_tfidf = vectorizer.transform(X_val)\n    \n    # Train a Random Forest classifier\n    clf = RandomForestClassifier(n_estimators=100, random_state=42)\n    clf.fit(X_train_tfidf, y_train)\n    \n    # Make predictions on the validation set\n    predictions = clf.predict(X_val_tfidf)\n    \n    return predictions"
+    },
+    {
+      "iteration": 49,
+      "val_accuracy": 0.734,
+      "val_loss": 1.2626,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 22.3,
+      "code": "from sklearn.model_selection import train_test_split\nfrom sklearn.feature_extraction.text import TfidfVectorizer\nfrom sklearn.ensemble import RandomForestClassifier\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Split the data into training and validation sets (though it seems they are already split)\n    # X_train = np.array(X_train)\n    # y_train = np.array(y_train)\n    # X_val = np.array(X_val)\n    # y_val = np.array(y_val)\n\n    # Convert text to TF-IDF features\n    vectorizer = TfidfVectorizer()\n    X_train_tfidf = vectorizer.fit_transform(X_train)\n    X_val_tfidf = vectorizer.transform(X_val)\n\n    # Train a RandomForestClassifier model\n    clf = RandomForestClassifier(n_estimators=100, random_state=42)\n    clf.fit(X_train_tfidf, y_train)\n\n    # Predict on the validation set\n    predictions = clf.predict(X_val_tfidf)\n\n    return predictions"
+    },
+    {
+      "iteration": 50,
+      "val_accuracy": null,
+      "val_loss": null,
+      "family": "LogisticRegression",
+      "error": "Runtime Error: Cannot center sparse matrices: pass `with_mean=False` instead. See docstring for motivation and alternatives.\nTraceback (most recent call last):\n  File \"F:\\AI-IN-THE-LOOP\\aitl-paper\\experiments\\aeos\\aeos_behave\\trainer.py\", line 95, in _run_in_process\n    predictions = solve_fn(\n  File \"<string>\", line 22, in solve\n  File \"C:\\Users\\ZENITH\\AppData\\Roaming\\Python\\Python310\\site-packages\\sklearn\\base.py\", line 1365, in wrapper\n    return fit_method(estimator, *args, **kwargs)\n  File ",
+      "time_seconds": 17.1,
+      "code": "from sklearn.model_selection import train_test_split\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.linear_model import LogisticRegression\nfrom sklearn.metrics import accuracy_score\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Split the training data into features and target\n    X_train = np.array([x for x in X_train if isinstance(x, str)])\n    X_val = np.array([x for x in X_val if isinstance(x, str)])\n\n    # Initialize the vectorizer with stop words removed\n    vectorizer = TfidfVectorizer(stop_words='english')\n\n    # Create a pipeline that applies TF-IDF transformation and then trains a Logistic Regression\n    model = Pipeline([\n        ('tfidf', vectorizer),\n        ('scaler', StandardScaler()),\n        ('classifier', LogisticRegression(max_iter=1000, random_state=42))\n    ])\n\n    # Train the model\n    model.fit(X_train, y_train)\n\n    # Make predictions on the validation set\n    predictions = model.predict(X_val)\n\n    return predictions"
+    },
+    {
+      "iteration": 51,
+      "val_accuracy": 0.7099,
+      "val_loss": 1.3724,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 20.5,
+      "code": "from sklearn.model_selection import train_test_split\nfrom sklearn.feature_extraction.text import TfidfVectorizer\nfrom sklearn.ensemble import RandomForestClassifier\nfrom sklearn.metrics import accuracy_score\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Split the training set into training and validation sets\n    X_train, _, y_train, _ = train_test_split(X_train, y_train, test_size=0.15, random_state=42)\n    \n    # Initialize TfidfVectorizer\n    vectorizer = TfidfVectorizer(max_features=5000)  # Adjust max_features as needed\n    \n    # Fit and transform the training data\n    X_train_tfidf = vectorizer.fit_transform(X_train).toarray()\n    \n    # Initialize RandomForestClassifier\n    model = RandomForestClassifier(n_estimators=100, random_state=42)\n    \n    # Train the model\n    model.fit(X_train_tfidf, y_train)\n    \n    # Transform validation data\n    X_val_tfidf = vectorizer.transform(X_val).toarray()\n    \n    # Predict on validation set\n    predictions = model.predict(X_val_tfidf)\n    \n    return predictions"
+    },
+    {
+      "iteration": 52,
+      "val_accuracy": null,
+      "val_loss": null,
+      "family": "Ensemble",
+      "error": "Timeout Error: Code execution exceeded 300 seconds. Process terminated.",
+      "time_seconds": 314.0,
+      "code": "from sklearn.feature_extraction.text import TfidfVectorizer\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.ensemble import VotingClassifier\nfrom sklearn.linear_model import LogisticRegression\nfrom sklearn.metrics import accuracy_score\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Step 1: Convert text data to numerical features using TF-IDF Vectorizer\n    vectorizer = TfidfVectorizer(stop_words='english')\n    X_train_tfidf = vectorizer.fit_transform(X_train)\n    X_val_tfidf = vectorizer.transform(X_val)\n    \n    # Step 2: Initialize and train different models\n    model1 = LogisticRegression(max_iter=500, n_jobs=-1)\n    model2 = RandomForestClassifier(n_estimators=100, random_state=42)\n    model3 = SVC(kernel='linear', probability=True)\n    \n    # Step 3: Create a Voting Classifier to combine predictions\n    voting_classifier = VotingClassifier(estimators=[('lr', model1), ('rf', model2), ('svc', model3)], voting='soft')\n    \n    # Step 4: Train the Voting Classifier\n    voting_classifier.fit(X_train_tfidf, y_train)\n    \n    # Step 5: Make predictions on validation set\n    predictions = voting_classifier.predict(X_val_tfidf)\n    \n    return predictions\n\n# Example usage:\n# X_train, y_train, X_val, y_val = load_data()  # Replace with your data loading function\n# predictions = solve(X_train, y_train, X_val, y_val)"
+    },
+    {
+      "iteration": 53,
+      "val_accuracy": 0.7217,
+      "val_loss": 1.3185,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 25.7,
+      "code": "import numpy as np\nfrom sklearn.feature_extraction.text import TfidfVectorizer\nfrom sklearn.pipeline import make_pipeline\nfrom sklearn.ensemble import RandomForestClassifier\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Initialize the TF-IDF vectorizer\n    vectorizer = TfidfVectorizer()\n    \n    # Create a pipeline that first applies the vectorizer and then trains a Random Forest classifier\n    model = make_pipeline(vectorizer, RandomForestClassifier())\n    \n    try:\n        # Fit the model to the training data\n        model.fit(X_train, y_train)\n        \n        # Predict on the validation set\n        predictions = model.predict(X_val)\n        \n        return predictions\n    \n    except Exception as e:\n        print(f\"An error occurred: {e}\")\n        return None"
+    },
+    {
+      "iteration": 54,
+      "val_accuracy": 0.734,
+      "val_loss": 1.2626,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 24.0,
+      "code": "from sklearn.feature_extraction.text import TfidfVectorizer\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.pipeline import make_pipeline\nfrom sklearn.metrics import accuracy_score\nfrom sklearn.ensemble import RandomForestClassifier\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Use TfidfVectorizer to convert text data into numerical features\n    vectorizer = TfidfVectorizer()\n    X_train_vec = vectorizer.fit_transform(X_train)\n    X_val_vec = vectorizer.transform(X_val)\n\n    # Initialize and train the RandomForestClassifier\n    model = RandomForestClassifier(n_estimators=100, random_state=42)\n    model.fit(X_train_vec, y_train)\n\n    # Make predictions on the validation set\n    predictions = model.predict(X_val_vec)\n\n    return predictions"
+    },
+    {
+      "iteration": 55,
+      "val_accuracy": 0.713,
+      "val_loss": 1.3584,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 23.0,
+      "code": "from sklearn.model_selection import train_test_split\nfrom sklearn.feature_extraction.text import TfidfVectorizer\nfrom sklearn.pipeline import make_pipeline\nfrom sklearn.ensemble import RandomForestClassifier\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Split the training data into training and validation sets for cross-validation\n    xtrain_cv, xval_cv, ytrain_cv, yval_cv = train_test_split(X_train, y_train, test_size=0.2, random_state=42)\n    \n    # Build a pipeline with TF-IDF Vectorizer and RandomForest Classifier\n    model = make_pipeline(TfidfVectorizer(), RandomForestClassifier(random_state=42))\n    \n    # Fit the model to the cross-validation data\n    model.fit(xtrain_cv, ytrain_cv)\n    \n    # Predict on the validation set\n    predictions = model.predict(X_val)\n    \n    return predictions.astype(int)"
+    },
+    {
+      "iteration": 56,
+      "val_accuracy": 0.734,
+      "val_loss": 1.2626,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 22.4,
+      "code": "from sklearn.feature_extraction.text import TfidfVectorizer\nfrom sklearn.ensemble import RandomForestClassifier\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Convert text data to numeric features using TF-IDF Vectorizer\n    vectorizer = TfidfVectorizer()\n    X_train_tfidf = vectorizer.fit_transform(X_train)\n    X_val_tfidf = vectorizer.transform(X_val)\n\n    # Train a RandomForestClassifier on the transformed text data\n    clf = RandomForestClassifier(n_estimators=100, random_state=42)\n    clf.fit(X_train_tfidf, y_train)\n\n    # Make predictions on the validation set\n    predictions = clf.predict(X_val_tfidf)\n\n    return predictions"
+    },
+    {
+      "iteration": 57,
+      "val_accuracy": 0.8571,
+      "val_loss": 0.7018,
+      "family": "Unknown",
+      "is_best": true,
+      "time_seconds": 57.6,
+      "code": "from sklearn.model_selection import train_test_split, RandomizedSearchCV\nfrom sklearn.pipeline import make_pipeline\nfrom sklearn.feature_extraction.text import TfidfVectorizer\nfrom sklearn.naive_bayes import MultinomialNB\nfrom sklearn.metrics import accuracy_score\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Split the training data into features and target\n    X_train = np.array([x for x in X_train if isinstance(x, str)])\n    X_val = np.array([x for x in X_val if isinstance(x, str)])\n\n    # Initialize the TfidfVectorizer with stop words removed\n    vectorizer = TfidfVectorizer(stop_words='english')\n\n    # Create a pipeline that applies TF-IDF transformation and then trains a Naive Bayes classifier\n    model = make_pipeline(vectorizer, MultinomialNB())\n\n    # Define the parameter grid for RandomizedSearchCV\n    param_grid = {\n        'multinomialnb__alpha': [0.1, 1, 5, 10],\n        'tfidfvectorizer__ngram_range': [(1, 1), (1, 2)]\n    }\n\n    # Initialize RandomizedSearchCV with the pipeline and parameter grid\n    search = RandomizedSearchCV(model, param_grid, n_iter=10, cv=5, random_state=42)\n\n    # Fit the model\n    search.fit(X_train, y_train)\n\n    # Make predictions on the validation set\n    predictions = search.predict(X_val)\n\n    return predictions"
+    },
+    {
+      "iteration": 58,
+      "val_accuracy": 0.734,
+      "val_loss": 1.2626,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 21.7,
+      "code": "import numpy as np\nfrom sklearn.feature_extraction.text import TfidfVectorizer\nfrom sklearn.ensemble import RandomForestClassifier\nfrom sklearn.pipeline import make_pipeline\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Define a pipeline with TF-IDF vectorizer and Random Forest Classifier\n    model = make_pipeline(TfidfVectorizer(), RandomForestClassifier(n_estimators=100, random_state=42))\n    \n    # Train the model\n    model.fit(X_train, y_train)\n    \n    # Predict on validation set\n    predictions = model.predict(X_val)\n    \n    return predictions"
+    },
+    {
+      "iteration": 59,
+      "val_accuracy": null,
+      "val_loss": null,
+      "family": "RandomForest",
+      "error": "Shape Error: Expected 2282 predictions, got 857.",
+      "time_seconds": 19.3,
+      "code": "from sklearn.feature_extraction.text import TfidfVectorizer\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.ensemble import RandomForestClassifier\nfrom sklearn.metrics import accuracy_score\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Initialize the TF-IDF vectorizer\n    tfidf_vectorizer = TfidfVectorizer(max_features=5000)\n    \n    # Fit and transform training data\n    X_train_tfidf = tfidf_vectorizer.fit_transform(X_train).toarray()\n    \n    # Split train and validation sets for further splitting into features and target\n    X_train, X_val, y_train, y_val = train_test_split(X_train_tfidf, y_train, test_size=0.25, random_state=42)\n    \n    # Initialize the RandomForestClassifier with hyperparameters tuned from previous experiments\n    model = RandomForestClassifier(n_estimators=100, max_depth=50, min_samples_split=2, random_state=42)\n    \n    # Train the model\n    model.fit(X_train, y_train)\n    \n    # Make predictions on validation set\n    y_pred = model.predict(X_val)\n    \n    # Return predictions as a numpy array of integers\n    return y_pred.astype(int)\n\n# Example usage:\n# x_train, y_train, x_val, y_val = load_dataset()  # Load your dataset here\n# predictions = solve(x_train, y_train, x_val, y_val)"
+    },
+    {
+      "iteration": 60,
+      "val_accuracy": 0.7274,
+      "val_loss": 1.2925,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 19.1,
+      "code": "from sklearn.feature_extraction.text import TfidfVectorizer\nfrom sklearn.ensemble import RandomForestClassifier\nfrom sklearn.metrics import accuracy_score\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Convert text data to numerical features using TF-IDF Vectorizer\n    vectorizer = TfidfVectorizer(max_features=5000)  # Adjust max_features as needed\n    X_train_tfidf = vectorizer.fit_transform(X_train)\n    X_val_tfidf = vectorizer.transform(X_val)\n\n    # Train a RandomForestClassifier\n    model = RandomForestClassifier(n_estimators=100, random_state=42)\n    model.fit(X_train_tfidf, y_train)\n\n    # Make predictions on the validation set\n    predictions = model.predict(X_val_tfidf)\n\n    # Return the predictions as a numpy array of integers\n    return predictions.astype(int)"
+    },
+    {
+      "iteration": 61,
+      "val_accuracy": 0.734,
+      "val_loss": 1.2626,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 21.7,
+      "code": "import numpy as np\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.feature_extraction.text import TfidfVectorizer\nfrom sklearn.ensemble import RandomForestClassifier\nfrom sklearn.metrics import accuracy_score\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Convert text to numeric features using TF-IDF Vectorizer\n    vectorizer = TfidfVectorizer()\n    X_train_tfidf = vectorizer.fit_transform(X_train)\n    X_val_tfidf = vectorizer.transform(X_val)\n\n    # Train a RandomForestClassifier\n    model = RandomForestClassifier(n_estimators=100, random_state=42)\n    model.fit(X_train_tfidf, y_train)\n\n    # Make predictions on the validation set\n    predictions = model.predict(X_val_tfidf)\n\n    return predictions"
+    },
+    {
+      "iteration": 62,
+      "val_accuracy": 0.734,
+      "val_loss": 1.2626,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 21.6,
+      "code": "from sklearn.feature_extraction.text import TfidfVectorizer\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.ensemble import RandomForestClassifier\nfrom sklearn.metrics import accuracy_score\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Convert text to TF-IDF features\n    vectorizer = TfidfVectorizer()\n    X_train_tfidf = vectorizer.fit_transform(X_train)\n    X_val_tfidf = vectorizer.transform(X_val)\n    \n    # Train a RandomForestClassifier\n    model = RandomForestClassifier(n_estimators=100, random_state=42)\n    model.fit(X_train_tfidf, y_train)\n    \n    # Make predictions on validation set\n    predictions = model.predict(X_val_tfidf)\n    \n    return predictions"
+    },
+    {
+      "iteration": 63,
+      "val_accuracy": 0.7651,
+      "val_loss": 1.1209,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 37.7,
+      "code": "from sklearn.feature_extraction.text import TfidfVectorizer\nfrom sklearn.ensemble import RandomForestClassifier\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Convert text data to numeric features using TF-IDF Vectorizer\n    vectorizer = TfidfVectorizer(stop_words='english', ngram_range=(1, 2))\n    X_train_tfidf = vectorizer.fit_transform(X_train)\n    X_val_tfidf = vectorizer.transform(X_val)\n\n    # Train a Random Forest Classifier\n    model = RandomForestClassifier(n_estimators=100, random_state=42)\n    model.fit(X_train_tfidf, y_train)\n\n    # Make predictions on the validation set\n    predictions = model.predict(X_val_tfidf)\n\n    return predictions"
+    },
+    {
+      "iteration": 64,
+      "val_accuracy": null,
+      "val_loss": null,
+      "family": "SVM",
+      "error": "Timeout Error: Code execution exceeded 300 seconds. Process terminated.",
+      "time_seconds": 314.4,
+      "code": "from sklearn.model_selection import train_test_split, GridSearchCV\nfrom sklearn.pipeline import make_pipeline\nfrom sklearn.preprocessing import StandardScaler, PolynomialFeatures\nfrom sklearn.svm import SVC\nfrom sklearn.metrics import accuracy_score\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Split the training data into features and target\n    X_train = np.array([x for x in X_train if isinstance(x, str)])\n    X_val = np.array([x for x in X_val if isinstance(x, str)])\n\n    # Initialize the pipeline with preprocessing steps\n    model = make_pipeline(\n        StandardScaler(),\n        PolynomialFeatures(degree=2),\n        SVC(C=1.0, kernel='rbf', probability=True)\n    )\n\n    # Define the parameter grid for GridSearchCV\n    param_grid = {\n        'polynomialfeatures__degree': [1, 2, 3],\n        'svc__C': [0.1, 1, 10, 100],\n        'svc__kernel': ['linear', 'rbf']\n    }\n\n    # Initialize GridSearchCV with the pipeline and parameter grid\n    search = GridSearchCV(model, param_grid, cv=5, n_jobs=-1, verbose=2)\n\n    # Fit the model\n    search.fit(X_train, y_train)\n\n    # Make predictions on the validation set\n    predictions = search.predict(X_val)\n\n    return predictions"
+    },
+    {
+      "iteration": 65,
+      "val_accuracy": null,
+      "val_loss": null,
+      "family": "RandomForest",
+      "error": "Shape Error: Expected 2282 predictions, got 1142.",
+      "time_seconds": 34.4,
+      "code": "import numpy as np\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.feature_extraction.text import TfidfVectorizer\nfrom sklearn.ensemble import RandomForestClassifier\nfrom sklearn.metrics import accuracy_score\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Split the training data into training and validation sets\n    X_train_val = np.concatenate([X_train, X_val])\n    y_train_val = np.concatenate([y_train, y_val])\n\n    # Split the combined train-validation set into training and validation sets again for final model evaluation\n    X_train_final, X_val_final, y_train_final, y_val_final = train_test_split(X_train_val, y_train_val, test_size=0.2, random_state=42)\n\n    # Vectorize the text data using TF-IDF\n    vectorizer = TfidfVectorizer()\n    X_train_vec = vectorizer.fit_transform(X_train_final)\n    X_val_vec = vectorizer.transform(X_val_final)\n\n    # Train a RandomForestClassifier\n    clf = RandomForestClassifier(n_estimators=100, random_state=42)\n    clf.fit(X_train_vec, y_train_final)\n\n    # Make predictions on the validation set\n    predictions = clf.predict(X_val_vec)\n\n    return predictions\n\n# Example usage:\n# X_train, y_train, X_val, y_val = load_data()  # Load your dataset here\n# predictions = solve(X_train, y_train, X_val, y_val)"
+    }
+  ]
+}

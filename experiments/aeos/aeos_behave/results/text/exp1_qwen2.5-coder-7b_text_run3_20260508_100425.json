@@ -1,0 +1,62 @@
+{
+  "run_id": "20260508_100425",
+  "backend": "ollama",
+  "model": "ollama/qwen2.5-coder:7b",
+  "dataset": "text",
+  "n_features": 0,
+  "n_classes": 6,
+  "n_train": 3427,
+  "n_val": 2282,
+  "best_accuracy": 0.798,
+  "best_loss": 0.9712,
+  "best_iteration": 2,
+  "best_code": "from sklearn.feature_extraction.text import TfidfVectorizer\nfrom sklearn.svm import SVC\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    vectorizer = TfidfVectorizer()\n    X_train_vec = vectorizer.fit_transform(X_train)\n    X_val_vec = vectorizer.transform(X_val)\n\n    model = SVC(kernel='linear', probability=True)\n    model.fit(X_train_vec, y_train)\n\n    predictions = model.predict(X_val_vec)\n    return predictions",
+  "total_iterations": 5,
+  "stop_reason": "Agent autonomously stopped at iteration 5",
+  "total_time_seconds": 215.1,
+  "model_families_explored": [
+    "RandomForest",
+    "SVM",
+    "GradientBoosting"
+  ],
+  "sunk_cost_episodes": 0,
+  "waste_count": 0,
+  "iterations": [
+    {
+      "iteration": 1,
+      "val_accuracy": 0.6766,
+      "val_loss": 1.524,
+      "family": "RandomForest",
+      "is_best": true,
+      "time_seconds": 21.9,
+      "code": "from sklearn.feature_extraction.text import TfidfVectorizer\nfrom sklearn.ensemble import RandomForestClassifier\n\ndef solve(X_train, y_train, X_val, y_val):\n    vectorizer = TfidfVectorizer(max_features=1000)\n    X_train_vec = vectorizer.fit_transform(X_train)\n    X_val_vec = vectorizer.transform(X_val)\n    \n    model = RandomForestClassifier(n_estimators=100, random_state=42)\n    model.fit(X_train_vec, y_train)\n    \n    predictions = model.predict(X_val_vec)\n    return predictions"
+    },
+    {
+      "iteration": 2,
+      "val_accuracy": 0.798,
+      "val_loss": 0.9712,
+      "family": "SVM",
+      "is_best": true,
+      "time_seconds": 56.0,
+      "code": "from sklearn.feature_extraction.text import TfidfVectorizer\nfrom sklearn.svm import SVC\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    vectorizer = TfidfVectorizer()\n    X_train_vec = vectorizer.fit_transform(X_train)\n    X_val_vec = vectorizer.transform(X_val)\n\n    model = SVC(kernel='linear', probability=True)\n    model.fit(X_train_vec, y_train)\n\n    predictions = model.predict(X_val_vec)\n    return predictions"
+    },
+    {
+      "iteration": 3,
+      "val_accuracy": 0.7384,
+      "val_loss": 1.2426,
+      "family": "GradientBoosting",
+      "is_best": false,
+      "time_seconds": 105.6,
+      "code": "from sklearn.feature_extraction.text import TfidfVectorizer\nfrom sklearn.ensemble import GradientBoostingClassifier\n\ndef solve(X_train, y_train, X_val, y_val):\n    vectorizer = TfidfVectorizer()\n    X_train_vec = vectorizer.fit_transform(X_train)\n    X_val_vec = vectorizer.transform(X_val)\n\n    model = GradientBoostingClassifier(n_estimators=100, learning_rate=0.1, max_depth=4, random_state=42)\n    model.fit(X_train_vec, y_train)\n\n    predictions = model.predict(X_val_vec)\n    return predictions"
+    },
+    {
+      "iteration": 4,
+      "val_accuracy": 0.695,
+      "val_loss": 1.4402,
+      "family": "SVM",
+      "is_best": false,
+      "time_seconds": 26.7,
+      "code": "from sklearn.feature_extraction.text import TfidfVectorizer\nfrom sklearn.svm import SVC\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    vectorizer = TfidfVectorizer(max_features=1000)\n    X_train_vec = vectorizer.fit_transform(X_train).toarray()\n    X_val_vec = vectorizer.transform(X_val).toarray()\n\n    model = SVC(kernel='linear', C=1.0, probability=True)\n    model.fit(X_train_vec, y_train)\n\n    predictions = model.predict(X_val_vec)\n    return predictions"
+    }
+  ]
+}

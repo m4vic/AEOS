@@ -1,0 +1,133 @@
+{
+  "completed": 9,
+  "failed": 0,
+  "skipped": 0,
+  "results": [
+    {
+      "exp_id": "1.1",
+      "model": "qwen2.5-coder:1.5b",
+      "dataset": "tabular",
+      "best_accuracy": 0.743,
+      "total_iterations": 5,
+      "waste_count": 1,
+      "sunk_cost_episodes": 0,
+      "total_time": 27.5,
+      "families": [
+        "DecisionTree"
+      ]
+    },
+    {
+      "exp_id": "1.2",
+      "model": "qwen2.5-coder:1.5b",
+      "dataset": "text",
+      "best_accuracy": 0.8032,
+      "total_iterations": 5,
+      "waste_count": 1,
+      "sunk_cost_episodes": 0,
+      "total_time": 32.5,
+      "families": [
+        "LogisticRegression"
+      ]
+    },
+    {
+      "exp_id": "1.3",
+      "model": "qwen2.5-coder:1.5b",
+      "dataset": "vision",
+      "best_accuracy": 0.943,
+      "total_iterations": 1,
+      "waste_count": 0,
+      "sunk_cost_episodes": 0,
+      "total_time": 16.8,
+      "families": [
+        "RandomForest"
+      ]
+    },
+    {
+      "exp_id": "1.19",
+      "model": "qwen2.5-coder:7b",
+      "dataset": "tabular",
+      "best_accuracy": 0.809,
+      "total_iterations": 12,
+      "waste_count": 0,
+      "sunk_cost_episodes": 1,
+      "total_time": 151.5,
+      "families": [
+        "RandomForest",
+        "SVM",
+        "GradientBoosting",
+        "sklearn_MLP"
+      ]
+    },
+    {
+      "exp_id": "1.20",
+      "model": "qwen2.5-coder:7b",
+      "dataset": "text",
+      "best_accuracy": 0.798,
+      "total_iterations": 6,
+      "waste_count": 0,
+      "sunk_cost_episodes": 0,
+      "total_time": 332.7,
+      "families": [
+        "SVM",
+        "RandomForest",
+        "GradientBoosting"
+      ]
+    },
+    {
+      "exp_id": "1.21",
+      "model": "qwen2.5-coder:7b",
+      "dataset": "vision",
+      "best_accuracy": 0.9475,
+      "total_iterations": 6,
+      "waste_count": 1,
+      "sunk_cost_episodes": 0,
+      "total_time": 298.4,
+      "families": [
+        "SVM",
+        "RandomForest",
+        "KNN",
+        "GradientBoosting"
+      ]
+    },
+    {
+      "exp_id": "1.22",
+      "model": "qwen2.5-coder:14b",
+      "dataset": "tabular",
+      "best_accuracy": 0.8065,
+      "total_iterations": 6,
+      "waste_count": 0,
+      "sunk_cost_episodes": 0,
+      "total_time": 80.1,
+      "families": [
+        "GradientBoosting",
+        "RandomForest"
+      ]
+    },
+    {
+      "exp_id": "1.23",
+      "model": "qwen2.5-coder:14b",
+      "dataset": "text",
+      "best_accuracy": 0.798,
+      "total_iterations": 6,
+      "waste_count": 0,
+      "sunk_cost_episodes": 1,
+      "total_time": 235.9,
+      "families": [
+        "SVM"
+      ]
+    },
+    {
+      "exp_id": "1.24",
+      "model": "qwen2.5-coder:14b",
+      "dataset": "vision",
+      "best_accuracy": 0.9625,
+      "total_iterations": 6,
+      "waste_count": 0,
+      "sunk_cost_episodes": 1,
+      "total_time": 97.9,
+      "families": [
+        "SVM"
+      ]
+    }
+  ]
+}

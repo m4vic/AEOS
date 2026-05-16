@@ -3,6 +3,7 @@ message: "If you use this work, please cite it."
 authors:
   - family-names: "Jajoo"
     given-names: "Sanskar"
+    affiliation: "Neuralchemy Labs"
 title: "AI In The Loop: The Evolution from Human-in-the-Loop Evaluation"
 version: 1.0.0
 date-released: 2026-04-11
@@ -12,6 +13,7 @@ preferred-citation:
   authors:
     - family-names: "Jajoo"
       given-names: "Sanskar"
+      affiliation: "Neuralchemy Labs"
   title: "AI In The Loop: The Evolution from Human-in-the-Loop Evaluation"
   journal: "arXiv preprint"
   year: 2026

@@ -1,0 +1,216 @@
+{
+  "run_id": "20260424_005202",
+  "backend": "openai",
+  "model": "openai/gpt-4o-mini",
+  "dataset": "tabular",
+  "n_features": 54,
+  "n_classes": 7,
+  "n_train": 8000,
+  "n_val": 2000,
+  "best_accuracy": 0.8115,
+  "best_loss": 0.9441,
+  "best_iteration": 4,
+  "best_code": "from sklearn.ensemble import VotingClassifier\nfrom sklearn.ensemble import ExtraTreesClassifier, RandomForestClassifier\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.pipeline import make_pipeline\nfrom sklearn.model_selection import GridSearchCV\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Scale the features\n    scaler = StandardScaler()\n    \n    # Define the classifiers\n    rf = RandomForestClassifier(n_estimators=100, random_state=42)\n    et = ExtraTreesClassifier(n_estimators=100, random_state=42)\n\n    # Create a voting classifier\n    voting_clf = VotingClassifier(estimators=[('rf', rf), ('et', et)], voting='soft')\n\n    # Create a pipeline with scaling and voting classifier\n    pipeline = make_pipeline(scaler, voting_clf)\n\n    # Fit the model\n    pipeline.fit(X_train, y_train)\n\n    # Predict\n    predictions = pipeline.predict(X_val)\n\n    return predictions",
+  "total_iterations": 22,
+  "stop_reason": "System forced stop (no improvement in 15 iterations)",
+  "total_time_seconds": 914.9,
+  "model_families_explored": [
+    "ExtraTrees",
+    "GradientBoosting",
+    "sklearn_MLP",
+    "RandomForest"
+  ],
+  "sunk_cost_episodes": 3,
+  "waste_count": 2,
+  "iterations": [
+    {
+      "iteration": 1,
+      "val_accuracy": 0.8065,
+      "val_loss": 0.9677,
+      "family": "RandomForest",
+      "is_best": true,
+      "time_seconds": 5.6,
+      "code": "from sklearn.ensemble import RandomForestClassifier\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.metrics import accuracy_score\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Standardizing the features\n    scaler = StandardScaler()\n    X_train_scaled = scaler.fit_transform(X_train)\n    X_val_scaled = scaler.transform(X_val)\n    \n    # Building a baseline model using Random Forest\n    model = RandomForestClassifier(random_state=42)\n    model.fit(X_train_scaled, y_train)\n    \n    # Making predictions\n    predictions = model.predict(X_val_scaled)\n    \n    return predictions"
+    },
+    {
+      "iteration": 2,
+      "val_accuracy": 0.7585,
+      "val_loss": 1.1951,
+      "family": "GradientBoosting",
+      "is_best": false,
+      "time_seconds": 24.7,
+      "code": "from sklearn.ensemble import GradientBoostingClassifier\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.metrics import accuracy_score\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Preprocessing: Standardize the features\n    scaler = StandardScaler()\n    X_train_scaled = scaler.fit_transform(X_train)\n    X_val_scaled = scaler.transform(X_val)\n    \n    # Model: Gradient Boosting Classifier\n    model = GradientBoostingClassifier(n_estimators=200, learning_rate=0.1, max_depth=3, random_state=42)\n    model.fit(X_train_scaled, y_train)\n    \n    # Predictions\n    predictions = model.predict(X_val_scaled)\n    \n    return predictions"
+    },
+    {
+      "iteration": 3,
+      "val_accuracy": 0.8105,
+      "val_loss": 0.9488,
+      "family": "ExtraTrees",
+      "is_best": true,
+      "time_seconds": 4.3,
+      "code": "from sklearn.preprocessing import StandardScaler\nfrom sklearn.ensemble import ExtraTreesClassifier\nfrom sklearn.pipeline import make_pipeline\nfrom sklearn.metrics import accuracy_score\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Standardize the features\n    scaler = StandardScaler()\n    \n    # Build an Extra Trees Classifier model\n    model = ExtraTreesClassifier(n_estimators=200, random_state=42)\n    \n    # Create a pipeline\n    pipeline = make_pipeline(scaler, model)\n    \n    # Train the model\n    pipeline.fit(X_train, y_train)\n    \n    # Make predictions\n    predictions = pipeline.predict(X_val)\n    \n    return predictions"
+    },
+    {
+      "iteration": 4,
+      "val_accuracy": 0.8115,
+      "val_loss": 0.9441,
+      "family": "RandomForest",
+      "is_best": true,
+      "time_seconds": 5.4,
+      "code": "from sklearn.ensemble import VotingClassifier\nfrom sklearn.ensemble import ExtraTreesClassifier, RandomForestClassifier\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.pipeline import make_pipeline\nfrom sklearn.model_selection import GridSearchCV\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Scale the features\n    scaler = StandardScaler()\n    \n    # Define the classifiers\n    rf = RandomForestClassifier(n_estimators=100, random_state=42)\n    et = ExtraTreesClassifier(n_estimators=100, random_state=42)\n\n    # Create a voting classifier\n    voting_clf = VotingClassifier(estimators=[('rf', rf), ('et', et)], voting='soft')\n\n    # Create a pipeline with scaling and voting classifier\n    pipeline = make_pipeline(scaler, voting_clf)\n\n    # Fit the model\n    pipeline.fit(X_train, y_train)\n\n    # Predict\n    predictions = pipeline.predict(X_val)\n\n    return predictions"
+    },
+    {
+      "iteration": 5,
+      "val_accuracy": 0.782,
+      "val_loss": 1.0838,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 25.2,
+      "code": "from sklearn.preprocessing import StandardScaler\nfrom sklearn.ensemble import VotingClassifier\nfrom sklearn.ensemble import RandomForestClassifier, ExtraTreesClassifier, GradientBoostingClassifier\nfrom sklearn.svm import SVC\nfrom sklearn.pipeline import make_pipeline\nfrom sklearn.metrics import accuracy_score\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Standardizing the features\n    scaler = StandardScaler()\n    \n    # Setting up the classifiers\n    rf = RandomForestClassifier(n_estimators=100, random_state=42)\n    et = ExtraTreesClassifier(n_estimators=100, random_state=42)\n    gbc = GradientBoostingClassifier(n_estimators=100, random_state=42)\n    svc = SVC(probability=True, random_state=42)\n\n    # Creating a voting classifier\n    voting_clf = VotingClassifier(estimators=[\n        ('rf', rf), \n        ('et', et), \n        ('gbc', gbc), \n        ('svc', svc)\n    ], voting='soft')\n    \n    # Creating a pipeline with scaling\n    pipeline = make_pipeline(scaler, voting_clf)\n    \n    # Fitting the model\n    pipeline.fit(X_train, y_train)\n    \n    # Predicting on validation set\n    predictions = pipeline.predict(X_val)\n    \n    return predictions"
+    },
+    {
+      "iteration": 6,
+      "val_accuracy": 0.7755,
+      "val_loss": 1.1146,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 17.2,
+      "code": "from sklearn.ensemble import VotingClassifier\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.pipeline import make_pipeline\nfrom sklearn.linear_model import LogisticRegression\nfrom sklearn.svm import SVC\nfrom sklearn.ensemble import ExtraTreesClassifier, RandomForestClassifier\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Preprocessing: Standardizing the features\n    scaler = StandardScaler()\n    \n    # Defining models\n    rf = RandomForestClassifier(n_estimators=200, random_state=42)\n    et = ExtraTreesClassifier(n_estimators=200, random_state=42)\n    lr = LogisticRegression(max_iter=1000, random_state=42)\n    svc = SVC(probability=True, random_state=42)\n    \n    # Combining models using Voting Classifier\n    voting_clf = VotingClassifier(\n        estimators=[('rf', rf), ('et', et), ('lr', lr), ('svc', svc)],\n        voting='soft'\n    )\n    \n    # Creating a pipeline with scaling and voting classifier\n    pipeline = make_pipeline(scaler, voting_clf)\n    \n    # Training the model\n    pipeline.fit(X_train, y_train)\n    \n    # Making predictions\n    predictions = pipeline.predict(X_val)\n    \n    return predictions"
+    },
+    {
+      "iteration": 7,
+      "val_accuracy": 0.741,
+      "val_loss": 1.278,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 3.6,
+      "code": "from sklearn.preprocessing import StandardScaler\nfrom sklearn.ensemble import RandomForestClassifier\nfrom sklearn.model_selection import GridSearchCV\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Standardize the features\n    scaler = StandardScaler()\n    X_train_scaled = scaler.fit_transform(X_train)\n    X_val_scaled = scaler.transform(X_val)\n    \n    # Create a RandomForestClassifier\n    model = RandomForestClassifier(n_estimators=100, max_depth=10, random_state=42)\n    \n    # Fit the model\n    model.fit(X_train_scaled, y_train)\n    \n    # Generate predictions\n    predictions = model.predict(X_val_scaled)\n    \n    return predictions"
+    },
+    {
+      "iteration": 8,
+      "val_accuracy": null,
+      "val_loss": null,
+      "family": "GradientBoosting",
+      "error": "Timeout Error: Code execution exceeded 300 seconds. Try a simpler/faster model.",
+      "time_seconds": 304.5,
+      "code": "from sklearn.preprocessing import StandardScaler\nfrom sklearn.ensemble import GradientBoostingClassifier\nfrom sklearn.model_selection import RandomizedSearchCV\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Preprocessing: Standardize the features\n    scaler = StandardScaler()\n    X_train_scaled = scaler.fit_transform(X_train)\n    X_val_scaled = scaler.transform(X_val)\n    \n    # Define the model with hyperparameter tuning\n    gb_model = GradientBoostingClassifier()\n    param_dist = {\n        'n_estimators': [100, 200, 300],\n        'learning_rate': [0.01, 0.1, 0.2],\n        'max_depth': [3, 5, 7],\n        'min_samples_split': [2, 5, 10],\n    }\n    \n    # Randomized search for hyperparameter optimization\n    random_search = RandomizedSearchCV(gb_model, param_distributions=param_dist, n_iter=50, scoring='accuracy', n_jobs=-1, cv=3, verbose=0, random_state=42)\n    random_search.fit(X_train_scaled, y_train)\n    \n    # Best model predictions\n    best_model = random_search.best_estimator_\n    predictions = best_model.predict(X_val_scaled)\n    \n    return predictions"
+    },
+    {
+      "iteration": 9,
+      "val_accuracy": 0.8065,
+      "val_loss": 0.9677,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 4.7,
+      "code": "from sklearn.preprocessing import StandardScaler\nfrom sklearn.ensemble import RandomForestClassifier\nfrom sklearn.pipeline import make_pipeline\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Standardize features\n    scaler = StandardScaler()\n    \n    # Create a Random Forest model\n    model = RandomForestClassifier(n_estimators=100, random_state=42)\n    \n    # Create a pipeline that first scales the data and then applies the model\n    pipeline = make_pipeline(scaler, model)\n    \n    # Train the model\n    pipeline.fit(X_train, y_train)\n    \n    # Predict on validation set\n    predictions = pipeline.predict(X_val)\n    \n    return predictions"
+    },
+    {
+      "iteration": 10,
+      "val_accuracy": 0.779,
+      "val_loss": 1.098,
+      "family": "sklearn_MLP",
+      "is_best": false,
+      "time_seconds": 188.8,
+      "code": "from sklearn.preprocessing import StandardScaler\nfrom sklearn.neural_network import MLPClassifier\nfrom sklearn.pipeline import make_pipeline\nfrom sklearn.model_selection import train_test_split\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Standardizing the dataset\n    scaler = StandardScaler()\n    \n    # Defining the MLPClassifier model\n    mlp = MLPClassifier(hidden_layer_sizes=(100, 50), max_iter=300, random_state=42)\n    \n    # Creating a pipeline\n    pipeline = make_pipeline(scaler, mlp)\n    \n    # Fitting the model\n    pipeline.fit(X_train, y_train)\n    \n    # Making predictions\n    predictions = pipeline.predict(X_val)\n    \n    return predictions"
+    },
+    {
+      "iteration": 11,
+      "val_accuracy": 0.7915,
+      "val_loss": 1.0388,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 70.7,
+      "code": "from sklearn.decomposition import PCA\nfrom sklearn.ensemble import StackingClassifier\nfrom sklearn.linear_model import LogisticRegression\nfrom sklearn.ensemble import RandomForestClassifier, ExtraTreesClassifier\nfrom sklearn.svm import SVC\nfrom sklearn.pipeline import make_pipeline\nfrom sklearn.preprocessing import StandardScaler\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Reduce dimensionality with PCA\n    pca = PCA(n_components=0.95)  # Keep 95% of variance\n\n    # Define base classifiers\n    base_learners = [\n        ('rf', RandomForestClassifier(n_estimators=100, random_state=42)),\n        ('et', ExtraTreesClassifier(n_estimators=100, random_state=42)),\n        ('svc', SVC(probability=True, random_state=42))\n    ]\n\n    # Create a stacking classifier with logistic regression as the final estimator\n    stacking_clf = StackingClassifier(estimators=base_learners, final_estimator=LogisticRegression())\n\n    # Create a pipeline with scaling, PCA, and stacking classifier\n    pipeline = make_pipeline(StandardScaler(), pca, stacking_clf)\n\n    # Fit the model\n    pipeline.fit(X_train, y_train)\n\n    # Predict\n    predictions = pipeline.predict(X_val)\n\n    return predictions"
+    },
+    {
+      "iteration": 12,
+      "val_accuracy": 0.782,
+      "val_loss": 1.0838,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 27.2,
+      "code": "from sklearn.preprocessing import StandardScaler\nfrom sklearn.ensemble import VotingClassifier\nfrom sklearn.ensemble import RandomForestClassifier, ExtraTreesClassifier, GradientBoostingClassifier\nfrom sklearn.svm import SVC\nfrom sklearn.pipeline import make_pipeline\nfrom sklearn.metrics import accuracy_score\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Standardize the features\n    scaler = StandardScaler()\n    X_train_scaled = scaler.fit_transform(X_train)\n    X_val_scaled = scaler.transform(X_val)\n\n    # Define models\n    rf = RandomForestClassifier(n_estimators=100, random_state=42)\n    et = ExtraTreesClassifier(n_estimators=100, random_state=42)\n    gb = GradientBoostingClassifier(n_estimators=100, random_state=42)\n    svc = SVC(probability=True, random_state=42)\n\n    # Create a voting classifier\n    voting_clf = VotingClassifier(estimators=[\n        ('rf', rf), ('et', et), ('gb', gb), ('svc', svc)],\n        voting='soft')\n\n    # Fit the voting classifier\n    voting_clf.fit(X_train_scaled, y_train)\n\n    # Make predictions\n    predictions = voting_clf.predict(X_val_scaled)\n\n    return predictions"
+    },
+    {
+      "iteration": 13,
+      "val_accuracy": 0.785,
+      "val_loss": 1.0696,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 13.4,
+      "code": "from sklearn.preprocessing import StandardScaler\nfrom sklearn.ensemble import VotingClassifier\nfrom sklearn.svm import SVC\nfrom sklearn.neighbors import KNeighborsClassifier\nfrom sklearn.ensemble import RandomForestClassifier\nfrom sklearn.pipeline import make_pipeline\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Standardize the features\n    scaler = StandardScaler()\n    \n    # Define models\n    rf_model = RandomForestClassifier(n_estimators=100, random_state=42)\n    svc_model = SVC(kernel='linear', probability=True, random_state=42)\n    knn_model = KNeighborsClassifier(n_neighbors=5)\n\n    # Create a voting classifier\n    voting_clf = VotingClassifier(estimators=[\n        ('rf', rf_model),\n        ('svc', svc_model),\n        ('knn', knn_model)\n    ], voting='soft')\n\n    # Create a pipeline with scaling and the voting classifier\n    pipeline = make_pipeline(scaler, voting_clf)\n\n    # Train the model\n    pipeline.fit(X_train, y_train)\n\n    # Make predictions\n    predictions = pipeline.predict(X_val)\n    \n    return predictions"
+    },
+    {
+      "iteration": 14,
+      "val_accuracy": 0.768,
+      "val_loss": 1.1501,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 25.4,
+      "code": "from sklearn.preprocessing import StandardScaler\nfrom sklearn.ensemble import VotingClassifier\nfrom sklearn.linear_model import LogisticRegression\nfrom sklearn.svm import SVC\nfrom sklearn.tree import DecisionTreeClassifier\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Preprocessing: Standardize the features\n    scaler = StandardScaler()\n    X_train_scaled = scaler.fit_transform(X_train)\n    X_val_scaled = scaler.transform(X_val)\n\n    # Define multiple classifiers\n    clf1 = RandomForestClassifier(n_estimators=100, random_state=42)\n    clf2 = GradientBoostingClassifier(n_estimators=100, random_state=42)\n    clf3 = SVC(probability=True, random_state=42)\n    clf4 = LogisticRegression(random_state=42)\n    \n    # Create a voting classifier\n    voting_clf = VotingClassifier(estimators=[\n        ('rf', clf1), \n        ('gb', clf2), \n        ('svc', clf3), \n        ('lr', clf4)\n    ], voting='soft')\n    \n    # Train the model\n    voting_clf.fit(X_train_scaled, y_train)\n    \n    # Make predictions\n    predictions = voting_clf.predict(X_val_scaled)\n    \n    return predictions"
+    },
+    {
+      "iteration": 15,
+      "val_accuracy": 0.8035,
+      "val_loss": 0.982,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 7.8,
+      "code": "from sklearn.ensemble import VotingClassifier\nfrom sklearn.ensemble import RandomForestClassifier, ExtraTreesClassifier\nfrom sklearn.linear_model import LogisticRegression\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.pipeline import make_pipeline\nfrom sklearn.metrics import accuracy_score\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Standardize the features\n    scaler = StandardScaler()\n    \n    # Create base models\n    rf = RandomForestClassifier(n_estimators=100, random_state=42)\n    et = ExtraTreesClassifier(n_estimators=100, random_state=42)\n    lr = LogisticRegression(max_iter=1000, random_state=42)\n    \n    # Create a voting ensemble of the classifiers\n    voting_clf = VotingClassifier(estimators=[('rf', rf), ('et', et), ('lr', lr)], voting='hard')\n    \n    # Create a pipeline with scaling and the voting classifier\n    model = make_pipeline(scaler, voting_clf)\n    \n    # Fit the model\n    model.fit(X_train, y_train)\n    \n    # Predict on the validation set\n    predictions = model.predict(X_val)\n    \n    return predictions"
+    },
+    {
+      "iteration": 16,
+      "val_accuracy": 0.738,
+      "val_loss": 1.2922,
+      "family": "GradientBoosting",
+      "is_best": false,
+      "time_seconds": 110.3,
+      "code": "from sklearn.decomposition import PCA\nfrom sklearn.ensemble import GradientBoostingClassifier\nfrom sklearn.pipeline import make_pipeline\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.model_selection import StratifiedKFold, cross_val_score\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Reduce dimensionality with PCA\n    pca = PCA(n_components=30)\n\n    # Define the Gradient Boosting Classifier\n    gbc = GradientBoostingClassifier(n_estimators=200, learning_rate=0.1, max_depth=3, random_state=42)\n\n    # Create a pipeline with PCA and Gradient Boosting Classifier\n    pipeline = make_pipeline(StandardScaler(), pca, gbc)\n\n    # Fit the model\n    pipeline.fit(X_train, y_train)\n\n    # Predict\n    predictions = pipeline.predict(X_val)\n\n    return predictions"
+    },
+    {
+      "iteration": 17,
+      "val_accuracy": null,
+      "val_loss": null,
+      "family": "DecisionTree",
+      "error": "Runtime Error: AdaBoostClassifier.__init__() got an unexpected keyword argument 'base_estimator'\nTraceback (most recent call last):\n  File \"F:\\AI-IN-THE-LOOP\\aitl-paper\\experiments\\aeos\\trainer.py\", line 116, in run_solve\n    result_holder[0] = solve_fn(\n  File \"<string>\", line 13, in solve\nTypeError: AdaBoostClassifier.__init__() got an unexpected keyword argument 'base_estimator'\n",
+      "time_seconds": 3.0,
+      "code": "from sklearn.ensemble import AdaBoostClassifier\nfrom sklearn.tree import DecisionTreeClassifier\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.pipeline import make_pipeline\nfrom sklearn.metrics import accuracy_score\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Standardize the features\n    scaler = StandardScaler()\n    \n    # Create an AdaBoost model with a Decision Tree as the base estimator\n    ada_model = AdaBoostClassifier(base_estimator=DecisionTreeClassifier(max_depth=1), n_estimators=100)\n    \n    # Create a pipeline with scaling and the model\n    pipeline = make_pipeline(scaler, ada_model)\n    \n    # Fit the model\n    pipeline.fit(X_train, y_train)\n    \n    # Predict on validation set\n    predictions = pipeline.predict(X_val)\n    \n    return predictions"
+    },
+    {
+      "iteration": 18,
+      "val_accuracy": 0.8035,
+      "val_loss": 0.982,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 7.7,
+      "code": "from sklearn.ensemble import VotingClassifier\nfrom sklearn.ensemble import RandomForestClassifier, ExtraTreesClassifier\nfrom sklearn.linear_model import LogisticRegression\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.pipeline import make_pipeline\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Preprocessing: Standardize the features\n    scaler = StandardScaler()\n    \n    # Define the models\n    rf = RandomForestClassifier(n_estimators=100, random_state=42)\n    et = ExtraTreesClassifier(n_estimators=100, random_state=42)\n    lr = LogisticRegression(max_iter=1000, random_state=42)\n    \n    # Create a voting classifier\n    voting_clf = VotingClassifier(estimators=[('rf', rf), ('et', et), ('lr', lr)], voting='hard')\n    \n    # Create and fit the pipeline\n    pipeline = make_pipeline(scaler, voting_clf)\n    pipeline.fit(X_train, y_train)\n    \n    # Make predictions\n    predictions = pipeline.predict(X_val)\n    \n    return predictions"
+    },
+    {
+      "iteration": 19,
+      "val_accuracy": 0.8035,
+      "val_loss": 0.982,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 18.0,
+      "code": "from sklearn.ensemble import VotingClassifier\nfrom sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier, ExtraTreesClassifier\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.pipeline import Pipeline\nfrom sklearn.metrics import accuracy_score\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Preprocess the data\n    scaler = StandardScaler()\n    \n    # Define models\n    rf = RandomForestClassifier(n_estimators=100, random_state=42)\n    gb = GradientBoostingClassifier(n_estimators=100, random_state=42)\n    et = ExtraTreesClassifier(n_estimators=100, random_state=42)\n\n    # Create a voting classifier\n    voting_clf = VotingClassifier(estimators=[('rf', rf), ('gb', gb), ('et', et)], voting='hard')\n\n    # Create a pipeline with scaling and the voting classifier\n    pipeline = Pipeline(steps=[('scaler', scaler), ('voting_clf', voting_clf)])\n\n    # Train the model\n    pipeline.fit(X_train, y_train)\n\n    # Predict on validation set\n    predictions = pipeline.predict(X_val)\n\n    return predictions"
+    },
+    {
+      "iteration": 20,
+      "val_accuracy": 0.7735,
+      "val_loss": 1.124,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 24.8,
+      "code": "from sklearn.preprocessing import StandardScaler\nfrom sklearn.ensemble import VotingClassifier\nfrom sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier\nfrom sklearn.svm import SVC\nfrom sklearn.pipeline import make_pipeline\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Standardize features\n    scaler = StandardScaler()\n    X_train_scaled = scaler.fit_transform(X_train)\n    X_val_scaled = scaler.transform(X_val)\n\n    # Define the models\n    rf = RandomForestClassifier(n_estimators=100, random_state=42)\n    gb = GradientBoostingClassifier(n_estimators=100, random_state=42)\n    svm = SVC(probability=True, random_state=42)\n\n    # Create a voting classifier\n    voting_clf = VotingClassifier(estimators=[\n        ('rf', rf), \n        ('gb', gb), \n        ('svm', svm)\n    ], voting='soft')\n\n    # Train the model\n    voting_clf.fit(X_train_scaled, y_train)\n\n    # Make predictions\n    predictions = voting_clf.predict(X_val_scaled)\n    \n    return predictions"
+    },
+    {
+      "iteration": 21,
+      "val_accuracy": 0.809,
+      "val_loss": 0.9559,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 18.5,
+      "code": "from sklearn.preprocessing import StandardScaler\nfrom sklearn.ensemble import RandomForestClassifier\nfrom sklearn.model_selection import GridSearchCV\nimport numpy as np\n\ndef solve(X_train, y_train, X_val, y_val):\n    scaler = StandardScaler()\n    X_train_scaled = scaler.fit_transform(X_train)\n    X_val_scaled = scaler.transform(X_val)\n\n    # Using RandomForest with hyperparameter tuning\n    param_grid = {\n        'n_estimators': [100, 200],\n        'max_depth': [None, 10, 20],\n        'min_samples_split': [2, 5, 10]\n    }\n    \n    rf = RandomForestClassifier(random_state=42)\n    grid_search = GridSearchCV(estimator=rf, param_grid=param_grid, cv=3, n_jobs=-1)\n    grid_search.fit(X_train_scaled, y_train)\n\n    best_rf = grid_search.best_estimator_\n    predictions = best_rf.predict(X_val_scaled)\n\n    return np.array(predictions)"
+    }
+  ]
+}

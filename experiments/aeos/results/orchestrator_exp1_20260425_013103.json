@@ -1,0 +1,104 @@
+{
+  "completed": 6,
+  "failed": 0,
+  "skipped": 0,
+  "results": [
+    {
+      "exp_id": "1.28",
+      "model": "gpt-5.4-mini-2026-03-17",
+      "dataset": "tabular",
+      "best_accuracy": 0.821,
+      "total_iterations": 40,
+      "waste_count": 1,
+      "sunk_cost_episodes": 3,
+      "total_time": 1701.0,
+      "families": [
+        "GradientBoosting",
+        "ExtraTrees",
+        "LogisticRegression",
+        "RandomForest"
+      ]
+    },
+    {
+      "exp_id": "1.29",
+      "model": "gpt-5.4-mini-2026-03-17",
+      "dataset": "text",
+      "best_accuracy": 0.8659,
+      "total_iterations": 61,
+      "waste_count": 3,
+      "sunk_cost_episodes": 6,
+      "total_time": 3163.1,
+      "families": [
+        "ExtraTrees",
+        "SVM",
+        "RandomForest",
+        "Unknown",
+        "LogisticRegression"
+      ]
+    },
+    {
+      "exp_id": "1.30",
+      "model": "gpt-5.4-mini-2026-03-17",
+      "dataset": "vision",
+      "best_accuracy": 0.9545,
+      "total_iterations": 10,
+      "waste_count": 1,
+      "sunk_cost_episodes": 0,
+      "total_time": 431.7,
+      "families": [
+        "ExtraTrees",
+        "LogisticRegression",
+        "RandomForest"
+      ]
+    },
+    {
+      "exp_id": "1.31",
+      "model": "gpt-5.4-2026-03-05",
+      "dataset": "tabular",
+      "best_accuracy": 0.8275,
+      "total_iterations": 19,
+      "waste_count": 0,
+      "sunk_cost_episodes": 3,
+      "total_time": 703.7,
+      "families": [
+        "KNN",
+        "SVM",
+        "RandomForest"
+      ]
+    },
+    {
+      "exp_id": "1.32",
+      "model": "gpt-5.4-2026-03-05",
+      "dataset": "text",
+      "best_accuracy": 0.8602,
+      "total_iterations": 18,
+      "waste_count": 0,
+      "sunk_cost_episodes": 3,
+      "total_time": 640.6,
+      "families": [
+        "RandomForest",
+        "SVM",
+        "LogisticRegression"
+      ]
+    },
+    {
+      "exp_id": "1.33",
+      "model": "gpt-5.4-2026-03-05",
+      "dataset": "vision",
+      "best_accuracy": 0.993,
+      "total_iterations": 75,
+      "waste_count": 6,
+      "sunk_cost_episodes": 9,
+      "total_time": 2558.0,
+      "families": [
+        "RandomForest",
+        "PyTorch_NN",
+        "SVM",
+        "LogisticRegression",
+        "sklearn_MLP",
+        "ExtraTrees",
+        "GradientBoosting"
+      ]
+    }
+  ]
+}

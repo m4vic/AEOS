@@ -3,8 +3,41 @@ __pycache__/
 *.py[cod]
 *$py.class
 
-# AITL experiment results (contains logs and potentially API keys if hardcoded)
-experiments/blind_nas_tuner/results/*.json
+# Environment files with API keys
+.env
+.env.local
 
-# Keep the plot image but ignore data files
+# Large model files (PyTorch/HuggingFace weights)
+*.safetensors
+*.bin
+*.pth
+*.pt
+*.joblib
+*.onnx
+*.h5
+
+# AITL experiment heavyweight artifacts
+experiments/aeos/aeos_behave/best_*.joblib
+experiments/aeos/aeos_behave/best_*.pth
+experiments/aeos/aeos_behave/data/
+
+# Blind NAS tuner raw results
+experiments/blind_nas_tuner/results/*.json
 !experiments/blind_nas_tuner/results/loss_curve.png
+
+# LaTeX build artifacts
+*.aux
+*.log
+*.out
+*.synctex.gz
+*.fls
+*.fdb_latexmk
+*.toc
+*.bbl
+*.blg
+texput.log
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini

@@ -1,0 +1,90 @@
+{
+  "exp": "EXP2_agent_critic",
+  "run_id": "20260501_180132",
+  "reviewer_backend": "ollama",
+  "reviewer_model": "qwen2.5-coder:7b",
+  "coder_backend": "ollama",
+  "coder_model": "qwen2.5-coder:7b",
+  "dataset": "tabular2",
+  "n_features": 16,
+  "n_classes": 7,
+  "n_train": 8000,
+  "n_val": 2000,
+  "best_accuracy": 0.927,
+  "best_loss": 0.397,
+  "best_iteration": 2,
+  "best_code": "import numpy as np\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.svm import SVC\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Feature scaling\n    scaler = StandardScaler()\n    X_train_scaled = scaler.fit_transform(X_train)\n    X_val_scaled = scaler.transform(X_val)\n\n    # Initialize and train the model\n    model = SVC(kernel='linear', C=1.0, random_state=42)\n    model.fit(X_train_scaled, y_train)\n\n    # Make predictions\n    predictions = model.predict(X_val_scaled)\n    \n    return predictions",
+  "total_iterations": 5,
+  "stop_reason": "Reviewer autonomously stopped at iteration 5",
+  "total_time_seconds": 400.4,
+  "model_families_explored": [
+    "SVM",
+    "RandomForest",
+    "PyTorch_NN"
+  ],
+  "sunk_cost_episodes": 0,
+  "waste_count": 1,
+  "reviewer_efficiency_pct": null,
+  "iterations": [
+    {
+      "iteration": 1,
+      "val_accuracy": null,
+      "val_loss": null,
+      "family": "RandomForest",
+      "is_best": false,
+      "directive": "Build a Random Forest classifier with 100 trees and use GridSearchCV for hyperparameter tuning.",
+      "reviewer_fired_stop": false,
+      "error": "Timeout Error: Code execution exceeded 300 seconds. Process terminated.",
+      "time_seconds": 319.3,
+      "code": "from sklearn.ensemble import RandomForestClassifier\nfrom sklearn.model_selection import GridSearchCV\n\ndef solve(X_train, y_train, X_val, y_val):\n    param_grid = {\n        'n_estimators': [100],\n        'max_depth': [None, 10, 20, 30],\n        'min_samples_split': [2, 5, 10],\n        'min_samples_leaf': [1, 2, 4]\n    }\n    \n    rf = RandomForestClassifier(random_state=42)\n    grid_search = GridSearchCV(estimator=rf, param_grid=param_grid, cv=3, scoring='accuracy', n_jobs=-1)\n    grid_search.fit(X_train, y_train)\n    \n    best_model = grid_search.best_estimator_\n    predictions = best_model.predict(X_val)\n    \n    return predictions"
+    },
+    {
+      "iteration": 2,
+      "val_accuracy": 0.927,
+      "val_loss": 0.397,
+      "family": "SVM",
+      "is_best": true,
+      "directive": "Simplify the model architecture and reduce the number of layers or nodes to see if it improves performance without causing timeouts.",
+      "reviewer_fired_stop": false,
+      "error": null,
+      "time_seconds": 28.5,
+      "code": "import numpy as np\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.svm import SVC\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Feature scaling\n    scaler = StandardScaler()\n    X_train_scaled = scaler.fit_transform(X_train)\n    X_val_scaled = scaler.transform(X_val)\n\n    # Initialize and train the model\n    model = SVC(kernel='linear', C=1.0, random_state=42)\n    model.fit(X_train_scaled, y_train)\n\n    # Make predictions\n    predictions = model.predict(X_val_scaled)\n    \n    return predictions"
+    },
+    {
+      "iteration": 3,
+      "val_accuracy": 0.916,
+      "val_loss": 0.4491,
+      "family": "SVM",
+      "is_best": false,
+      "directive": "Perform 5 more iterations with the SVM model to ensure consistency in performance. If the accuracy remains high, explore feature selection techniques to potentially improve model efficiency without sacrificing performance.",
+      "reviewer_fired_stop": false,
+      "error": null,
+      "time_seconds": 21.7,
+      "code": "import numpy as np\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.svm import SVC\nfrom sklearn.feature_selection import SelectKBest, f_classif\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Feature scaling\n    scaler = StandardScaler()\n    X_train_scaled = scaler.fit_transform(X_train)\n    X_val_scaled = scaler.transform(X_val)\n\n    # Initialize and train the model\n    for _ in range(5):\n        model = SVC(kernel='linear', C=1.0, random_state=42)\n        model.fit(X_train_scaled, y_train)\n\n    # Feature selection\n    selector = SelectKBest(f_classif, k=10)\n    X_train_selected = selector.fit_transform(X_train_scaled, y_train)\n    X_val_selected = selector.transform(X_val_scaled)\n\n    # Initialize and train the model with selected features\n    model = SVC(kernel='linear', C=1.0, random_state=42)\n    model.fit(X_train_selected, y_train)\n\n    # Make predictions\n    predictions = model.predict(X_val_selected)\n    \n    return predictions"
+    },
+    {
+      "iteration": 4,
+      "val_accuracy": 0.0385,
+      "val_loss": 4.6051,
+      "family": "PyTorch_NN",
+      "is_best": false,
+      "directive": "Build a PyTorch neural network with 3 hidden layers and use Adam optimizer.",
+      "reviewer_fired_stop": false,
+      "error": null,
+      "time_seconds": 23.8,
+      "code": "import numpy as np\nimport torch\nfrom torch import nn, optim\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Convert data to PyTorch tensors\n    X_train = torch.tensor(X_train, dtype=torch.float32)\n    y_train = torch.tensor(y_train, dtype=torch.long)\n    X_val = torch.tensor(X_val, dtype=torch.float32)\n\n    # Define the neural network model\n    class Net(nn.Module):\n        def __init__(self):\n            super(Net, self).__init__()\n            self.fc1 = nn.Linear(16, 64)\n            self.fc2 = nn.Linear(64, 32)\n            self.fc3 = nn.Linear(32, 16)\n            self.fc4 = nn.Linear(16, 7)\n\n        def forward(self, x):\n            x = torch.relu(self.fc1(x))\n            x = torch.relu(self.fc2(x))\n            x = torch.relu(self.fc3(x))\n            x = self.fc4(x)\n            return x\n\n    model = Net()\n    criterion = nn.CrossEntropyLoss()\n    optimizer = optim.Adam(model.parameters(), lr=0.001)\n\n    # Train the model\n    for epoch in range(10):  # Adjust the number of epochs as needed\n        optimizer.zero_grad()\n        outputs = model(X_train)\n        loss = criterion(outputs, y_train)\n        loss.backward()\n        optimizer.step()\n\n    # Make predictions\n    with torch.no_grad():\n        predictions = model(X_val).argmax(dim=1).numpy()\n    \n    return predictions"
+    },
+    {
+      "iteration": 5,
+      "val_accuracy": null,
+      "val_loss": null,
+      "family": "REVIEWER_STOP",
+      "is_best": false,
+      "directive": "STOP",
+      "reviewer_fired_stop": true,
+      "error": null,
+      "time_seconds": 7.1,
+      "code": null
+    }
+  ]
+}

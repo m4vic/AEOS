@@ -1,0 +1,72 @@
+{
+  "run_id": "20260424_185328",
+  "backend": "ollama",
+  "model": "ollama/qwen2.5-coder:7b",
+  "dataset": "vision",
+  "n_features": 784,
+  "n_classes": 10,
+  "n_train": 8000,
+  "n_val": 2000,
+  "best_accuracy": 0.9475,
+  "best_loss": 0.3212,
+  "best_iteration": 2,
+  "best_code": "def solve(X_train, y_train, X_val, y_val):\n    from sklearn.neighbors import KNeighborsClassifier\n    \n    # Normalize features\n    X_train = X_train / 255.0\n    X_val = X_val / 255.0\n    \n    # Initialize and train the model\n    model = KNeighborsClassifier(n_neighbors=3)\n    model.fit(X_train, y_train)\n    \n    # Make predictions\n    predictions = model.predict(X_val)\n    \n    return predictions",
+  "total_iterations": 6,
+  "stop_reason": "Agent autonomously stopped at iteration 6",
+  "total_time_seconds": 298.4,
+  "model_families_explored": [
+    "SVM",
+    "RandomForest",
+    "KNN",
+    "GradientBoosting"
+  ],
+  "sunk_cost_episodes": 0,
+  "waste_count": 1,
+  "iterations": [
+    {
+      "iteration": 1,
+      "val_accuracy": 0.943,
+      "val_loss": 0.3444,
+      "family": "RandomForest",
+      "is_best": true,
+      "time_seconds": 13.3,
+      "code": "import numpy as np\nfrom sklearn.ensemble import RandomForestClassifier\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Normalize features\n    X_train = X_train / 255.0\n    X_val = X_val / 255.0\n    \n    # Initialize and train the model\n    model = RandomForestClassifier(n_estimators=100, random_state=42)\n    model.fit(X_train, y_train)\n    \n    # Make predictions\n    predictions = model.predict(X_val)\n    return predictions"
+    },
+    {
+      "iteration": 2,
+      "val_accuracy": 0.9475,
+      "val_loss": 0.3212,
+      "family": "KNN",
+      "is_best": true,
+      "time_seconds": 4.4,
+      "code": "def solve(X_train, y_train, X_val, y_val):\n    from sklearn.neighbors import KNeighborsClassifier\n    \n    # Normalize features\n    X_train = X_train / 255.0\n    X_val = X_val / 255.0\n    \n    # Initialize and train the model\n    model = KNeighborsClassifier(n_neighbors=3)\n    model.fit(X_train, y_train)\n    \n    # Make predictions\n    predictions = model.predict(X_val)\n    \n    return predictions"
+    },
+    {
+      "iteration": 3,
+      "val_accuracy": 0.9345,
+      "val_loss": 0.3881,
+      "family": "SVM",
+      "is_best": false,
+      "time_seconds": 8.2,
+      "code": "import numpy as np\nfrom sklearn.svm import SVC\nfrom sklearn.preprocessing import StandardScaler\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Standardize features\n    scaler = StandardScaler()\n    X_train_scaled = scaler.fit_transform(X_train)\n    X_val_scaled = scaler.transform(X_val)\n\n    # Initialize and train the model\n    model = SVC(kernel='rbf', C=1.0, gamma='scale')\n    model.fit(X_train_scaled, y_train)\n\n    # Make predictions\n    predictions = model.predict(X_val_scaled)\n    \n    return predictions"
+    },
+    {
+      "iteration": 4,
+      "val_accuracy": 0.9285,
+      "val_loss": 0.4189,
+      "family": "GradientBoosting",
+      "is_best": false,
+      "time_seconds": 255.8,
+      "code": "import numpy as np\nfrom sklearn.ensemble import GradientBoostingClassifier\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Normalize features\n    X_train = X_train / 255.0\n    X_val = X_val / 255.0\n    \n    # Initialize and train the model\n    model = GradientBoostingClassifier(n_estimators=100, learning_rate=0.1, max_depth=3)\n    model.fit(X_train, y_train)\n    \n    # Make predictions\n    predictions = model.predict(X_val)\n    \n    return predictions"
+    },
+    {
+      "iteration": 5,
+      "val_accuracy": null,
+      "val_loss": null,
+      "family": "RandomForest",
+      "error": "Runtime Error: view() takes from 0 to 2 positional arguments but 4 were given\nTraceback (most recent call last):\n  File \"F:\\AI-IN-THE-LOOP\\aitl-paper\\experiments\\aeos\\trainer.py\", line 123, in run_solve\n    result_holder[0] = solve_fn(\n  File \"<string>\", line 39, in solve\nTypeError: view() takes from 0 to 2 positional arguments but 4 were given\n",
+      "time_seconds": 14.0,
+      "code": "import numpy as np\nfrom sklearn.ensemble import RandomForestClassifier\nfrom sklearn.neighbors import KNeighborsClassifier\nfrom sklearn.svm import SVC\nfrom sklearn.metrics import accuracy_score\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Standardize the features\n    X_train = X_train / 255.0\n    X_val = X_val / 255.0\n    \n    # Try a different model family that was not explored yet: Neural Network with PyTorch\n    class SimpleCNN(nn.Module):\n        def __init__(self):\n            super(SimpleCNN, self).__init__()\n            self.conv1 = nn.Conv2d(1, 32, kernel_size=3, padding=1)\n            self.relu = nn.ReLU()\n            self.pool = nn.MaxPool2d(2)\n            self.fc1 = nn.Linear(32 * 14 * 14, 50)\n            self.fc2 = nn.Linear(50, 10)\n        \n        def forward(self, x):\n            x = self.pool(self.relu(self.conv1(x)))\n            x = x.view(-1, 32 * 14 * 14)\n            x = self.relu(self.fc1(x))\n            x = self.fc2(x)\n            return x\n    \n    model = SimpleCNN()\n    criterion = nn.CrossEntropyLoss()\n    optimizer = optim.Adam(model.parameters(), lr=0.001)\n    \n    # Train the model\n    model.train()\n    for epoch in range(10):  # Adjust number of epochs as needed\n        running_loss = 0.0\n        for i, data in enumerate(zip(X_train, y_train), 0):\n            inputs, labels = data\n            inputs = inputs.view(-1, 1, 28, 28)  # Reshape to (batch_size, channels, height, width)\n            \n            optimizer.zero_grad()\n            outputs = model(inputs)\n            loss = criterion(outputs, labels)\n            loss.backward()\n            optimizer.step()\n        \n        running_loss += loss.item()\n    \n    # Evaluate the model\n    model.eval()\n    with torch.no_grad():\n        predictions = []\n        for i, data in enumerate(zip(X_val, y_val), 0):\n            inputs, labels = data\n            inputs = inputs.view(-1, 1, 28, 28)\n            outputs = model(inputs)\n            _, predicted = torch.max(outputs.data, 1)\n            predictions.extend(predicted.numpy())\n    \n    return np.array(predictions)"
+    }
+  ]
+}

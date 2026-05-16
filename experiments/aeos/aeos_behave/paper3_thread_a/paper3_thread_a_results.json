@@ -1,0 +1,790 @@
+{
+    "tabular": {
+        "best_single": {
+            "key": "llama3.1:8b",
+            "exp_type": "single",
+            "n_runs": 3,
+            "avg_accuracy": 0.9492,
+            "max_accuracy": 0.9765,
+            "std_accuracy": 0.0194,
+            "avg_iterations": 103.7,
+            "avg_sunk_cost": 8.7,
+            "avg_time_s": 3432.0,
+            "stop_reasons": [
+                "System forced stop (no improvement in 30 iterations)",
+                "Experiment manually aborted by user at iteration 150"
+            ]
+        },
+        "best_dual": {
+            "key": "qwen2.5-coder:14b \u2192 deepseek-coder-v2:16b",
+            "exp_type": "dual",
+            "n_runs": 3,
+            "avg_accuracy": 0.9373,
+            "max_accuracy": 0.9395,
+            "std_accuracy": 0.0016,
+            "avg_iterations": 7.0,
+            "avg_sunk_cost": 0.0,
+            "avg_time_s": 330.0,
+            "stop_reasons": [
+                "Reviewer autonomously stopped at iteration 7",
+                "Reviewer autonomously stopped at iteration 6",
+                "Reviewer autonomously stopped at iteration 8"
+            ]
+        },
+        "all_single": [
+            {
+                "key": "llama3.1:8b",
+                "exp_type": "single",
+                "n_runs": 3,
+                "avg_accuracy": 0.9492,
+                "max_accuracy": 0.9765,
+                "std_accuracy": 0.0194,
+                "avg_iterations": 103.7,
+                "avg_sunk_cost": 8.7,
+                "avg_time_s": 3432.0,
+                "stop_reasons": [
+                    "System forced stop (no improvement in 30 iterations)",
+                    "Experiment manually aborted by user at iteration 150"
+                ]
+            },
+            {
+                "key": "qwen2.5-coder:3b",
+                "exp_type": "single",
+                "n_runs": 4,
+                "avg_accuracy": 0.9472,
+                "max_accuracy": 1.0,
+                "std_accuracy": 0.0306,
+                "avg_iterations": 46.0,
+                "avg_sunk_cost": 5.2,
+                "avg_time_s": 3430.0,
+                "stop_reasons": [
+                    "Agent autonomously stopped at iteration 41",
+                    "Agent autonomously stopped at iteration 63",
+                    "System forced stop (no improvement in 30 iterations)",
+                    "Agent autonomously stopped at iteration 21"
+                ]
+            },
+            {
+                "key": "deepseek-coder-v2:16b",
+                "exp_type": "single",
+                "n_runs": 7,
+                "avg_accuracy": 0.9349,
+                "max_accuracy": 0.9385,
+                "std_accuracy": 0.0035,
+                "avg_iterations": 80.4,
+                "avg_sunk_cost": 8.6,
+                "avg_time_s": 3997.0,
+                "stop_reasons": [
+                    "System forced stop (no improvement in 30 iterations)"
+                ]
+            },
+            {
+                "key": "ministral-3:14b",
+                "exp_type": "single",
+                "n_runs": 3,
+                "avg_accuracy": 0.9338,
+                "max_accuracy": 0.934,
+                "std_accuracy": 0.0002,
+                "avg_iterations": 63.7,
+                "avg_sunk_cost": 4.3,
+                "avg_time_s": 5013.0,
+                "stop_reasons": [
+                    "Experiment manually aborted by user at iteration 59",
+                    "System forced stop (no improvement in 30 iterations)"
+                ]
+            },
+            {
+                "key": "qwen3.5:9b",
+                "exp_type": "single",
+                "n_runs": 3,
+                "avg_accuracy": 0.9323,
+                "max_accuracy": 0.934,
+                "std_accuracy": 0.0017,
+                "avg_iterations": 65.3,
+                "avg_sunk_cost": 5.3,
+                "avg_time_s": 6410.0,
+                "stop_reasons": [
+                    "Agent autonomously stopped at iteration 15",
+                    "System forced stop (no improvement in 30 iterations)"
+                ]
+            },
+            {
+                "key": "qwen2.5-coder:14b",
+                "exp_type": "single",
+                "n_runs": 7,
+                "avg_accuracy": 0.9309,
+                "max_accuracy": 0.939,
+                "std_accuracy": 0.004,
+                "avg_iterations": 9.1,
+                "avg_sunk_cost": 0.7,
+                "avg_time_s": 566.0,
+                "stop_reasons": [
+                    "Agent autonomously stopped at iteration 12",
+                    "Agent autonomously stopped at iteration 7",
+                    "Agent autonomously stopped at iteration 10",
+                    "Agent autonomously stopped at iteration 6",
+                    "Agent autonomously stopped at iteration 5",
+                    "Agent autonomously stopped at iteration 19"
+                ]
+            },
+            {
+                "key": "qwen2.5-coder:7b",
+                "exp_type": "single",
+                "n_runs": 4,
+                "avg_accuracy": 0.9305,
+                "max_accuracy": 0.939,
+                "std_accuracy": 0.0052,
+                "avg_iterations": 6.8,
+                "avg_sunk_cost": 0.2,
+                "avg_time_s": 162.0,
+                "stop_reasons": [
+                    "Agent autonomously stopped at iteration 6",
+                    "Agent autonomously stopped at iteration 11",
+                    "Agent autonomously stopped at iteration 5"
+                ]
+            },
+            {
+                "key": "phi3:mini",
+                "exp_type": "single",
+                "n_runs": 4,
+                "avg_accuracy": 0.9263,
+                "max_accuracy": 0.9305,
+                "std_accuracy": 0.003,
+                "avg_iterations": 36.2,
+                "avg_sunk_cost": 0.2,
+                "avg_time_s": 1172.0,
+                "stop_reasons": [
+                    "Experiment manually aborted by user at iteration 14",
+                    "Experiment manually aborted by user at iteration 107",
+                    "System forced stop (10 consecutive errors encountered)"
+                ]
+            }
+        ],
+        "all_dual": [
+            {
+                "key": "qwen2.5-coder:14b \u2192 deepseek-coder-v2:16b",
+                "exp_type": "dual",
+                "n_runs": 3,
+                "avg_accuracy": 0.9373,
+                "max_accuracy": 0.9395,
+                "std_accuracy": 0.0016,
+                "avg_iterations": 7.0,
+                "avg_sunk_cost": 0.0,
+                "avg_time_s": 330.0,
+                "stop_reasons": [
+                    "Reviewer autonomously stopped at iteration 7",
+                    "Reviewer autonomously stopped at iteration 6",
+                    "Reviewer autonomously stopped at iteration 8"
+                ]
+            },
+            {
+                "key": "llama3.1:8b \u2192 qwen2.5-coder:3b",
+                "exp_type": "dual",
+                "n_runs": 3,
+                "avg_accuracy": 0.9332,
+                "max_accuracy": 0.9385,
+                "std_accuracy": 0.0038,
+                "avg_iterations": 16.3,
+                "avg_sunk_cost": 0.0,
+                "avg_time_s": 423.0,
+                "stop_reasons": [
+                    "Reviewer autonomously stopped at iteration 20",
+                    "Reviewer autonomously stopped at iteration 22",
+                    "Reviewer autonomously stopped at iteration 7"
+                ]
+            },
+            {
+                "key": "qwen2.5-coder:7b \u2192 qwen3.5:9b",
+                "exp_type": "dual",
+                "n_runs": 3,
+                "avg_accuracy": 0.9325,
+                "max_accuracy": 0.934,
+                "std_accuracy": 0.0021,
+                "avg_iterations": 11.3,
+                "avg_sunk_cost": 0.0,
+                "avg_time_s": 704.0,
+                "stop_reasons": [
+                    "Reviewer autonomously stopped at iteration 14",
+                    "Reviewer autonomously stopped at iteration 8",
+                    "Reviewer autonomously stopped at iteration 12"
+                ]
+            },
+            {
+                "key": "phi3:mini \u2192 qwen2.5-coder:3b",
+                "exp_type": "dual",
+                "n_runs": 4,
+                "avg_accuracy": 0.9303,
+                "max_accuracy": 0.9325,
+                "std_accuracy": 0.0013,
+                "avg_iterations": 13.0,
+                "avg_sunk_cost": 0.8,
+                "avg_time_s": 395.0,
+                "stop_reasons": [
+                    "Reviewer autonomously stopped at iteration 18",
+                    "Reviewer autonomously stopped at iteration 14",
+                    "Reviewer autonomously stopped at iteration 8",
+                    "Reviewer autonomously stopped at iteration 12"
+                ]
+            },
+            {
+                "key": "qwen2.5-coder:3b \u2192 llama3.1:8b",
+                "exp_type": "dual",
+                "n_runs": 3,
+                "avg_accuracy": 0.9303,
+                "max_accuracy": 0.932,
+                "std_accuracy": 0.0012,
+                "avg_iterations": 6.3,
+                "avg_sunk_cost": 0.0,
+                "avg_time_s": 132.0,
+                "stop_reasons": [
+                    "Reviewer autonomously stopped at iteration 5",
+                    "Reviewer autonomously stopped at iteration 9"
+                ]
+            },
+            {
+                "key": "phi3:mini \u2192 qwen2.5-coder:7b",
+                "exp_type": "dual",
+                "n_runs": 4,
+                "avg_accuracy": 0.9298,
+                "max_accuracy": 0.934,
+                "std_accuracy": 0.0025,
+                "avg_iterations": 4.8,
+                "avg_sunk_cost": 0.0,
+                "avg_time_s": 161.0,
+                "stop_reasons": [
+                    "Reviewer autonomously stopped at iteration 2",
+                    "Reviewer autonomously stopped at iteration 11",
+                    "Reviewer autonomously stopped at iteration 4"
+                ]
+            },
+            {
+                "key": "unknown \u2192 unknown",
+                "exp_type": "dual",
+                "n_runs": 3,
+                "avg_accuracy": 0.9295,
+                "max_accuracy": 0.9295,
+                "std_accuracy": 0.0,
+                "avg_iterations": 75.0,
+                "avg_sunk_cost": null,
+                "avg_time_s": 5680.0,
+                "stop_reasons": [
+                    "Safety cap reached (75 iterations)"
+                ]
+            },
+            {
+                "key": "qwen3.5:9b \u2192 qwen2.5-coder:7b",
+                "exp_type": "dual",
+                "n_runs": 3,
+                "avg_accuracy": 0.9292,
+                "max_accuracy": 0.9295,
+                "std_accuracy": 0.0002,
+                "avg_iterations": 75.0,
+                "avg_sunk_cost": 20.3,
+                "avg_time_s": 3427.0,
+                "stop_reasons": [
+                    "Safety cap reached (75 iterations)"
+                ]
+            },
+            {
+                "key": "qwen2.5-coder:7b \u2192 qwen2.5-coder:7b",
+                "exp_type": "dual",
+                "n_runs": 4,
+                "avg_accuracy": 0.9281,
+                "max_accuracy": 0.931,
+                "std_accuracy": 0.0023,
+                "avg_iterations": 6.5,
+                "avg_sunk_cost": 0.0,
+                "avg_time_s": 302.0,
+                "stop_reasons": [
+                    "Reviewer autonomously stopped at iteration 6",
+                    "Reviewer autonomously stopped at iteration 5",
+                    "Reviewer autonomously stopped at iteration 9"
+                ]
+            },
+            {
+                "key": "qwen2.5-coder:7b \u2192 llama3.1:8b",
+                "exp_type": "dual",
+                "n_runs": 4,
+                "avg_accuracy": 0.6967,
+                "max_accuracy": 0.9345,
+                "std_accuracy": 0.4023,
+                "avg_iterations": 4.2,
+                "avg_sunk_cost": 0.0,
+                "avg_time_s": 293.0,
+                "stop_reasons": [
+                    "Reviewer autonomously stopped at iteration 2",
+                    "Reviewer autonomously stopped at iteration 10",
+                    "Reviewer autonomously stopped at iteration 3"
+                ]
+            }
+        ]
+    },
+    "vision": {
+        "best_single": {
+            "key": "qwen3.5:9b",
+            "exp_type": "single",
+            "n_runs": 3,
+            "avg_accuracy": 0.9827,
+            "max_accuracy": 0.983,
+            "std_accuracy": 0.0002,
+            "avg_iterations": 25.0,
+            "avg_sunk_cost": 0.0,
+            "avg_time_s": 2759.0,
+            "stop_reasons": [
+                "Agent autonomously stopped at iteration 6",
+                "Agent autonomously stopped at iteration 38",
+                "Agent autonomously stopped at iteration 31"
+            ]
+        },
+        "best_dual": {
+            "key": "qwen3.5:9b \u2192 qwen2.5-coder:7b",
+            "exp_type": "dual",
+            "n_runs": 3,
+            "avg_accuracy": 0.984,
+            "max_accuracy": 0.9905,
+            "std_accuracy": 0.0085,
+            "avg_iterations": 75.0,
+            "avg_sunk_cost": 10.3,
+            "avg_time_s": 6612.0,
+            "stop_reasons": [
+                "Safety cap reached (75 iterations)"
+            ]
+        },
+        "all_single": [
+            {
+                "key": "qwen3.5:9b",
+                "exp_type": "single",
+                "n_runs": 3,
+                "avg_accuracy": 0.9827,
+                "max_accuracy": 0.983,
+                "std_accuracy": 0.0002,
+                "avg_iterations": 25.0,
+                "avg_sunk_cost": 0.0,
+                "avg_time_s": 2759.0,
+                "stop_reasons": [
+                    "Agent autonomously stopped at iteration 6",
+                    "Agent autonomously stopped at iteration 38",
+                    "Agent autonomously stopped at iteration 31"
+                ]
+            },
+            {
+                "key": "ministral-3:14b",
+                "exp_type": "single",
+                "n_runs": 3,
+                "avg_accuracy": 0.9778,
+                "max_accuracy": 0.9815,
+                "std_accuracy": 0.0045,
+                "avg_iterations": 8.7,
+                "avg_sunk_cost": 0.0,
+                "avg_time_s": 546.0,
+                "stop_reasons": [
+                    "Agent autonomously stopped at iteration 7",
+                    "Agent autonomously stopped at iteration 5",
+                    "Agent autonomously stopped at iteration 14"
+                ]
+            },
+            {
+                "key": "qwen2.5-coder:7b",
+                "exp_type": "single",
+                "n_runs": 3,
+                "avg_accuracy": 0.9595,
+                "max_accuracy": 0.9645,
+                "std_accuracy": 0.0071,
+                "avg_iterations": 9.3,
+                "avg_sunk_cost": 0.0,
+                "avg_time_s": 353.0,
+                "stop_reasons": [
+                    "Agent autonomously stopped at iteration 6",
+                    "Agent autonomously stopped at iteration 12",
+                    "Agent autonomously stopped at iteration 10"
+                ]
+            },
+            {
+                "key": "llama3.1:8b",
+                "exp_type": "single",
+                "n_runs": 3,
+                "avg_accuracy": 0.955,
+                "max_accuracy": 0.967,
+                "std_accuracy": 0.0092,
+                "avg_iterations": 46.7,
+                "avg_sunk_cost": 1.7,
+                "avg_time_s": 1847.0,
+                "stop_reasons": [
+                    "System forced stop (10 consecutive errors encountered)"
+                ]
+            },
+            {
+                "key": "deepseek-coder-v2:16b",
+                "exp_type": "single",
+                "n_runs": 3,
+                "avg_accuracy": 0.9545,
+                "max_accuracy": 0.957,
+                "std_accuracy": 0.0019,
+                "avg_iterations": 65.3,
+                "avg_sunk_cost": 7.3,
+                "avg_time_s": 13763.0,
+                "stop_reasons": [
+                    "System forced stop (no improvement in 30 iterations)"
+                ]
+            },
+            {
+                "key": "qwen2.5-coder:3b",
+                "exp_type": "single",
+                "n_runs": 3,
+                "avg_accuracy": 0.948,
+                "max_accuracy": 0.9565,
+                "std_accuracy": 0.006,
+                "avg_iterations": 61.3,
+                "avg_sunk_cost": 9.0,
+                "avg_time_s": 4081.0,
+                "stop_reasons": [
+                    "Agent autonomously stopped at iteration 40",
+                    "Agent autonomously stopped at iteration 52",
+                    "System forced stop (no improvement in 30 iterations)"
+                ]
+            },
+            {
+                "key": "qwen2.5-coder:14b",
+                "exp_type": "single",
+                "n_runs": 3,
+                "avg_accuracy": 0.944,
+                "max_accuracy": 0.9495,
+                "std_accuracy": 0.0041,
+                "avg_iterations": 16.0,
+                "avg_sunk_cost": 1.3,
+                "avg_time_s": 624.0,
+                "stop_reasons": [
+                    "Agent autonomously stopped at iteration 6",
+                    "Agent autonomously stopped at iteration 37",
+                    "Agent autonomously stopped at iteration 5"
+                ]
+            },
+            {
+                "key": "phi3:mini",
+                "exp_type": "single",
+                "n_runs": 3,
+                "avg_accuracy": 0.6287,
+                "max_accuracy": 0.9475,
+                "std_accuracy": 0.4445,
+                "avg_iterations": 13.0,
+                "avg_sunk_cost": 0.0,
+                "avg_time_s": 516.0,
+                "stop_reasons": [
+                    "System forced stop (10 consecutive errors encountered)"
+                ]
+            }
+        ],
+        "all_dual": [
+            {
+                "key": "qwen3.5:9b \u2192 qwen2.5-coder:7b",
+                "exp_type": "dual",
+                "n_runs": 3,
+                "avg_accuracy": 0.984,
+                "max_accuracy": 0.9905,
+                "std_accuracy": 0.0085,
+                "avg_iterations": 75.0,
+                "avg_sunk_cost": 10.3,
+                "avg_time_s": 6612.0,
+                "stop_reasons": [
+                    "Safety cap reached (75 iterations)"
+                ]
+            },
+            {
+                "key": "qwen2.5-coder:14b \u2192 deepseek-coder-v2:16b",
+                "exp_type": "dual",
+                "n_runs": 3,
+                "avg_accuracy": 0.9687,
+                "max_accuracy": 0.9795,
+                "std_accuracy": 0.0084,
+                "avg_iterations": 14.3,
+                "avg_sunk_cost": 1.3,
+                "avg_time_s": 1319.0,
+                "stop_reasons": [
+                    "Reviewer autonomously stopped at iteration 20",
+                    "Reviewer autonomously stopped at iteration 7",
+                    "Reviewer autonomously stopped at iteration 16"
+                ]
+            },
+            {
+                "key": "llama3.1:8b \u2192 qwen2.5-coder:3b",
+                "exp_type": "dual",
+                "n_runs": 3,
+                "avg_accuracy": 0.9452,
+                "max_accuracy": 0.9495,
+                "std_accuracy": 0.0031,
+                "avg_iterations": 9.7,
+                "avg_sunk_cost": 0.0,
+                "avg_time_s": 397.0,
+                "stop_reasons": [
+                    "Reviewer autonomously stopped at iteration 10",
+                    "Reviewer autonomously stopped at iteration 9"
+                ]
+            },
+            {
+                "key": "qwen2.5-coder:3b \u2192 llama3.1:8b",
+                "exp_type": "dual",
+                "n_runs": 3,
+                "avg_accuracy": 0.9403,
+                "max_accuracy": 0.943,
+                "std_accuracy": 0.0038,
+                "avg_iterations": 13.0,
+                "avg_sunk_cost": 0.0,
+                "avg_time_s": 533.0,
+                "stop_reasons": [
+                    "Reviewer autonomously stopped at iteration 11",
+                    "Reviewer autonomously stopped at iteration 22",
+                    "Reviewer autonomously stopped at iteration 6"
+                ]
+            },
+            {
+                "key": "qwen2.5-coder:7b \u2192 qwen3.5:9b",
+                "exp_type": "dual",
+                "n_runs": 3,
+                "avg_accuracy": 0.94,
+                "max_accuracy": 0.943,
+                "std_accuracy": 0.0039,
+                "avg_iterations": 8.7,
+                "avg_sunk_cost": 0.0,
+                "avg_time_s": 673.0,
+                "stop_reasons": [
+                    "Reviewer autonomously stopped at iteration 5",
+                    "Reviewer autonomously stopped at iteration 9",
+                    "Reviewer autonomously stopped at iteration 12"
+                ]
+            }
+        ]
+    },
+    "text": {
+        "best_single": {
+            "key": "llama3.1:8b",
+            "exp_type": "single",
+            "n_runs": 3,
+            "avg_accuracy": 0.8988,
+            "max_accuracy": 0.9391,
+            "std_accuracy": 0.0531,
+            "avg_iterations": 113.3,
+            "avg_sunk_cost": 1.7,
+            "avg_time_s": 3202.0,
+            "stop_reasons": [
+                "Safety cap reached (200 iterations)",
+                "System forced stop (10 consecutive errors encountered)"
+            ]
+        },
+        "best_dual": {
+            "key": "qwen2.5-coder:14b \u2192 deepseek-coder-v2:16b",
+            "exp_type": "dual",
+            "n_runs": 3,
+            "avg_accuracy": 0.8116,
+            "max_accuracy": 0.823,
+            "std_accuracy": 0.0161,
+            "avg_iterations": 8.7,
+            "avg_sunk_cost": 0.0,
+            "avg_time_s": 596.0,
+            "stop_reasons": [
+                "Reviewer autonomously stopped at iteration 9",
+                "Reviewer autonomously stopped at iteration 8"
+            ]
+        },
+        "all_single": [
+            {
+                "key": "llama3.1:8b",
+                "exp_type": "single",
+                "n_runs": 3,
+                "avg_accuracy": 0.8988,
+                "max_accuracy": 0.9391,
+                "std_accuracy": 0.0531,
+                "avg_iterations": 113.3,
+                "avg_sunk_cost": 1.7,
+                "avg_time_s": 3202.0,
+                "stop_reasons": [
+                    "Safety cap reached (200 iterations)",
+                    "System forced stop (10 consecutive errors encountered)"
+                ]
+            },
+            {
+                "key": "ministral-3:14b",
+                "exp_type": "single",
+                "n_runs": 3,
+                "avg_accuracy": 0.8377,
+                "max_accuracy": 0.8379,
+                "std_accuracy": 0.0002,
+                "avg_iterations": 107.7,
+                "avg_sunk_cost": 4.0,
+                "avg_time_s": 10381.0,
+                "stop_reasons": [
+                    "Agent autonomously stopped at iteration 120",
+                    "System forced stop (no improvement in 30 iterations)"
+                ]
+            },
+            {
+                "key": "qwen2.5-coder:3b",
+                "exp_type": "single",
+                "n_runs": 3,
+                "avg_accuracy": 0.8344,
+                "max_accuracy": 0.8571,
+                "std_accuracy": 0.0161,
+                "avg_iterations": 50.3,
+                "avg_sunk_cost": 8.0,
+                "avg_time_s": 1910.0,
+                "stop_reasons": [
+                    "Agent autonomously stopped at iteration 33",
+                    "Agent autonomously stopped at iteration 66",
+                    "System forced stop (no improvement in 30 iterations)"
+                ]
+            },
+            {
+                "key": "deepseek-coder-v2:16b",
+                "exp_type": "single",
+                "n_runs": 3,
+                "avg_accuracy": 0.8265,
+                "max_accuracy": 0.8501,
+                "std_accuracy": 0.0329,
+                "avg_iterations": 129.3,
+                "avg_sunk_cost": 7.7,
+                "avg_time_s": 7159.0,
+                "stop_reasons": [
+                    "System forced stop (no improvement in 30 iterations)"
+                ]
+            },
+            {
+                "key": "qwen3.5:9b",
+                "exp_type": "single",
+                "n_runs": 3,
+                "avg_accuracy": 0.8129,
+                "max_accuracy": 0.8278,
+                "std_accuracy": 0.0166,
+                "avg_iterations": 79.3,
+                "avg_sunk_cost": 1.3,
+                "avg_time_s": 11226.0,
+                "stop_reasons": [
+                    "Agent autonomously stopped at iteration 102",
+                    "Agent autonomously stopped at iteration 36",
+                    "System forced stop (no improvement in 30 iterations)"
+                ]
+            },
+            {
+                "key": "qwen2.5-coder:14b",
+                "exp_type": "single",
+                "n_runs": 3,
+                "avg_accuracy": 0.7917,
+                "max_accuracy": 0.798,
+                "std_accuracy": 0.0045,
+                "avg_iterations": 5.3,
+                "avg_sunk_cost": 0.3,
+                "avg_time_s": 212.0,
+                "stop_reasons": [
+                    "Agent autonomously stopped at iteration 6",
+                    "Agent autonomously stopped at iteration 5"
+                ]
+            },
+            {
+                "key": "qwen2.5-coder:7b",
+                "exp_type": "single",
+                "n_runs": 3,
+                "avg_accuracy": 0.7831,
+                "max_accuracy": 0.8067,
+                "std_accuracy": 0.0275,
+                "avg_iterations": 6.0,
+                "avg_sunk_cost": 0.0,
+                "avg_time_s": 307.0,
+                "stop_reasons": [
+                    "Agent autonomously stopped at iteration 8",
+                    "Agent autonomously stopped at iteration 5"
+                ]
+            },
+            {
+                "key": "phi3:mini",
+                "exp_type": "single",
+                "n_runs": 3,
+                "avg_accuracy": 0.5035,
+                "max_accuracy": 0.7739,
+                "std_accuracy": 0.3564,
+                "avg_iterations": 34.7,
+                "avg_sunk_cost": 1.0,
+                "avg_time_s": 713.0,
+                "stop_reasons": [
+                    "System forced stop (10 consecutive errors encountered)"
+                ]
+            }
+        ],
+        "all_dual": [
+            {
+                "key": "qwen2.5-coder:14b \u2192 deepseek-coder-v2:16b",
+                "exp_type": "dual",
+                "n_runs": 3,
+                "avg_accuracy": 0.8116,
+                "max_accuracy": 0.823,
+                "std_accuracy": 0.0161,
+                "avg_iterations": 8.7,
+                "avg_sunk_cost": 0.0,
+                "avg_time_s": 596.0,
+                "stop_reasons": [
+                    "Reviewer autonomously stopped at iteration 9",
+                    "Reviewer autonomously stopped at iteration 8"
+                ]
+            },
+            {
+                "key": "qwen2.5-coder:7b \u2192 qwen3.5:9b",
+                "exp_type": "dual",
+                "n_runs": 3,
+                "avg_accuracy": 0.7996,
+                "max_accuracy": 0.823,
+                "std_accuracy": 0.0207,
+                "avg_iterations": 14.3,
+                "avg_sunk_cost": 0.0,
+                "avg_time_s": 1107.0,
+                "stop_reasons": [
+                    "Reviewer autonomously stopped at iteration 19",
+                    "Reviewer autonomously stopped at iteration 10",
+                    "Reviewer autonomously stopped at iteration 14"
+                ]
+            },
+            {
+                "key": "llama3.1:8b \u2192 qwen2.5-coder:3b",
+                "exp_type": "dual",
+                "n_runs": 3,
+                "avg_accuracy": 0.7802,
+                "max_accuracy": 0.8032,
+                "std_accuracy": 0.0163,
+                "avg_iterations": 10.0,
+                "avg_sunk_cost": 0.0,
+                "avg_time_s": 626.0,
+                "stop_reasons": [
+                    "Reviewer autonomously stopped at iteration 10",
+                    "Reviewer autonomously stopped at iteration 8",
+                    "Reviewer autonomously stopped at iteration 12"
+                ]
+            },
+            {
+                "key": "qwen3.5:9b \u2192 qwen2.5-coder:7b",
+                "exp_type": "dual",
+                "n_runs": 3,
+                "avg_accuracy": 0.7744,
+                "max_accuracy": 0.855,
+                "std_accuracy": 0.0573,
+                "avg_iterations": 75.0,
+                "avg_sunk_cost": 17.3,
+                "avg_time_s": 4955.0,
+                "stop_reasons": [
+                    "Safety cap reached (75 iterations)"
+                ]
+            },
+            {
+                "key": "qwen2.5-coder:3b \u2192 llama3.1:8b",
+                "exp_type": "dual",
+                "n_runs": 3,
+                "avg_accuracy": 0.7476,
+                "max_accuracy": 0.7945,
+                "std_accuracy": 0.0332,
+                "avg_iterations": 9.7,
+                "avg_sunk_cost": 0.0,
+                "avg_time_s": 598.0,
+                "stop_reasons": [
+                    "Reviewer autonomously stopped at iteration 5",
+                    "Reviewer autonomously stopped at iteration 8",
+                    "Reviewer autonomously stopped at iteration 16"
+                ]
+            }
+        ]
+    }
+}

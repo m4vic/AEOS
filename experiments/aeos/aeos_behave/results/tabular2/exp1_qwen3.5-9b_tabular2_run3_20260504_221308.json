@@ -1,0 +1,152 @@
+{
+  "run_id": "20260504_221308",
+  "backend": "ollama",
+  "model": "ollama/qwen3.5:9b",
+  "dataset": "tabular2",
+  "n_features": 16,
+  "n_classes": 7,
+  "n_train": 8000,
+  "n_val": 2000,
+  "best_accuracy": 0.93,
+  "best_loss": 0.3828,
+  "best_iteration": 4,
+  "best_code": "import numpy as np\nfrom sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier, ExtraTreesClassifier\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.pipeline import Pipeline\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Scale features for consistency across models\n    scaler = StandardScaler()\n    X_train_scaled = scaler.fit_transform(X_train)\n    X_val_scaled = scaler.transform(X_val)\n    \n    # Model 1: RandomForest with tuned hyperparameters\n    rf = RandomForestClassifier(\n        n_estimators=200,\n        max_depth=10,\n        min_samples_split=5,\n        min_samples_leaf=2,\n        max_features='sqrt',\n        random_state=42,\n        n_jobs=-1\n    )\n    rf.fit(X_train_scaled, y_train)\n    rf_pred = rf.predict(X_val_scaled)\n    \n    # Model 2: ExtraTrees for diversity\n    et = ExtraTreesClassifier(\n        n_estimators=200,\n        max_depth=10,\n        min_samples_split=5,\n        min_samples_leaf=2,\n        max_features='sqrt',\n        random_state=42,\n        n_jobs=-1\n    )\n    et.fit(X_train_scaled, y_train)\n    et_pred = et.predict(X_val_scaled)\n    \n    # Model 3: GradientBoosting with reasonable depth\n    gb = GradientBoostingClassifier(\n        n_estimators=150,\n        max_depth=5,\n        learning_rate=0.1,\n        min_samples_split=5,\n        min_samples_leaf=2,\n        subsample=0.8,\n        random_state=42\n    )\n    gb.fit(X_train_scaled, y_train)\n    gb_pred = gb.predict(X_val_scaled)\n    \n    # Ensemble: weighted average of predictions\n    rf_proba = rf.predict_proba(X_val_scaled)\n    et_proba = et.predict_proba(X_val_scaled)\n    gb_proba = gb.predict_proba(X_val_scaled)\n    \n    # Normalize probabilities and ensemble\n    ensemble_proba = 0.4 * rf_proba + 0.3 * et_proba + 0.3 * gb_proba\n    ensemble_pred = ensemble_proba.argmax(axis=1)\n    \n    return ensemble_pred",
+  "total_iterations": 15,
+  "stop_reason": "Agent autonomously stopped at iteration 15",
+  "total_time_seconds": 1336.9,
+  "model_families_explored": [
+    "Ensemble",
+    "GradientBoosting",
+    "RandomForest"
+  ],
+  "sunk_cost_episodes": 0,
+  "waste_count": 4,
+  "iterations": [
+    {
+      "iteration": 1,
+      "val_accuracy": 0.926,
+      "val_loss": 0.4018,
+      "family": "RandomForest",
+      "is_best": true,
+      "time_seconds": 52.1,
+      "code": "import numpy as np\nfrom sklearn.ensemble import RandomForestClassifier\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Initialize Random Forest with fixed hyperparameters\n    # max_features='sqrt' is required per constraints\n    # n_jobs=-1 utilizes all available CPU cores for efficiency\n    model = RandomForestClassifier(\n        n_estimators=200,\n        max_depth=None,\n        max_features='sqrt',\n        random_state=42,\n        n_jobs=-1,\n        verbose=0\n    )\n    \n    # Train the model\n    model.fit(X_train, y_train)\n    \n    # Get predictions using predict (not predict_proba)\n    predictions = model.predict(X_val)\n    \n    return predictions"
+    },
+    {
+      "iteration": 2,
+      "val_accuracy": 0.9125,
+      "val_loss": 0.4657,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 100.9,
+      "code": "import numpy as np\nfrom sklearn.ensemble import GradientBoostingClassifier, RandomForestClassifier, ExtraTreesClassifier\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.linear_model import LogisticRegression\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Scale features\n    scaler = StandardScaler()\n    X_train_scaled = scaler.fit_transform(X_train)\n    X_val_scaled = scaler.transform(X_val)\n    \n    # Try multiple models and ensemble\n    models = {\n        'rf': RandomForestClassifier(n_estimators=200, max_depth=10, max_features='sqrt', random_state=42),\n        'et': ExtraTreesClassifier(n_estimators=200, max_depth=10, max_features='sqrt', random_state=42),\n        'gb': GradientBoostingClassifier(n_estimators=150, max_depth=5, learning_rate=0.1, random_state=42),\n        'lr': LogisticRegression(max_iter=1000, multi_class='multinomial', solver='lbfgs', C=1.0)\n    }\n    \n    # Train all models\n    for name, model in models.items():\n        model.fit(X_train_scaled, y_train)\n    \n    # Get predictions from each model\n    preds = []\n    for name, model in models.items():\n        preds.append(model.predict(X_val_scaled))\n    \n    # Ensemble: weighted average based on simple voting\n    ensemble_preds = np.array(preds).mean(axis=0)\n    ensemble_preds = np.clip(ensemble_preds, 0, 6)\n    \n    # Alternative: use gradient boosting as primary since it often outperforms RF\n    best_preds = models['gb'].predict(X_val_scaled)\n    \n    # Try combining predictions\n    combined = np.array([models['rf'].predict(X_val_scaled), \n                         models['gb'].predict(X_val_scaled), \n                         models['et'].predict(X_val_scaled)])\n    combined = np.mean(combined, axis=0)\n    combined = np.clip(combined, 0, 6).astype(int)\n    \n    return combined.astype(int)"
+    },
+    {
+      "iteration": 3,
+      "val_accuracy": 0.1235,
+      "val_loss": 4.2026,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 100.1,
+      "code": "import numpy as np\nfrom sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.pipeline import Pipeline\nfrom sklearn.linear_model import LogisticRegression\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Standardize features\n    scaler = StandardScaler()\n    X_train_scaled = scaler.fit_transform(X_train)\n    X_val_scaled = scaler.transform(X_val)\n    \n    # Try GradientBoosting with tuned parameters\n    gb_model = GradientBoostingClassifier(\n        n_estimators=200,\n        max_depth=5,\n        learning_rate=0.1,\n        min_samples_split=5,\n        min_samples_leaf=3,\n        subsample=0.8,\n        random_state=42\n    )\n    gb_model.fit(X_train_scaled, y_train)\n    gb_pred = gb_model.predict(X_val_scaled)\n    \n    # Also try optimized RandomForest\n    rf_model = RandomForestClassifier(\n        n_estimators=300,\n        max_depth=10,\n        min_samples_split=5,\n        min_samples_leaf=3,\n        max_features='sqrt',\n        n_jobs=-1,\n        random_state=42,\n        class_weight='balanced'\n    )\n    rf_model.fit(X_train_scaled, y_train)\n    rf_pred = rf_model.predict(X_val_scaled)\n    \n    # Try Logistic Regression as baseline\n    lr_model = LogisticRegression(\n        max_iter=1000,\n        C=1.0,\n        random_state=42,\n        multi_class='multinomial'\n    )\n    lr_model.fit(X_train_scaled, y_train)\n    lr_pred = lr_model.predict(X_val_scaled)\n    \n    # Ensemble: majority vote\n    predictions = np.zeros(len(y_val), dtype=int)\n    for pred in [gb_pred, rf_pred, lr_pred]:\n        predictions += pred\n    \n    predictions = np.sign(predictions)\n    predictions[predictions == 0] = 0  # Handle ties\n    \n    return predictions"
+    },
+    {
+      "iteration": 4,
+      "val_accuracy": 0.93,
+      "val_loss": 0.3828,
+      "family": "RandomForest",
+      "is_best": true,
+      "time_seconds": 88.8,
+      "code": "import numpy as np\nfrom sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier, ExtraTreesClassifier\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.pipeline import Pipeline\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Scale features for consistency across models\n    scaler = StandardScaler()\n    X_train_scaled = scaler.fit_transform(X_train)\n    X_val_scaled = scaler.transform(X_val)\n    \n    # Model 1: RandomForest with tuned hyperparameters\n    rf = RandomForestClassifier(\n        n_estimators=200,\n        max_depth=10,\n        min_samples_split=5,\n        min_samples_leaf=2,\n        max_features='sqrt',\n        random_state=42,\n        n_jobs=-1\n    )\n    rf.fit(X_train_scaled, y_train)\n    rf_pred = rf.predict(X_val_scaled)\n    \n    # Model 2: ExtraTrees for diversity\n    et = ExtraTreesClassifier(\n        n_estimators=200,\n        max_depth=10,\n        min_samples_split=5,\n        min_samples_leaf=2,\n        max_features='sqrt',\n        random_state=42,\n        n_jobs=-1\n    )\n    et.fit(X_train_scaled, y_train)\n    et_pred = et.predict(X_val_scaled)\n    \n    # Model 3: GradientBoosting with reasonable depth\n    gb = GradientBoostingClassifier(\n        n_estimators=150,\n        max_depth=5,\n        learning_rate=0.1,\n        min_samples_split=5,\n        min_samples_leaf=2,\n        subsample=0.8,\n        random_state=42\n    )\n    gb.fit(X_train_scaled, y_train)\n    gb_pred = gb.predict(X_val_scaled)\n    \n    # Ensemble: weighted average of predictions\n    rf_proba = rf.predict_proba(X_val_scaled)\n    et_proba = et.predict_proba(X_val_scaled)\n    gb_proba = gb.predict_proba(X_val_scaled)\n    \n    # Normalize probabilities and ensemble\n    ensemble_proba = 0.4 * rf_proba + 0.3 * et_proba + 0.3 * gb_proba\n    ensemble_pred = ensemble_proba.argmax(axis=1)\n    \n    return ensemble_pred"
+    },
+    {
+      "iteration": 5,
+      "val_accuracy": null,
+      "val_loss": null,
+      "family": "Unknown",
+      "error": "Structure Error: Must define 'def solve(X_train, y_train, X_val, y_val)' that returns predictions.",
+      "time_seconds": 57.1,
+      "code": "print('Error: LLM returned an empty response. You might be exceeding your context window.')"
+    },
+    {
+      "iteration": 6,
+      "val_accuracy": 0.9295,
+      "val_loss": 0.3852,
+      "family": "GradientBoosting",
+      "is_best": false,
+      "time_seconds": 87.7,
+      "code": "import numpy as np\nfrom sklearn.ensemble import GradientBoostingClassifier, ExtraTreesClassifier\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.pipeline import Pipeline\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Standardize features\n    scaler = StandardScaler()\n    X_train_scaled = scaler.fit_transform(X_train)\n    X_val_scaled = scaler.transform(X_val)\n    \n    # Try GradientBoosting with tuned hyperparameters\n    model = GradientBoostingClassifier(\n        n_estimators=200,\n        max_depth=4,\n        learning_rate=0.1,\n        min_samples_split=5,\n        min_samples_leaf=2,\n        subsample=0.8,\n        random_state=42,\n        loss='log_loss'\n    )\n    model.fit(X_train_scaled, y_train)\n    predictions = model.predict(X_val_scaled)\n    return predictions"
+    },
+    {
+      "iteration": 7,
+      "val_accuracy": 0.91,
+      "val_loss": 0.4776,
+      "family": "Ensemble",
+      "is_best": false,
+      "time_seconds": 181.8,
+      "code": "import numpy as np\nfrom sklearn.ensemble import RandomForestClassifier, ExtraTreesClassifier, GradientBoostingClassifier, VotingClassifier\nfrom sklearn.linear_model import LogisticRegression\nfrom sklearn.neural_network import MLPClassifier\nfrom sklearn.preprocessing import StandardScaler\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Model 1: ExtraTreesClassifier (often more robust than RF)\n    et = ExtraTreesClassifier(n_estimators=300, max_depth=12, min_samples_split=5, random_state=42)\n    et.fit(X_train, y_train)\n    \n    # Model 2: GradientBoosting with tuned params\n    gb = GradientBoostingClassifier(n_estimators=150, max_depth=5, learning_rate=0.05, random_state=42)\n    gb.fit(X_train, y_train)\n    \n    # Model 3: MLP with scaling\n    scaler = StandardScaler()\n    X_train_scaled = scaler.fit_transform(X_train)\n    X_val_scaled = scaler.transform(X_val)\n    \n    mlp = MLPClassifier(hidden_layer_sizes=(128, 64, 32), max_iter=150, random_state=42, early_stopping=True)\n    mlp.fit(X_train_scaled, y_train)\n    \n    # Model 4: LogisticRegression as baseline\n    lr = LogisticRegression(max_iter=300, random_state=42, C=1.0)\n    lr.fit(X_train, y_train)\n    \n    # Model 5: KNN for local patterns\n    knn = KNeighborsClassifier(n_neighbors=5, weights='distance')\n    knn.fit(X_train, y_train)\n    \n    # Voting ensemble - soft voting combines predictions\n    voting = VotingClassifier(\n        estimators=[\n            ('et', et),\n            ('gb', gb),\n            ('mlp', mlp),\n            ('lr', lr),\n            ('knn', knn)\n        ],\n        voting='soft'\n    )\n    voting.fit(X_train, y_train)\n    predictions = voting.predict(X_val)\n    \n    return predictions"
+    },
+    {
+      "iteration": 8,
+      "val_accuracy": null,
+      "val_loss": null,
+      "family": "Unknown",
+      "error": "Structure Error: Must define 'def solve(X_train, y_train, X_val, y_val)' that returns predictions.",
+      "time_seconds": 57.2,
+      "code": "print('Error: LLM returned an empty response. You might be exceeding your context window.')"
+    },
+    {
+      "iteration": 9,
+      "val_accuracy": 0.9275,
+      "val_loss": 0.3947,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 31.1,
+      "code": "import numpy as np\nfrom sklearn.ensemble import RandomForestClassifier\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.linear_model import LogisticRegression\nfrom sklearn.neural_network import MLPClassifier\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Scale features for better model performance\n    scaler = StandardScaler()\n    X_train_scaled = scaler.fit_transform(X_train)\n    X_val_scaled = scaler.transform(X_val)\n    \n    # RandomForest with optimized hyperparameters\n    rf = RandomForestClassifier(\n        n_estimators=250,\n        max_depth=15,\n        min_samples_split=3,\n        min_samples_leaf=1,\n        max_features='sqrt',\n        random_state=42,\n        n_jobs=-1,\n        class_weight='balanced'\n    )\n    rf.fit(X_train_scaled, y_train)\n    predictions = rf.predict(X_val_scaled)\n    \n    # Fallback to MLP if RF struggles (but RF is best so far)\n    # Just return RF predictions\n    return predictions"
+    },
+    {
+      "iteration": 10,
+      "val_accuracy": 0.9265,
+      "val_loss": 0.3994,
+      "family": "Ensemble",
+      "is_best": false,
+      "time_seconds": 257.5,
+      "code": "import numpy as np\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.ensemble import GradientBoostingClassifier, RandomForestClassifier, ExtraTreesClassifier, VotingClassifier\nfrom sklearn.linear_model import LogisticRegression\nfrom sklearn.svm import SVC\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Standardize features\n    scaler = StandardScaler()\n    X_train_scaled = scaler.fit_transform(X_train)\n    X_val_scaled = scaler.transform(X_val)\n    \n    # Train multiple diverse models\n    gbm = GradientBoostingClassifier(n_estimators=200, max_depth=6, learning_rate=0.08, min_samples_split=4, random_state=42)\n    gbm.fit(X_train_scaled, y_train)\n    pred_gbm = gbm.predict(X_val_scaled)\n    \n    rf = RandomForestClassifier(n_estimators=300, max_depth=10, min_samples_split=3, random_state=42, n_jobs=-1)\n    rf.fit(X_train_scaled, y_train)\n    pred_rf = rf.predict(X_val_scaled)\n    \n    et = ExtraTreesClassifier(n_estimators=300, max_depth=10, min_samples_split=3, random_state=42, n_jobs=-1)\n    et.fit(X_train_scaled, y_train)\n    pred_et = et.predict(X_val_scaled)\n    \n    lr = LogisticRegression(max_iter=1000, C=0.5, solver='lbfgs', random_state=42)\n    lr.fit(X_train_scaled, y_train)\n    pred_lr = lr.predict(X_val_scaled)\n    \n    # Soft voting ensemble\n    from sklearn.ensemble import VotingClassifier\n    soft_voter = VotingClassifier(\n        estimators=[('gbm', gbm), ('rf', rf), ('et', et), ('lr', lr)],\n        voting='soft',\n        weights=[1, 1, 1, 1]\n    )\n    soft_voter.fit(X_train_scaled, y_train)\n    predictions = soft_voter.predict(X_val_scaled)\n    \n    return predictions"
+    },
+    {
+      "iteration": 11,
+      "val_accuracy": null,
+      "val_loss": null,
+      "family": "Unknown",
+      "error": "Structure Error: Must define 'def solve(X_train, y_train, X_val, y_val)' that returns predictions.",
+      "time_seconds": 57.1,
+      "code": "print('Error: LLM returned an empty response. You might be exceeding your context window.')"
+    },
+    {
+      "iteration": 12,
+      "val_accuracy": 0.929,
+      "val_loss": 0.3876,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 101.0,
+      "code": "import numpy as np\nfrom sklearn.ensemble import GradientBoostingClassifier, RandomForestClassifier, ExtraTreesClassifier\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.linear_model import LogisticRegression\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Standardize features\n    scaler = StandardScaler()\n    X_train_scaled = scaler.fit_transform(X_train)\n    X_val_scaled = scaler.transform(X_val)\n    \n    # Train multiple models\n    rf = RandomForestClassifier(n_estimators=200, max_depth=None, max_features='sqrt', random_state=42, n_jobs=-1)\n    rf.fit(X_train_scaled, y_train)\n    rf_pred = rf.predict(X_val_scaled)\n    \n    gb = GradientBoostingClassifier(n_estimators=150, max_depth=5, learning_rate=0.1, random_state=42)\n    gb.fit(X_train_scaled, y_train)\n    gb_pred = gb.predict(X_val_scaled)\n    \n    et = ExtraTreesClassifier(n_estimators=200, max_depth=None, max_features='sqrt', random_state=42, n_jobs=-1)\n    et.fit(X_train_scaled, y_train)\n    et_pred = et.predict(X_val_scaled)\n    \n    # Ensemble: weighted average of probabilities\n    rf_proba = rf.predict_proba(X_val_scaled)\n    gb_proba = gb.predict_proba(X_val_scaled)\n    et_proba = et.predict_proba(X_val_scaled)\n    \n    # Average probabilities\n    avg_proba = (rf_proba + gb_proba + et_proba) / 3\n    \n    # Get predictions\n    predictions = np.argmax(avg_proba, axis=1)\n    \n    return predictions"
+    },
+    {
+      "iteration": 13,
+      "val_accuracy": null,
+      "val_loss": null,
+      "family": "Unknown",
+      "error": "Structure Error: Must define 'def solve(X_train, y_train, X_val, y_val)' that returns predictions.",
+      "time_seconds": 57.7,
+      "code": "print('Error: LLM returned an empty response. You might be exceeding your context window.')"
+    },
+    {
+      "iteration": 14,
+      "val_accuracy": 0.9295,
+      "val_loss": 0.3852,
+      "family": "RandomForest",
+      "is_best": false,
+      "time_seconds": 85.0,
+      "code": "import numpy as np\nfrom sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier\nfrom sklearn.linear_model import LogisticRegression\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.metrics import accuracy_score\n\ndef solve(X_train, y_train, X_val, y_val):\n    # Standardize features\n    scaler = StandardScaler()\n    X_train_scaled = scaler.fit_transform(X_train)\n    X_val_scaled = scaler.transform(X_val)\n    \n    # Try multiple models and ensemble\n    rf = RandomForestClassifier(\n        n_estimators=200,\n        max_depth=10,\n        min_samples_split=5,\n        min_samples_leaf=2,\n        max_features='sqrt',\n        random_state=42,\n        n_jobs=-1\n    )\n    rf.fit(X_train_scaled, y_train)\n    rf_pred = rf.predict(X_val_scaled)\n    \n    gb = GradientBoostingClassifier(\n        n_estimators=150,\n        max_depth=5,\n        learning_rate=0.1,\n        min_samples_split=10,\n        min_samples_leaf=5,\n        subsample=0.8,\n        random_state=42\n    )\n    gb.fit(X_train_scaled, y_train)\n    gb_pred = gb.predict(X_val_scaled)\n    \n    # Ensemble: weighted average of predictions\n    rf_proba = rf.predict_proba(X_val_scaled)\n    gb_proba = gb.predict_proba(X_val_scaled)\n    ensemble_proba = 0.7 * rf_proba + 0.3 * gb_proba\n    \n    predictions = np.argmax(ensemble_proba, axis=1)\n    \n    return predictions.astype(np.int64)"
+    }
+  ]
+}
