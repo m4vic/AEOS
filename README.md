@@ -1,5 +1,5 @@
 <p align="center">
-  <h1 align="center">🧪 AEOS — Autonomous Empirical Optimization System</h1>
+  <h1 align="center">AEOS — Autonomous Empirical Optimization System</h1>
   <p align="center"><b>Neuralchemy Labs Research Series</b></p>
   <p align="center"><i>5 papers exploring how LLMs behave, fail, and cooperate when left alone in autonomous engineering loops</i></p>
 </p>
@@ -19,8 +19,8 @@
 |:-:|-------|---------------|------------------|:------:|
 | 1 | [**AITL Taxonomy**](https://zenodo.org/records/19551173) | How do we classify AI evaluation loops? | Formal taxonomy: Human-in-the-Loop → AI-in-the-Loop | ✅ Published |
 | 2 | [**The Autonomous Sunk-Cost Fallacy**](https://zenodo.org/records/19846960) | Do LLMs know when to stop? | 13 models tested — general LLMs waste 3,400s in sunk-cost loops; code-tuned models stop in 162s | ✅ Published |
-| 3 | [**Cognitive Agentic Diversity**](#paper-3-cognitive-agentic-diversity) | Can dual-agents fix sunk-cost? | Yes — **10× compute efficiency**, 0 SCE in 7/9 pairings. Plus the **Modality Paradox** | 📝 Preprint |
-| 4 | [**Hybrid Gatekeepers & MoE Panels**](#paper-4-hybrid-gatekeepers--moe-reasoning-panels) | Can diverse local models rival frontier APIs? | **+10pp diversity premium** in reasoning; **1,300× latency speedup** in security routing | 📝 Preprint |
+| 3 | [**Cognitive Agentic Diversity**](#paper-3-cognitive-agentic-diversity) | Can dual-agents fix sunk-cost? | Yes — **10× compute efficiency**, 0 SCE in 7/9 pairings. Plus the **Modality Paradox** | Preprint |
+| 4 | [**Hybrid Gatekeepers & MoE Panels**](#paper-4-hybrid-gatekeepers--moe-reasoning-panels) | Can diverse local models rival frontier APIs? | **+10pp diversity premium** in reasoning; **1,300× latency speedup** in security routing |  Preprint |
 | 5 | [**The Lab Director (Ω Function)**](#paper-5-the-lab-director--the-ω-function) | Can we replace text-based stopping with math? | The Ω output-quality self-measurement function — 4-action decision rule | 🔬 Active |
 
 ---
