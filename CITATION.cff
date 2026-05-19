@@ -1,19 +1,47 @@
 cff-version: 1.2.0
-message: "If you use this work, please cite it."
+message: "If you use this work, please cite the relevant paper(s)."
 authors:
   - family-names: "Jajoo"
     given-names: "Sanskar"
     affiliation: "Neuralchemy Labs"
-title: "AI In The Loop: The Evolution from Human-in-the-Loop Evaluation"
-version: 1.0.0
-date-released: 2026-04-11
-url: "https://github.com/m4vic/AITL"
+title: "AEOS: Autonomous Empirical Optimization System — Neuralchemy Research Series"
+version: 2.0.0
+date-released: 2026-05-18
+url: "https://github.com/m4vic/AEOS"
+keywords:
+  - autonomous-agents
+  - llm-evaluation
+  - sunk-cost-fallacy
+  - multi-agent-systems
+  - mixture-of-experts
+  - ai-safety
+  - meta-reasoning
 preferred-citation:
   type: article
   authors:
     - family-names: "Jajoo"
       given-names: "Sanskar"
       affiliation: "Neuralchemy Labs"
-  title: "AI In The Loop: The Evolution from Human-in-the-Loop Evaluation"
-  journal: "arXiv preprint"
+  title: "The Autonomous Sunk-Cost Fallacy: Stopping Failures and Meta-Reasoning in LLMs Deployed within AEOS"
   year: 2026
+  url: "https://zenodo.org/records/19846960"
+references:
+  - type: article
+    title: "AI In The Loop (AITL): A Systems Taxonomy for Closed-Loop Autonomous Evaluation"
+    authors:
+      - family-names: "Jajoo"
+        given-names: "Sanskar"
+    year: 2026
+    url: "https://zenodo.org/records/19551173"
+  - type: article
+    title: "Cognitive Agentic Diversity in Autonomous ML Engineering: The Asymmetric Architecture"
+    authors:
+      - family-names: "Jajoo"
+        given-names: "Sanskar"
+    year: 2026
+  - type: article
+    title: "Hybrid Gatekeepers and Local MoE Reasoning Panels: Securing and Scaling Agentic Diversity"
+    authors:
+      - family-names: "Jajoo"
+        given-names: "Sanskar"
+    year: 2026
