@@ -1,4 +1,4 @@
-# AEOS: Autonomous Empirical Optimization System
+# AEOS: Autonomous Empirical Optimization System Paper 2 experiment and code
 
 [![Zenodo research paper ](https://img.shields.io/badge/Research-paper-red?logo=google-chrome)](https://zenodo.org/records/19846960)
 [![GitHub](https://img.shields.io/badge/GitHub-m4vic%2FAEOS-blue?logo=github)](https://github.com/m4vic/AEOS)
